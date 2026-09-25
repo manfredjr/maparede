@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MapaRede - MT - inventário da rede para Windows</title>
+<meta name="description" content="Programa para Windows que levanta os equipamentos de uma rede local, com IP, MAC, fabricante e nome, e gera um relatório em HTML. Arquivo único, sem instalar nada e sem administrador. Software livre, da MT - Manfred Tecnologia.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="MapaRede - MT - inventário da rede para Windows">
+<meta property="og:description" content="Levanta os equipamentos da rede local, com fabricante e nome, e gera um relatório em HTML. Gratuito e de código aberto.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://maparede.manfred.com.br/">
+<link rel="canonical" href="https://maparede.manfred.com.br/">
+<style>
+  /* Identidade MT - Manfred Tecnologia, a mesma da página do CronoAula.
+     Claro: areia de fundo, grafite no texto, verde escuro no acento.
+     Escuro: grafite de fundo, areia no texto, verde claro no acento. */
+  :root {
+    --bg: #f5f7f2;
+    --surface: #ffffff;
+    --border: #e8ede6;
+    --ink: #1e2422;
+    --ink-soft: #6b736e;
+    --accent: #04511f;
+    --accent-ink: #ffffff;
+    --warn-bg: #fdf6e9;
+    --warn-border: #e0c48a;
+    --warn-ink: #9a5b00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151917;
+      --surface: #1e2422;
+      --border: #333b37;
+      --ink: #f5f7f2;
+      --ink-soft: #98a199;
+      --accent: #6aaf21;
+      --accent-ink: #022f10;
+      --warn-bg: #2a2214;
+      --warn-border: #55461f;
+      --warn-ink: #e09b2d;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 22px; }
+  h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
+
+  /* ---- topo ---- */
+  header { padding: 68px 0 44px; text-align: center; }
+  h1 { font-size: 2.6rem; margin: 0 0 12px; }
+  .lede { font-size: 1.18rem; color: var(--ink-soft); margin: 0 auto 34px; max-width: 33em; }
+
+  /* ---- miniatura do relatório ---- */
+  /* Mostra o formato da tabela do relatório, com endereços de exemplo da
+     faixa reservada para documentação (192.0.2.0/24), e não de rede real. */
+  .mock {
+    background: #1e2422;
+    border: 1px solid #333b37;
+    border-radius: 12px;
+    padding: 18px 20px 14px;
+    display: inline-block;
+    box-shadow: 0 12px 34px rgba(0,0,0,.22);
+    margin-bottom: 38px;
+    max-width: 100%;
+    overflow-x: auto;
+    text-align: left;
+  }
+  .mock table { border-collapse: collapse; font: 13px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; color: #f5f7f2; }
+  .mock th { color: #98a199; font-weight: 600; text-align: left; padding: 4px 14px 6px 0; border-bottom: 1px solid #333b37; }
+  .mock td { padding: 5px 14px 5px 0; white-space: nowrap; }
+  .mock .tag { color: #6aaf21; }
+  .mock .label {
+    font: .74rem/1 -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    text-transform: uppercase; letter-spacing: .13em;
+    color: #98a199; margin-top: 12px;
+  }
+
+  /* ---- botões ---- */
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 600;
+    padding: 15px 30px; border-radius: 9px; font-size: 1.05rem;
+    border: 1px solid transparent; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .88; }
+  .btn-main { background: var(--accent); color: var(--accent-ink); }
+  .btn-alt { border: 1.5px solid var(--accent); color: var(--accent); background: transparent; }
+  .fineprint { font-size: .88rem; color: var(--ink-soft); margin-top: 16px; }
+
+  /* ---- seções ---- */
+  section { padding: 30px 0; border-top: 1px solid var(--border); }
+  section h2 { font-size: 1.45rem; margin: 0 0 16px; }
+  p { margin: 0 0 16px; }
+
+  ul.feats { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  @media (min-width: 620px) { ul.feats { grid-template-columns: 1fr 1fr; } }
+  ul.feats li {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 9px; padding: 15px 17px; font-size: .96rem;
+  }
+  ul.feats strong { display: block; margin-bottom: 3px; }
+
+  .warn {
+    background: var(--warn-bg); border: 1px solid var(--warn-border);
+    color: var(--warn-ink); border-radius: 9px; padding: 17px 19px; font-size: .95rem;
+  }
+  .warn p:last-child { margin-bottom: 0; }
+
+  ol { padding-left: 1.25em; }
+  ol li { margin-bottom: 8px; }
+  pre {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 9px;
+    padding: 14px 16px; overflow-x: auto; font: 14px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+
+  a { color: var(--accent); }
+
+  /* ---- rodapé ----
+     Mesmo formato do rodapé dos produtos da MT: linha fina em cima, letra
+     pequena na cor apagada e o logo da MT ao lado. No celular tudo empilha. */
+  .rodape {
+    width: 100%; margin-top: 34px; padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    text-align: center; font-size: 12px; line-height: 1.5; color: var(--ink-soft);
+  }
+  .rodape-texto p { margin: 0; }
+  .rodape-texto p + p { margin-top: 2px; }
+  .rodape a { color: var(--ink-soft); text-decoration: none; }
+  .rodape a:hover { text-decoration: underline; }
+  .rodape a.rodape-forte { color: var(--ink); font-weight: 500; }
+  .rodape-logo { order: -1; flex-shrink: 0; display: inline-flex; border-radius: 2px; }
+  .rodape-logo img { height: 28px; width: auto; display: block; }
+  @media (min-width: 640px) {
+    .rodape { flex-direction: row; gap: 12px; text-align: right; }
+    .rodape-logo { order: 0; }
+    .rodape-logo img { height: 38px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>MapaRede - MT</h1>
+  <p class="lede">
+    Inventário da rede local para Windows. Descobre os equipamentos ligados na
+    rede e mostra o IP, o MAC, o fabricante e o nome de cada um, num relatório
+    que abre em qualquer navegador.
+  </p>
+
+  <div class="mock">
+    <table>
+      <tr><th>IP</th><th>Nome</th><th>Fabricante</th><th></th></tr>
+      <tr><td>192.0.2.1</td><td>roteador</td><td>Cisco Systems, Inc</td><td class="tag">Gateway</td></tr>
+      <tr><td>192.0.2.20</td><td>SRV-ARQUIVOS</td><td>Dell Inc.</td><td></td></tr>
+      <tr><td>192.0.2.35</td><td>impressora.local</td><td>Brother Industries, LTD.</td><td></td></tr>
+      <tr><td>192.0.2.101</td><td>iPhone-sala.local</td><td>MAC aleatório (privativo)</td><td></td></tr>
+    </table>
+    <div class="label">relatório de exemplo</div>
+  </div>
+
+  <div class="cta">
+    <a class="btn btn-main" href="https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe">Baixar para Windows</a>
+    <a class="btn btn-alt" href="https://github.com/manfredjr/maparede">Ver o código</a>
+  </div>
+  <p class="fineprint">
+    Windows 10 ou 11, 64 bits. Arquivo único, sem instalador e sem pedir administrador.
+  </p>
+</header>
+
+<main class="wrap">
+
+<section>
+  <h2>Para que serve</h2>
+  <p>
+    Quem chega para atender uma rede que não conhece precisa, antes de tudo,
+    saber o que está ligado nela: onde está o roteador, quais são as impressoras,
+    quantos computadores e celulares estão conectados.
+  </p>
+  <p>
+    O MapaRede faz esse levantamento a partir de um notebook ligado à rede e
+    deixa o resultado num arquivo que você guarda com a documentação do cliente.
+  </p>
+</section>
+
+<section>
+  <h2>O que ele levanta</h2>
+  <ul class="feats">
+    <li><strong>Todos os equipamentos da sub-rede</strong>Por ping e por ARP. Quem bloqueia ping no firewall também aparece.</li>
+    <li><strong>Fabricante pelo MAC</strong>Pela tabela oficial do IEEE, que vai dentro do programa. Não precisa de internet.</li>
+    <li><strong>Nome de cada equipamento</strong>Por DNS reverso, NetBIOS (com o grupo de trabalho ou domínio) e mDNS.</li>
+    <li><strong>Celular com MAC aleatório</strong>Identificado como tal, em vez de aparecer como fabricante desconhecido.</li>
+    <li><strong>Relatório em HTML</strong>Arquivo único, com resumo, tabela com filtro e o detalhe de cada equipamento.</li>
+    <li><strong>Janela e linha de comando</strong>O mesmo programa serve para o uso no dia a dia e para roteiros.</li>
+  </ul>
+  <p class="fineprint">
+    Nas próximas versões: portas abertas mais comuns, identificação leve do
+    equipamento (página web, SSH, UPnP) e classificação por tipo, como roteador,
+    impressora, câmera e servidor.
+  </p>
+</section>
+
+<section>
+  <h2>Como usar</h2>
+  <ol>
+    <li>Baixe o <a href="https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe">maparede.exe</a> e copie para qualquer pasta, ou para um pendrive.</li>
+    <li>Dê um duplo clique nele e escolha a interface de rede. A primeira da lista costuma ser a certa.</li>
+    <li>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapaRede - MT</em>.</li>
+  </ol>
+  <p>Pela linha de comando:</p>
+  <pre>maparede --interfaces
+maparede --varrer --interface 1 --abrir</pre>
+
+  <div class="warn">
+    <p>
+      <strong>Antes da primeira vez.</strong>
+    </p>
+    <p>
+      O Windows pode exibir <em>"O Windows protegeu o seu computador"</em>. O
+      motivo é a falta de assinatura digital, que é um certificado pago. Clique
+      em <strong>Mais informações</strong> e depois em
+      <strong>Executar assim mesmo</strong>.
+    </p>
+    <p>
+      Use o programa só em redes que você administra ou em que o responsável
+      autorizou o levantamento.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>O que ele não faz</h2>
+  <p>
+    O MapaRede não é scanner de vulnerabilidade. Ele não testa senha, não tenta
+    entrar em nenhum equipamento e não muda configuração. Registra só o que a
+    rede já mostra para qualquer computador ligado nela.
+  </p>
+  <p>
+    Também não envia nada para fora da rede local e não coleta dado de uso. O
+    relatório fica apenas no computador em que a varredura foi feita.
+  </p>
+</section>
+
+<section>
+  <h2>Código aberto</h2>
+  <p>
+    O MapaRede - MT é software livre, sob licença
+    <a href="https://github.com/manfredjr/maparede/blob/main/LICENSE">GPL-3.0</a>.
+    Qualquer pessoa pode usar, estudar e adaptar o programa. Quem distribuir uma
+    versão modificada precisa abrir o código dela também.
+  </p>
+  <p>
+    Encontrou um problema ou tem uma sugestão? Escreva nas
+    <a href="https://github.com/manfredjr/maparede/issues">Issues</a>.
+  </p>
+</section>
+
+</main>
+
+<footer class="rodape">
+  <div class="rodape-texto">
+    <p>
+      Desenvolvido e publicado por
+      <a class="rodape-forte" href="https://www.manfred.com.br" target="_blank" rel="noopener">MT - Manfred Tecnologia</a>
+    </p>
+    <p class="rodape-links">
+      <a href="https://github.com/manfredjr/maparede#readme">Manual de uso</a> &middot;
+      <a href="https://github.com/manfredjr/maparede">Código-fonte</a> &middot;
+      <a href="https://github.com/manfredjr/maparede/blob/main/LICENSE">Licença GPL-3.0</a> &middot;
+      <a href="https://github.com/manfredjr/maparede/issues">Avisar um problema</a>
+    </p>
+  </div>
+  <a class="rodape-logo" href="https://www.manfred.com.br" target="_blank" rel="noopener">
+    <picture>
+      <source srcset="logo-mt-claro.svg" media="(prefers-color-scheme: dark)">
+      <img src="logo-mt.png" alt="MT - Manfred Tecnologia" width="37" height="28">
+    </picture>
+  </a>
+</footer>
+
+</body>
+</html>

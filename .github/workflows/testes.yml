@@ -1,15 +1,25 @@
-# CI do MT Mapa de Rede: compila, roda os testes e gera o .exe em todo Pull Request
+# CI do MapaRede - MT: compila, roda os testes e gera o .exe em todo Pull Request
 # e em todo push no main. O .exe fica disponivel para baixar na execucao, em Artifacts.
+#
+# Quando uma marca de versao (v0.1.0, por exemplo) chega ao GitHub, o mesmo
+# fluxo publica a Release com o maparede.exe anexado. E dessa Release que a
+# pagina maparede.manfred.com.br baixa o programa.
 name: testes
 
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   testes:
     runs-on: windows-latest
+    permissions:
+      contents: write
     env:
       DOTNET_NOLOGO: 1
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -21,21 +31,39 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Compilar
-        if: hashFiles('mapa-rede-mt.sln') != ''
-        run: dotnet build mapa-rede-mt.sln -c Release
+        if: hashFiles('maparede.sln') != ''
+        run: dotnet build maparede.sln -c Release
 
       - name: Testar
-        if: hashFiles('mapa-rede-mt.sln') != ''
-        run: dotnet test mapa-rede-mt.sln -c Release --no-build
+        if: hashFiles('maparede.sln') != ''
+        run: dotnet test maparede.sln -c Release --no-build
 
       - name: Gerar o .exe
-        if: hashFiles('mapa-rede-mt.sln') != ''
-        run: dotnet publish src/mapa-rede-mt/mapa-rede-mt.csproj -c Release -o publicar
+        if: hashFiles('maparede.sln') != ''
+        run: dotnet publish src/maparede/maparede.csproj -c Release -o publicar
 
       - name: Guardar o .exe
-        if: hashFiles('mapa-rede-mt.sln') != ''
+        if: hashFiles('maparede.sln') != ''
         uses: actions/upload-artifact@v4
         with:
-          name: mt-mapa-rede-${{ github.sha }}
-          path: publicar/mt-mapa-rede.exe
+          name: maparede-${{ github.sha }}
+          path: publicar/maparede.exe
           retention-days: 14
+
+      - name: Conferir a versao da marca
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $versao = ([xml](Get-Content Directory.Build.props)).Project.PropertyGroup[0].Version
+          $marca = "${{ github.ref_name }}".TrimStart('v')
+          if ($versao -ne $marca) {
+            throw "A marca $marca nao bate com a versao $versao do Directory.Build.props."
+          }
+
+      - name: Publicar a Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: MapaRede - MT ${{ github.ref_name }}
+          files: publicar/maparede.exe
+          generate_release_notes: true

@@ -1,4 +1,4 @@
-# MT Mapa de Rede: regras do projeto
+# MapaRede - MT: regras do projeto
 
 Leia este arquivo antes de escrever qualquer linha.
 
@@ -8,17 +8,19 @@ Scanner de inventário de rede para Windows, produto da MT - Manfred Tecnologia 
 
 Não é scanner de vulnerabilidade. Não testa senha, não explora falha e não tenta entrar em nada. Só levanta o que a rede já mostra para qualquer computador ligado nela.
 
-O projeto não tem relação com o site institucional da MT. Desenho em `docs/superpowers/specs/2026-09-25-mapa-rede-mt-design.md`.
+O projeto não tem relação com o site institucional da MT. Desenho em `docs/superpowers/specs/2026-09-25-maparede-design.md`.
+
+O repositório `manfredjr/maparede` é **público**, sob licença GPL-3.0, no mesmo modelo do CronoAula, por decisão do Manfred em 25/09/2026. O programa tem página própria em `https://maparede.manfred.com.br`, servida pela pasta `public/`. Tudo que entra no repositório, inclusive o histórico, fica visível para qualquer pessoa.
 
 ## Método
 
-Este projeto segue o método da MT. Os documentos ficam em `docs/metodo/`:
+Este projeto segue o método da MT. Os documentos do método são internos e não entram no repositório público: ficam na pasta local `.superpowers/metodo/`, ignorada pelo git.
 
 - `briefing-metodo-projeto-mt.md`: princípios, ciclo de trabalho, Git, textos, jurídico, limites e autonomia.
 - `briefing-fechamento-das-respostas.md`: como fechar cada resposta ao Manfred.
-- `roteiro-publicacao-git-cpanel.md`: publicação de sistemas web pelo Git do cPanel. Não se aplica ao `.exe`, que é distribuído como diz `docs/publicacao.md`. Vale só se um dia houver página de download no servidor.
+- `roteiro-publicacao-git-cpanel.md`: publicação pelo Git do cPanel. Aqui vale para a página em `public/`, com as diferenças descritas em `docs/publicacao.md`.
 
-O briefing foi escrito para sistemas web em Laravel. Aqui valem os princípios, o ciclo das fatias, as regras de Git, de texto, de jurídico e de autonomia. A stack, o `C:\dev`, o cPanel e o banco não se aplicam. Quando este arquivo e os briefings divergirem, vale este arquivo.
+O briefing foi escrito para sistemas web em Laravel. Aqui valem os princípios, o ciclo das fatias, as regras de Git, de texto, de jurídico e de autonomia. A stack, o `C:\dev` e o banco não se aplicam. Quando este arquivo e os briefings divergirem, vale este arquivo.
 
 ## Autoria
 
@@ -30,16 +32,18 @@ O autor é Manfred Heil Junior. Nada atribui autoria a outra pessoa ou ferrament
 
 ## O que nunca vai para o GitHub
 
+O repositório é público. Além da lista abaixo, nada que descreva a infraestrutura interna da MT: nome de servidor, chave SSH, conta, pendência de segurança, documentos do método. Na dúvida, fica fora.
+
 - Relatório gerado em rede de cliente (HTML, XML, CSV) e qualquer dado de rede de cliente: IP, MAC, nome de equipamento, print de tela.
 - Senha, chave de API, token, credencial, certificado de assinatura de código e a senha dele.
 - Documento de terceiros (contrato, cartão CNPJ, PDF de instituição) e gravação pessoal.
 - Executável gerado (`bin/`, `obj/`, `publicar/`). O `.exe` sai do código, pelo CI ou pelo `ferramentas\publicar.cmd`.
 
-O `.gitignore` já barra os nomes padrão dos relatórios (`mapa-rede-*.html`, `.xml`, `.csv`), a pasta `/relatorios/` da raiz e a `.superpowers/`.
+O `.gitignore` já barra os nomes padrão dos relatórios (`maparede-*.html`, `.xml`, `.csv`), a pasta `/relatorios/` da raiz e a `.superpowers/`.
 
 ## Backup no GitHub
 
-Repositório privado `manfredjr/mapa-rede-mt`. Todo commit sobe na hora pelos ganchos `.githooks/post-commit` e `.githooks/post-merge`. Ao clonar, ligar os ganchos uma vez:
+Repositório público `manfredjr/maparede`. Todo commit sobe na hora pelos ganchos `.githooks/post-commit` e `.githooks/post-merge`. Ao clonar, ligar os ganchos uma vez:
 
 ```bat
 git config core.hooksPath .githooks
@@ -61,7 +65,7 @@ Se aparecer o aviso de que o commit não chegou ao GitHub, enviar à mão assim 
 - Texto que alguém lê passa pela `humanizar-ptbr` antes de entrar no código. Texto jurídico (licença, aviso ao cliente, termo de autorização da varredura) passa pela `legal-br` e nunca sai de memória.
 - Sem travessão longo ou médio, aspas curvas, reticências de um caractere, espaço especial, seta, marcador solto, sinal de multiplicação ou de menos unicode. Use hífen, aspas retas e três pontos. O teste `CaracteresProibidosTestes` confere o código e a documentação.
 - Nunca inventar nome, data, número ou citação. O que não tem fonte vira `[FONTE?]` ou `[PREENCHER]`.
-- Nome de arquivo sempre em minúsculas. As exceções são as que a ferramenta ou a convenção exigem: `AGENTS.md`, `README.md`, `LICENSE`, `Directory.Build.props` e os arquivos `CONSULTA-ADVOGADO-*` do método.
+- Nome de arquivo sempre em minúsculas. As exceções são as que a ferramenta ou a convenção exigem: `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `LICENSE`, `Directory.Build.props` e os arquivos `CONSULTA-ADVOGADO-*` do método.
 - Roteiros `.ps1` e `.cmd` ficam sem acento: o PowerShell 5.1 e o Prompt de Comando leem arquivo sem BOM na página de código do Windows.
 
 ## Autonomia
@@ -91,18 +95,18 @@ Só dentro de `C:\COWORK\CODE\MAPA-REDE-MT`. Rascunhos em `.superpowers/rascunho
 | Entrega | Um `.exe` único e autocontido para `win-x64`, sem instalar o .NET no cliente |
 | Interface | Janela WinForms e modo linha de comando no mesmo `.exe` |
 | Dependências de rede | Nenhuma externa: sem Npcap e sem Nmap |
-| Testes | xUnit, no projeto `testes/mapa-rede-mt.testes` |
+| Testes | xUnit, no projeto `testes/maparede.testes` |
 | CI | GitHub Actions em Windows, em todo Pull Request e em todo push no `main`. Gera o `.exe` como artefato |
 
 Divisão do código:
 
 | Pasta | Conteúdo |
 |---|---|
-| `src/mapa-rede-mt.nucleo` | Biblioteca `net8.0`, sem WinForms: interfaces, sub-rede, ping, ARP, OUI, nomes, relatórios, linha de comando. É o que os testes cobrem |
-| `src/mapa-rede-mt` | Aplicativo `net8.0-windows`: janela WinForms e ponto de entrada da linha de comando. Gera o `mt-mapa-rede.exe` |
-| `testes/mapa-rede-mt.testes` | Testes do núcleo. Rodam no Windows e no Linux |
+| `src/maparede.nucleo` | Biblioteca `net8.0`, sem WinForms: interfaces, sub-rede, ping, ARP, OUI, nomes, relatórios, linha de comando. É o que os testes cobrem |
+| `src/maparede` | Aplicativo `net8.0-windows`: janela WinForms e ponto de entrada da linha de comando. Gera o `maparede.exe` |
+| `testes/maparede.testes` | Testes do núcleo. Rodam no Windows e no Linux |
 | `ferramentas/` | Roteiros de apoio: gerar o `.exe`, atualizar a tabela OUI |
-| `docs/metodo/` | Documentos do método da MT |
+| `public/` | Página do programa em `maparede.manfred.com.br`. Só arquivo de site: o teste `SiteTestes` barra o resto |
 | `docs/superpowers/` | Specs, planos e pendências |
 | `docs/legal/` | Verificações jurídicas e consultas ao advogado |
 
@@ -119,14 +123,14 @@ O programa roda no notebook do técnico, ligado à rede do cliente. Isso molda o
 
 ## Dados de cliente
 
-O relatório traz dado da rede do cliente e pode trazer dado pessoal (nome de celular com nome de pessoa, MAC de aparelho pessoal). Ele fica só na máquina do técnico, em `Documentos\MT Mapa de Rede`, e nunca entra no repositório. As regras de aviso, guarda e descarte saem da análise da `legal-br` (ver `docs/superpowers/pendencias.md`).
+O relatório traz dado da rede do cliente e pode trazer dado pessoal (nome de celular com nome de pessoa, MAC de aparelho pessoal). Ele fica só na máquina do técnico, em `Documentos\MapaRede - MT`, e nunca entra no repositório. As regras de aviso, guarda e descarte saem da análise da `legal-br` (ver `docs/superpowers/pendencias.md`).
 
 ## Portões antes de cada commit
 
 Inclusive quando a mudança é só em documentação:
 
-1. `dotnet build mapa-rede-mt.sln -c Release` sem aviso (os avisos viram erro).
-2. `dotnet test mapa-rede-mt.sln -c Release` com todos os testes verdes, inclusive o de caracteres proibidos e o de nome de arquivo.
+1. `dotnet build maparede.sln -c Release` sem aviso (os avisos viram erro).
+2. `dotnet test maparede.sln -c Release` com todos os testes verdes, inclusive o de caracteres proibidos e o de nome de arquivo.
 3. Busca por menção a ferramenta de IA no repositório, com `git grep -i` pelos nomes das ferramentas usadas.
 4. Conferência de que só os arquivos previstos entram no commit, e de que o commit chegou ao GitHub.
 
@@ -136,11 +140,18 @@ Windows com o SDK do .NET 8. Não há servidor, banco nem vhost. O `.exe` sai de
 
 ## Publicação
 
-Distribuição do `.exe` ao cliente, só com autorização. Passo a passo em `docs/publicacao.md`.
+Duas publicações, que não se misturam, as duas só com autorização:
+
+| O quê | Para onde | Como |
+|---|---|---|
+| O programa (`maparede.exe`) | GitHub Releases | Marca de versão `vX.Y.Z` enviada ao GitHub. O CI testa, gera e publica |
+| A página (pasta `public/`) | `maparede.manfred.com.br`, no cPanel da GoDaddy, atrás do Cloudflare | Git Version Control do cPanel, com o `.cpanel.yml` |
+
+Passo a passo em `docs/publicacao.md`.
 
 ## Comunicação
 
-- Toda resposta termina com os blocos **Feito**, **Você precisa fazer**, **Fica comigo** e **Etapa**, nessa ordem. Detalhes em `docs/metodo/briefing-fechamento-das-respostas.md`.
+- Toda resposta termina com os blocos **Feito**, **Você precisa fazer**, **Fica comigo** e **Etapa**, nessa ordem. Detalhes em `.superpowers/metodo/briefing-fechamento-das-respostas.md`.
 - Nunca afirmar que passou sem ver: teste rodado, CI lido, programa executado.
 
 ## Ao terminar
