@@ -14,13 +14,17 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 
 | Fatia | Conteúdo | Ramo | Pull Request | Situação |
 |---|---|---|---|---|
-| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/mapnet/pull/1) | Em revisão |
-| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/mapnet/pull/2) | Em teste |
-| 1b | Página mapnet.manfred.com.br, código aberto (GPL-3.0), nome MapNet - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/mapnet/pull/3) | Em revisão |
-| 2 | Portas TCP comuns, com lista configurável | a definir | - | A fazer |
-| 3 | Identificação leve: título HTTP, banners SSH e FTP, certificado HTTPS, UPnP/SSDP | a definir | - | A fazer |
-| 4 | Classificação por heurística (roteador, impressora, câmera, servidor...) | a definir | - | A fazer |
-| 5 | Relatório completo em HTML, XML e CSV | a definir | - | A fazer |
+| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/mapnet/pull/1) | Concluída |
+| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/mapnet/pull/2) | Publicada na v0.1.2 |
+| 1b | Página mapnet.manfred.com.br, código aberto (GPL-3.0), nome MapNet - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/mapnet/pull/3) | Concluída |
+| 2 | Tela WPF do painel do técnico, com a identidade da MT (versão 0.2.0) | `tela-wpf` | - | Em teste |
+| 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda | a definir | - | A fazer |
+| 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões, rotas e `ipconfig /all` | a definir | - | A fazer |
+| 5 | Ações de manutenção com elevação sob demanda | a definir | - | A fazer |
+| 6 | Painel de detalhe do host | a definir | - | A fazer |
+| 7 em diante | Portas TCP, identificação leve, classificação e relatório completo em HTML, XML e CSV | a definir | - | A fazer |
+
+A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
 
 O que ficou de fora de cada fatia está em [`docs/superpowers/pendencias.md`](docs/superpowers/pendencias.md).
 
@@ -31,9 +35,10 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 ### Pela janela
 
 1. Abra o `mapnet.exe`.
-2. Escolha a interface de rede. A primeira da lista é a que tem gateway, normalmente a certa.
-3. Clique em **Iniciar varredura**. A lista vai se enchendo enquanto os hosts respondem.
-4. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Abrir relatório** abre no navegador, e **Salvar relatório como...** grava em outro lugar.
+2. Na faixa verde do topo, escolha a interface de rede. A primeira da lista é a que tem gateway, normalmente a certa. A coluna **Minha máquina** mostra a placa, o IP, o gateway, o DNS e a sub-rede que vai ser varrida.
+3. Clique em **Iniciar varredura**. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante ou observação, e cada coluna ordena com um clique no título.
+4. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo.
+5. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
 
 ### Pela linha de comando
 
@@ -153,8 +158,8 @@ Depois, compile e rode os testes de novo antes do commit.
 | Pasta | Conteúdo |
 |---|---|
 | `src/mapnet.nucleo` | Biblioteca sem janela: interfaces, sub-rede, ping, ARP, OUI, nomes, relatório e linha de comando |
-| `src/mapnet` | Aplicativo WinForms que gera o `mapnet.exe` |
-| `testes/mapnet.testes` | Testes do núcleo (xUnit) |
+| `src/mapnet` | Aplicativo WPF que gera o `mapnet.exe`, com a tela, o tema da MT e a fonte Montserrat |
+| `testes/mapnet.testes` | Testes do núcleo e da lógica da tela (xUnit) |
 | `ferramentas/` | Roteiros de compilação e de atualização da tabela OUI |
 | `public/` | Página do programa em mapnet.manfred.com.br |
 | `docs/superpowers/` | Desenho, planos e pendências |
@@ -168,6 +173,8 @@ Relatar problema, sugerir melhoria ou mandar código: veja o [`CONTRIBUTING.md`]
 ## Licença
 
 Distribuído sob a **[GNU General Public License v3.0](LICENSE)**. Qualquer pessoa pode usar, estudar e modificar o programa. Quem distribuir uma versão modificada precisa abrir o código dela sob a mesma licença.
+
+A fonte Montserrat, embutida no `.exe`, é do Montserrat Project e vai sob a SIL Open Font License 1.1, em [`src/mapnet/recursos/fontes/ofl.txt`](src/mapnet/recursos/fontes/ofl.txt).
 
 ## A confirmar com
 
