@@ -6,3 +6,6 @@
 *.cmd text eol=crlf
 *.gz binary
 *.ico binary
+*.ttf binary
+*.png binary
+*.xaml text eol=crlf

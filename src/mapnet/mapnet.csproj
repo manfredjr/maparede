@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyName>mapnet</AssemblyName>
     <RootNamespace>MapNet</RootNamespace>
@@ -11,8 +11,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>recursos\mapnet.ico</ApplicationIcon>
-    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-    <ApplicationVisualStyles>true</ApplicationVisualStyles>
 
     <!-- Entrega: um .exe unico, autocontido, para Windows 64 bits -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -21,6 +19,14 @@
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
+
+  <!-- Imagens e fonte da MT embutidas no .exe e lidas pela tela com pack:// -->
+  <ItemGroup>
+    <Resource Include="recursos\mapnet.ico" />
+    <Resource Include="recursos\mapnet-simbolo.png" />
+    <Resource Include="recursos\fontes\*.ttf" />
+    <Resource Include="recursos\fontes\ofl.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\mapnet.nucleo\mapnet.nucleo.csproj" />
