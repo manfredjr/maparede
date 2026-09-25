@@ -44,7 +44,7 @@ O CI roda os testes, gera o `maparede.exe` e cria a Release `MapaRede - MT v0.1.
 
 ### Depois de publicar
 
-1. Abrir `https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe` e conferir que o download começa.
+1. Abrir `https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe` e conferir que o download começa. A Release leva também o `maparede.exe.sha256.txt`, para quem baixou conferir o arquivo.
 2. Atualizar a "Situação do projeto" do README.
 3. Anotar em `docs/superpowers/pendencias.md` o que o uso em campo mostrar.
 

@@ -42,12 +42,23 @@ jobs:
         if: hashFiles('maparede.sln') != ''
         run: dotnet publish src/maparede/maparede.csproj -c Release -o publicar
 
+      # O .sha256.txt deixa quem baixou conferir que o .exe chegou igual ao publicado.
+      - name: Calcular o SHA-256
+        if: hashFiles('maparede.sln') != ''
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash publicar/maparede.exe -Algorithm SHA256).Hash
+          Set-Content -Path publicar/maparede.exe.sha256.txt -Value "$hash  maparede.exe" -Encoding ascii
+          Get-Content publicar/maparede.exe.sha256.txt
+
       - name: Guardar o .exe
         if: hashFiles('maparede.sln') != ''
         uses: actions/upload-artifact@v4
         with:
           name: maparede-${{ github.sha }}
-          path: publicar/maparede.exe
+          path: |
+            publicar/maparede.exe
+            publicar/maparede.exe.sha256.txt
           retention-days: 14
 
       - name: Conferir a versao da marca
@@ -65,5 +76,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: MapaRede - MT ${{ github.ref_name }}
-          files: publicar/maparede.exe
+          files: |
+            publicar/maparede.exe
+            publicar/maparede.exe.sha256.txt
           generate_release_notes: true
