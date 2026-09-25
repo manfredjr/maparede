@@ -6,7 +6,6 @@ O que ficou de fora, com o motivo e o que fecha o item.
 
 | Item | Motivo | O que fecha |
 |---|---|---|
-| Repositório público `manfredjr/maparede` no GitHub | A integração do ambiente de trabalho não tem permissão para criar repositório na conta do Manfred | O Manfred criar o repositório **público** vazio, sem README, e liberar o acesso do app, ou enviar os ramos da máquina dele |
 | Enquadramento jurídico inicial | Texto e regra jurídica passam pela `legal-br` e não saem de memória. Pontos: a MT é controladora ou operadora dos dados da varredura, base legal, autorização do responsável pela rede, aviso ao cliente, guarda e descarte do relatório, e a frase de uso responsável da página | Análise pela `legal-br`, gravada em `docs/legal/verificacao-varredura-e-lgpd-AAAA-MM-DD.md`, e seção de privacidade da spec atualizada |
 | Assinatura digital do `.exe` | Sem certificado de assinatura de código, o Windows SmartScreen avisa na primeira execução, e algum antivírus pode desconfiar de um programa que varre a rede | Decisão do Manfred sobre comprar o certificado |
 | Ícone do programa | Não havia arte da MT para ícone. A página usa um `favicon.svg` provisório, nas cores da MT | Arquivo `.ico` da marca da MT, usado no `.exe` e na página |

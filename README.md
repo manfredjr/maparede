@@ -14,9 +14,9 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 
 | Fatia | Conteúdo | Ramo | Pull Request | Situação |
 |---|---|---|---|---|
-| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [PREENCHER] | Em revisão |
-| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [PREENCHER] | Em teste |
-| 1b | Página maparede.manfred.com.br, código aberto (GPL-3.0), nome MapaRede - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [PREENCHER] | Em revisão |
+| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/maparede/pull/1) | Em revisão |
+| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/maparede/pull/2) | Em teste |
+| 1b | Página maparede.manfred.com.br, código aberto (GPL-3.0), nome MapaRede - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/maparede/pull/3) | Em revisão |
 | 2 | Portas TCP comuns, com lista configurável | a definir | - | A fazer |
 | 3 | Identificação leve: título HTTP, banners SSH e FTP, certificado HTTPS, UPnP/SSDP | a definir | - | A fazer |
 | 4 | Classificação por heurística (roteador, impressora, câmera, servidor...) | a definir | - | A fazer |
