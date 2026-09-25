@@ -77,7 +77,7 @@ Se aparecerem só pastas vazias, removê-las com `rmdir`, da mais funda para a d
 chmod 755 ~/repositories/mapnet && stat -c '%a %n' ~/repositories/mapnet ~/repositories/mapnet/public/index.html
 ```
 
-**4. Subdomínio.** No Cloudflare, criar o registro `A` com o nome `mapnet`, apontando para o mesmo IP do `maparede` e com proxy ligado. No cPanel, em Domínios, criar `mapnet.manfred.com.br` com **Compartilhar raiz com o domínio principal desligado** e a raiz `repositories/mapnet/public`.
+**4. Subdomínio.** No Cloudflare, criar o registro `A` com o nome `mapnet`, apontando para o IP da hospedagem e com proxy ligado. No cPanel, em Domínios, criar `mapnet.manfred.com.br` com **Compartilhar raiz com o domínio principal desligado** e a raiz `repositories/mapnet/public`.
 
 **5. Certificado.** Em Status SSL/TLS, rodar o AutoSSL e conferir que `mapnet.manfred.com.br` ganhou certificado. Sem ele, o Cloudflare responde **erro 526**. Se o AutoSSL falhar para esse nome, deixar o registro `mapnet` como "DNS only" no Cloudflare, rodar de novo e voltar para o modo com proxy.
 
@@ -89,15 +89,9 @@ tail -40 "$(ls -t ~/.cpanel/logs/vc_*deploy*.log | head -1)"
 
 **7. Conferir.** Purgar o cache do Cloudflare e abrir `https://mapnet.manfred.com.br/`. Conferir que a página abre com o logo da MT e que o botão de download baixa o executável do GitHub. Depois, ligar o Force HTTPS Redirect do subdomínio no cPanel.
 
-## 4. Endereço antigo
+## 4. Nome anterior
 
-O programa se chamou MapaRede - MT até 25/09/2026, com a página em `maparede.manfred.com.br`. Depois que `mapnet.manfred.com.br` estiver no ar:
-
-1. No Cloudflare, em **Rules**, criar um redirecionamento **301** de `maparede.manfred.com.br/*` para `https://mapnet.manfred.com.br/${1}`, mantendo o registro `maparede` com proxy ligado, que é o que faz a regra valer.
-2. Conferir que `https://maparede.manfred.com.br/` leva à página nova.
-3. Só então, com autorização, remover no cPanel o domínio `maparede.manfred.com.br` e o clone `repositories/maparede`.
-
-O GitHub já redireciona o endereço antigo do repositório (`manfredjr/maparede`) para o novo depois da renomeação. As versões 0.1.0 e 0.1.1 seguem publicadas com o arquivo `maparede.exe`, e a partir da 0.1.2 o arquivo é `mapnet.exe`.
+O programa se chamou MapaRede - MT até 25/09/2026. Como ainda não havia usuários, a publicação recomeçou do zero com o nome MapNet - MT: o endereço `maparede.manfred.com.br` foi desligado sem redirecionamento. O GitHub redireciona sozinho o endereço antigo do repositório para o novo.
 
 ## 5. Publicar a página: versão nova
 
