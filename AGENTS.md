@@ -100,7 +100,7 @@ Só dentro de `C:\COWORK\CODE\MAPNET-MT`. Rascunhos em `.superpowers/rascunho`, 
 |---|---|
 | Linguagem | C# com .NET 8 |
 | Entrega | Um `.exe` único e autocontido para `win-x64`, sem instalar o .NET no cliente |
-| Interface | Janela WinForms e modo linha de comando no mesmo `.exe` |
+| Interface | Janela WPF (painel do técnico) e modo linha de comando no mesmo `.exe` |
 | Dependências de rede | Nenhuma externa: sem Npcap e sem Nmap |
 | Testes | xUnit, no projeto `testes/mapnet.testes` |
 | CI | GitHub Actions em Windows, em todo Pull Request e em todo push no `main`. Gera o `.exe` como artefato |
@@ -109,8 +109,8 @@ Divisão do código:
 
 | Pasta | Conteúdo |
 |---|---|
-| `src/mapnet.nucleo` | Biblioteca `net8.0`, sem WinForms: interfaces, sub-rede, ping, ARP, OUI, nomes, relatórios, linha de comando. É o que os testes cobrem |
-| `src/mapnet` | Aplicativo `net8.0-windows`: janela WinForms e ponto de entrada da linha de comando. Gera o `mapnet.exe` |
+| `src/mapnet.nucleo` | Biblioteca `net8.0`, sem tela: interfaces, sub-rede, ping, ARP, OUI, nomes, relatórios, linha de comando e a lógica da tela (`painel/`). É o que os testes cobrem |
+| `src/mapnet` | Aplicativo `net8.0-windows`: janela WPF, tema da MT, fonte e ponto de entrada da linha de comando. Gera o `mapnet.exe` |
 | `testes/mapnet.testes` | Testes do núcleo. Rodam no Windows e no Linux |
 | `ferramentas/` | Roteiros de apoio: gerar o `.exe`, atualizar a tabela OUI |
 | `public/` | Página do programa em `mapnet.manfred.com.br`. Só arquivo de site: o teste `SiteTestes` barra o resto |

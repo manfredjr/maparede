@@ -32,7 +32,7 @@ public class CaracteresProibidosTestes
     // advogado seguem o nome do método.
     private static readonly string[] _nomesFixos = ["AGENTS.md", "README.md", "CONTRIBUTING.md", "LICENSE", "Directory.Build.props"];
 
-    private static readonly string[] _extensoes = [".cs", ".md", ".csproj", ".props", ".json", ".manifest", ".ps1", ".cmd", ".txt", ".html", ".yml"];
+    private static readonly string[] _extensoes = [".cs", ".md", ".csproj", ".props", ".json", ".manifest", ".ps1", ".cmd", ".txt", ".html", ".yml", ".xaml"];
 
     [Fact]
     public void Codigo_e_documentacao_nao_tem_caractere_proibido()
