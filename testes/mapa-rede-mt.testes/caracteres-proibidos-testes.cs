@@ -27,9 +27,10 @@ public class CaracteresProibidosTestes
         ['\u2212'] = "sinal de menos unicode",
     };
 
-    // Nomes que a ferramenta exige como estão: o MSBuild só lê o Directory.Build.props
-    // com essa grafia no Linux, e AGENTS.md e README.md são convenção de repositório.
-    private static readonly string[] _nomesFixos = ["AGENTS.md", "README.md", "Directory.Build.props"];
+    // Exceções do AGENTS.md: o MSBuild só lê o Directory.Build.props com essa grafia no
+    // Linux, AGENTS.md, README.md e LICENSE são convenção de repositório, e as consultas ao
+    // advogado seguem o nome do método.
+    private static readonly string[] _nomesFixos = ["AGENTS.md", "README.md", "LICENSE", "Directory.Build.props"];
 
     private static readonly string[] _extensoes = [".cs", ".md", ".csproj", ".props", ".json", ".manifest", ".ps1", ".cmd", ".txt"];
 
@@ -64,7 +65,7 @@ public class CaracteresProibidosTestes
         var fora = Directory.EnumerateFileSystemEntries(raiz, "*", SearchOption.AllDirectories)
             .Select(c => Path.GetRelativePath(raiz, c).Replace('\\', '/'))
             .Where(c => !c.Split('/').Any(p => p is "bin" or "obj" or ".git" or ".vs" or "publicar" or "TestResults"))
-            .Where(c => !_nomesFixos.Contains(Path.GetFileName(c)))
+            .Where(c => !_nomesFixos.Contains(Path.GetFileName(c)) && !Path.GetFileName(c).StartsWith("CONSULTA-ADVOGADO-", StringComparison.Ordinal))
             .Where(c => Path.GetFileName(c) != Path.GetFileName(c).ToLowerInvariant())
             .ToList();
 

@@ -4,17 +4,20 @@ Scanner de inventário de rede para Windows, da MT - Manfred Tecnologia. Roda na
 
 Não é scanner de vulnerabilidade: o programa não testa senha nem tenta entrar em nada. Ele só registra o que a rede já mostra para qualquer computador ligado nela.
 
+As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/superpowers/specs/2026-09-25-mapa-rede-mt-design.md`](docs/superpowers/specs/2026-09-25-mapa-rede-mt-design.md).
+
 ## Situação do projeto
 
-| Fatia | Conteúdo | Situação |
-|---|---|---|
-| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | Em teste, ramo `descoberta-hosts` |
-| 2 | Portas TCP comuns, com lista configurável | A fazer |
-| 3 | Identificação leve: título HTTP, banners SSH e FTP, certificado HTTPS, UPnP/SSDP | A fazer |
-| 4 | Classificação por heurística (roteador, impressora, câmera, servidor...) | A fazer |
-| 5 | Relatório completo em HTML, XML e CSV | A fazer |
+| Fatia | Conteúdo | Ramo | Pull Request | Situação |
+|---|---|---|---|---|
+| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [PREENCHER] | Em revisão |
+| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [PREENCHER] | Em teste |
+| 2 | Portas TCP comuns, com lista configurável | a definir | - | A fazer |
+| 3 | Identificação leve: título HTTP, banners SSH e FTP, certificado HTTPS, UPnP/SSDP | a definir | - | A fazer |
+| 4 | Classificação por heurística (roteador, impressora, câmera, servidor...) | a definir | - | A fazer |
+| 5 | Relatório completo em HTML, XML e CSV | a definir | - | A fazer |
 
-O que ficou de fora de cada fatia está em [`docs/pendencias.md`](docs/pendencias.md).
+O que ficou de fora de cada fatia está em [`docs/superpowers/pendencias.md`](docs/superpowers/pendencias.md).
 
 ## Como usar
 
@@ -61,9 +64,21 @@ Códigos de saída: `0` concluído, `1` erro nos argumentos, `2` interface não 
 
 Sub-rede maior que /22 (1022 endereços) é varrida só no bloco /22 em volta do IP do computador, com aviso no relatório. A faixa manual fica para uma próxima versão.
 
+## Primeira vez na máquina
+
+```bat
+git clone https://github.com/manfredjr/mapa-rede-mt.git MAPA-REDE-MT
+cd MAPA-REDE-MT
+git config core.hooksPath .githooks
+```
+
+O último comando liga os ganchos que enviam cada commit ao GitHub na hora. A configuração é local e não vem com o clone.
+
 ## Como compilar
 
-Precisa do [SDK do .NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) no Windows.
+O jeito mais simples de ter o `.exe` é baixar do CI: no GitHub, **Actions**, a execução do commit e, no fim da página, **Artifacts**. Todo Pull Request e todo push no `main` geram um.
+
+Para compilar na máquina, precisa do [SDK do .NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) no Windows.
 
 ```bat
 ferramentas\publicar.cmd
@@ -78,6 +93,10 @@ dotnet build mapa-rede-mt.sln -c Release
 dotnet test mapa-rede-mt.sln -c Release
 dotnet publish src\mapa-rede-mt\mapa-rede-mt.csproj -c Release -o publicar
 ```
+
+## Publicação
+
+Entregar uma versão ao cliente segue [`docs/publicacao.md`](docs/publicacao.md), com as seções "Antes de publicar" e "Depois de publicar".
 
 ## Tabela de fabricantes
 
@@ -97,7 +116,14 @@ Depois, compile e rode os testes de novo antes do commit.
 | `src/mapa-rede-mt` | Aplicativo WinForms que gera o `mt-mapa-rede.exe` |
 | `testes/mapa-rede-mt.testes` | Testes do núcleo (xUnit) |
 | `ferramentas/` | Roteiros de compilação e de atualização da tabela OUI |
-| `docs/` | Pendências e documentação |
+| `docs/metodo/` | Documentos do método da MT |
+| `docs/superpowers/` | Desenho, planos e pendências |
+| `.githooks/` | Ganchos que enviam cada commit ao GitHub |
+| `.github/workflows/` | CI em Windows: compila, testa e gera o `.exe` |
+
+## A confirmar com
+
+Nada no momento.
 
 ## Autor
 

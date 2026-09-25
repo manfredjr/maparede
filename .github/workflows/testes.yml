@@ -1,0 +1,41 @@
+# CI do MT Mapa de Rede: compila, roda os testes e gera o .exe em todo Pull Request
+# e em todo push no main. O .exe fica disponivel para baixar na execucao, em Artifacts.
+name: testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Compilar
+        if: hashFiles('mapa-rede-mt.sln') != ''
+        run: dotnet build mapa-rede-mt.sln -c Release
+
+      - name: Testar
+        if: hashFiles('mapa-rede-mt.sln') != ''
+        run: dotnet test mapa-rede-mt.sln -c Release --no-build
+
+      - name: Gerar o .exe
+        if: hashFiles('mapa-rede-mt.sln') != ''
+        run: dotnet publish src/mapa-rede-mt/mapa-rede-mt.csproj -c Release -o publicar
+
+      - name: Guardar o .exe
+        if: hashFiles('mapa-rede-mt.sln') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: mt-mapa-rede-${{ github.sha }}
+          path: publicar/mt-mapa-rede.exe
+          retention-days: 14
