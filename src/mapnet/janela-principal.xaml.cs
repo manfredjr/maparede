@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Threading;
 using MapNet.Nucleo;
 using Microsoft.Win32;
 
@@ -41,10 +42,21 @@ public partial class JanelaPrincipal : Window
 
     private void AoMudarConsole(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action == NotifyCollectionChangedAction.Add && ListaConsole.Items.Count > 0)
+        if (e.Action != NotifyCollectionChangedAction.Add)
         {
-            ListaConsole.ScrollIntoView(ListaConsole.Items[^1]);
+            return;
         }
+
+        // A rolagem espera a lista registrar a linha nova. Rolar aqui dentro, no meio do aviso
+        // de mudança, mede a lista antes de ela contar a linha, e o WPF derruba o programa com
+        // "ItemsControl is inconsistent with its items source".
+        Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+        {
+            if (ListaConsole.Items.Count > 0)
+            {
+                ListaConsole.ScrollIntoView(ListaConsole.Items[^1]);
+            }
+        });
     }
 
     private void AoClicarRelatorio(object sender, RoutedEventArgs e)
