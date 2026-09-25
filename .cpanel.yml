@@ -16,7 +16,9 @@ deployment:
         - echo "=== deploy em $REPO ==="
         - cd $REPO && git log --oneline -1
         - test -f $REPO/public/index.html
-        - test -f $REPO/public/favicon.svg
+        - test -f $REPO/public/img/favicon-32.png
+        - test -f $REPO/public/img/logo-128.webp
+        - test -f $REPO/public/img/maparede-logo.webp
         - chmod 755 $REPO
         - cd $REPO && find public -type d -exec chmod 755 {} \;
         - cd $REPO && find public -type f -exec chmod 644 {} \;

@@ -40,6 +40,16 @@ internal sealed class FormularioPrincipal : Form
 
         // Fonte de mensagens do sistema: Segoe UI no Windows 10 e 11, sem quebrar onde ela não existe.
         Font = SystemFonts.MessageBoxFont ?? Font;
+
+        // O ícone do produto vai embutido no .exe (ApplicationIcon) e é reaproveitado na janela.
+        try
+        {
+            Icon = Icon.ExtractAssociatedIcon(Environment.ProcessPath ?? Application.ExecutablePath) ?? Icon;
+        }
+        catch (Exception e) when (e is ArgumentException or IOException)
+        {
+            // Sem ícone, a janela usa o padrão do Windows.
+        }
         MinimumSize = new Size(900, 560);
         Size = new Size(1100, 700);
         StartPosition = FormStartPosition.CenterScreen;
