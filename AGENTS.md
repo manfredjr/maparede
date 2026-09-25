@@ -1,4 +1,4 @@
-# MapaRede - MT: regras do projeto
+# MapNet - MT: regras do projeto
 
 Leia este arquivo antes de escrever qualquer linha.
 
@@ -8,9 +8,9 @@ Scanner de inventário de rede para Windows, produto da MT - Manfred Tecnologia 
 
 Não é scanner de vulnerabilidade. Não testa senha, não explora falha e não tenta entrar em nada. Só levanta o que a rede já mostra para qualquer computador ligado nela.
 
-O projeto não tem relação com o site institucional da MT. Desenho em `docs/superpowers/specs/2026-09-25-maparede-design.md`.
+O projeto não tem relação com o site institucional da MT. Desenho em `docs/superpowers/specs/2026-09-25-mapnet-design.md`.
 
-O repositório `manfredjr/maparede` é **público**, sob licença GPL-3.0, no mesmo modelo do CronoAula, por decisão do Manfred em 25/09/2026. O programa tem página própria em `https://maparede.manfred.com.br`, servida pela pasta `public/`. Tudo que entra no repositório, inclusive o histórico, fica visível para qualquer pessoa.
+O repositório `manfredjr/mapnet` é **público**, sob licença GPL-3.0, no mesmo modelo do CronoAula, por decisão do Manfred em 25/09/2026. O programa tem página própria em `https://mapnet.manfred.com.br`, servida pela pasta `public/`. Tudo que entra no repositório, inclusive o histórico, fica visível para qualquer pessoa.
 
 ## Método
 
@@ -39,11 +39,11 @@ O repositório é público. Além da lista abaixo, nada que descreva a infraestr
 - Documento de terceiros (contrato, cartão CNPJ, PDF de instituição) e gravação pessoal.
 - Executável gerado (`bin/`, `obj/`, `publicar/`). O `.exe` sai do código, pelo CI ou pelo `ferramentas\publicar.cmd`.
 
-O `.gitignore` já barra os nomes padrão dos relatórios (`maparede-*.html`, `.xml`, `.csv`), a pasta `/relatorios/` da raiz e a `.superpowers/`.
+O `.gitignore` já barra os nomes padrão dos relatórios (`mapnet-*.html`, `.xml`, `.csv`), a pasta `/relatorios/` da raiz e a `.superpowers/`.
 
 ## Backup no GitHub
 
-Repositório público `manfredjr/maparede`. Todo commit sobe na hora pelos ganchos `.githooks/post-commit` e `.githooks/post-merge`. Ao clonar, ligar os ganchos uma vez:
+Repositório público `manfredjr/mapnet`. Todo commit sobe na hora pelos ganchos `.githooks/post-commit` e `.githooks/post-merge`. Ao clonar, ligar os ganchos uma vez:
 
 ```bat
 git config core.hooksPath .githooks
@@ -85,7 +85,7 @@ Na dúvida, perguntar. Pergunta boa é fechada, com opções e uma recomendaçã
 
 ## Onde ler e gravar
 
-Só dentro de `C:\COWORK\CODE\MAPA-REDE-MT`. Rascunhos em `.superpowers/rascunho`, que é ignorada pelo git. Fora da pasta, só com autorização ou quando o Manfred aponta o caminho. O SDK do .NET e o NuGet podem guardar cache fora da pasta.
+Só dentro de `C:\COWORK\CODE\MAPNET-MT`. Rascunhos em `.superpowers/rascunho`, que é ignorada pelo git. Fora da pasta, só com autorização ou quando o Manfred aponta o caminho. O SDK do .NET e o NuGet podem guardar cache fora da pasta.
 
 ## Stack
 
@@ -95,18 +95,18 @@ Só dentro de `C:\COWORK\CODE\MAPA-REDE-MT`. Rascunhos em `.superpowers/rascunho
 | Entrega | Um `.exe` único e autocontido para `win-x64`, sem instalar o .NET no cliente |
 | Interface | Janela WinForms e modo linha de comando no mesmo `.exe` |
 | Dependências de rede | Nenhuma externa: sem Npcap e sem Nmap |
-| Testes | xUnit, no projeto `testes/maparede.testes` |
+| Testes | xUnit, no projeto `testes/mapnet.testes` |
 | CI | GitHub Actions em Windows, em todo Pull Request e em todo push no `main`. Gera o `.exe` como artefato |
 
 Divisão do código:
 
 | Pasta | Conteúdo |
 |---|---|
-| `src/maparede.nucleo` | Biblioteca `net8.0`, sem WinForms: interfaces, sub-rede, ping, ARP, OUI, nomes, relatórios, linha de comando. É o que os testes cobrem |
-| `src/maparede` | Aplicativo `net8.0-windows`: janela WinForms e ponto de entrada da linha de comando. Gera o `maparede.exe` |
-| `testes/maparede.testes` | Testes do núcleo. Rodam no Windows e no Linux |
+| `src/mapnet.nucleo` | Biblioteca `net8.0`, sem WinForms: interfaces, sub-rede, ping, ARP, OUI, nomes, relatórios, linha de comando. É o que os testes cobrem |
+| `src/mapnet` | Aplicativo `net8.0-windows`: janela WinForms e ponto de entrada da linha de comando. Gera o `mapnet.exe` |
+| `testes/mapnet.testes` | Testes do núcleo. Rodam no Windows e no Linux |
 | `ferramentas/` | Roteiros de apoio: gerar o `.exe`, atualizar a tabela OUI |
-| `public/` | Página do programa em `maparede.manfred.com.br`. Só arquivo de site: o teste `SiteTestes` barra o resto |
+| `public/` | Página do programa em `mapnet.manfred.com.br`. Só arquivo de site: o teste `SiteTestes` barra o resto |
 | `docs/superpowers/` | Specs, planos e pendências |
 | `docs/legal/` | Verificações jurídicas e consultas ao advogado |
 
@@ -123,14 +123,14 @@ O programa roda no notebook do técnico, ligado à rede do cliente. Isso molda o
 
 ## Dados de cliente
 
-O relatório traz dado da rede do cliente e pode trazer dado pessoal (nome de celular com nome de pessoa, MAC de aparelho pessoal). Ele fica só na máquina do técnico, em `Documentos\MapaRede - MT`, e nunca entra no repositório. As regras de aviso, guarda e descarte saem da análise da `legal-br` (ver `docs/superpowers/pendencias.md`).
+O relatório traz dado da rede do cliente e pode trazer dado pessoal (nome de celular com nome de pessoa, MAC de aparelho pessoal). Ele fica só na máquina do técnico, em `Documentos\MapNet - MT`, e nunca entra no repositório. As regras de aviso, guarda e descarte saem da análise da `legal-br` (ver `docs/superpowers/pendencias.md`).
 
 ## Portões antes de cada commit
 
 Inclusive quando a mudança é só em documentação:
 
-1. `dotnet build maparede.sln -c Release` sem aviso (os avisos viram erro).
-2. `dotnet test maparede.sln -c Release` com todos os testes verdes, inclusive o de caracteres proibidos e o de nome de arquivo.
+1. `dotnet build mapnet.sln -c Release` sem aviso (os avisos viram erro).
+2. `dotnet test mapnet.sln -c Release` com todos os testes verdes, inclusive o de caracteres proibidos e o de nome de arquivo.
 3. Busca por menção a ferramenta de IA no repositório, com `git grep -i` pelos nomes das ferramentas usadas.
 4. Conferência de que só os arquivos previstos entram no commit, e de que o commit chegou ao GitHub.
 
@@ -144,8 +144,8 @@ Duas publicações, que não se misturam, as duas só com autorização:
 
 | O quê | Para onde | Como |
 |---|---|---|
-| O programa (`maparede.exe`) | GitHub Releases | Marca de versão `vX.Y.Z` enviada ao GitHub. O CI testa, gera e publica |
-| A página (pasta `public/`) | `maparede.manfred.com.br`, no cPanel da GoDaddy, atrás do Cloudflare | Git Version Control do cPanel, com o `.cpanel.yml` |
+| O programa (`mapnet.exe`) | GitHub Releases | Marca de versão `vX.Y.Z` enviada ao GitHub. O CI testa, gera e publica |
+| A página (pasta `public/`) | `mapnet.manfred.com.br`, no cPanel da GoDaddy, atrás do Cloudflare | Git Version Control do cPanel, com o `.cpanel.yml` |
 
 Passo a passo em `docs/publicacao.md`.
 

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>mapnet.nucleo</AssemblyName>
+    <RootNamespace>MapNet.Nucleo</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Nucleo do MapNet - MT: descoberta de hosts, nomes, fabricantes e relatorios.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="dados\oui.txt.gz" LogicalName="oui.txt.gz" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="mapnet.testes" />
+  </ItemGroup>
+
+</Project>

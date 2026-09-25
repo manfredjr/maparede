@@ -4,10 +4,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>Manfred Heil Junior</Authors>
     <Company>MT - Manfred Tecnologia</Company>
-    <Product>MapaRede - MT</Product>
+    <Product>MapNet - MT</Product>
     <Copyright>Copyright (c) 2026 MANFRED TECNOLOGIA LTDA</Copyright>
     <NeutralLanguage>pt-BR</NeutralLanguage>
     <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>

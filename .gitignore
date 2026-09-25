@@ -9,9 +9,9 @@ TestResults/
 
 # Relatorios gerados em rede de cliente nunca vao para o repositorio
 /relatorios/
-maparede-*.html
-maparede-*.xml
-maparede-*.csv
+mapnet-*.html
+mapnet-*.xml
+mapnet-*.csv
 
 # Rascunhos locais
 .superpowers/

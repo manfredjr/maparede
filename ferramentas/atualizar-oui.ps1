@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Atualiza a tabela OUI embutida no MapaRede - MT.
+    Atualiza a tabela OUI embutida no MapNet - MT.
 
 .DESCRIPTION
     Baixa o oui.txt oficial do IEEE (ou le um arquivo local), guarda so o prefixo e o nome
-    da organizacao e grava compactado em src\maparede.nucleo\dados\oui.txt.gz.
+    da organizacao e grava compactado em src\mapnet.nucleo\dados\oui.txt.gz.
     Depois de rodar, compile de novo e rode os testes antes do commit.
 
 .PARAMETER Origem
@@ -19,7 +19,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot
-$destino = [IO.Path]::Combine($raiz, 'src', 'maparede.nucleo', 'dados', 'oui.txt.gz')
+$destino = [IO.Path]::Combine($raiz, 'src', 'mapnet.nucleo', 'dados', 'oui.txt.gz')
 $temporario = [IO.Path]::Combine([IO.Path]::GetTempPath(), 'oui-ieee.txt')
 
 if ($Origem -match '^https?://') {
