@@ -1,9 +1,9 @@
-# CI do MapaRede - MT: compila, roda os testes e gera o .exe em todo Pull Request
+# CI do MapNet - MT: compila, roda os testes e gera o .exe em todo Pull Request
 # e em todo push no main. O .exe fica disponivel para baixar na execucao, em Artifacts.
 #
 # Quando uma marca de versao (v0.1.0, por exemplo) chega ao GitHub, o mesmo
-# fluxo publica a Release com o maparede.exe anexado. E dessa Release que a
-# pagina maparede.manfred.com.br baixa o programa.
+# fluxo publica a Release com o mapnet.exe anexado. E dessa Release que a
+# pagina mapnet.manfred.com.br baixa o programa.
 name: testes
 
 on:
@@ -31,34 +31,34 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Compilar
-        if: hashFiles('maparede.sln') != ''
-        run: dotnet build maparede.sln -c Release
+        if: hashFiles('mapnet.sln') != ''
+        run: dotnet build mapnet.sln -c Release
 
       - name: Testar
-        if: hashFiles('maparede.sln') != ''
-        run: dotnet test maparede.sln -c Release --no-build
+        if: hashFiles('mapnet.sln') != ''
+        run: dotnet test mapnet.sln -c Release --no-build
 
       - name: Gerar o .exe
-        if: hashFiles('maparede.sln') != ''
-        run: dotnet publish src/maparede/maparede.csproj -c Release -o publicar
+        if: hashFiles('mapnet.sln') != ''
+        run: dotnet publish src/mapnet/mapnet.csproj -c Release -o publicar
 
       # O .sha256.txt deixa quem baixou conferir que o .exe chegou igual ao publicado.
       - name: Calcular o SHA-256
-        if: hashFiles('maparede.sln') != ''
+        if: hashFiles('mapnet.sln') != ''
         shell: pwsh
         run: |
-          $hash = (Get-FileHash publicar/maparede.exe -Algorithm SHA256).Hash
-          Set-Content -Path publicar/maparede.exe.sha256.txt -Value "$hash  maparede.exe" -Encoding ascii
-          Get-Content publicar/maparede.exe.sha256.txt
+          $hash = (Get-FileHash publicar/mapnet.exe -Algorithm SHA256).Hash
+          Set-Content -Path publicar/mapnet.exe.sha256.txt -Value "$hash  mapnet.exe" -Encoding ascii
+          Get-Content publicar/mapnet.exe.sha256.txt
 
       - name: Guardar o .exe
-        if: hashFiles('maparede.sln') != ''
+        if: hashFiles('mapnet.sln') != ''
         uses: actions/upload-artifact@v4
         with:
-          name: maparede-${{ github.sha }}
+          name: mapnet-${{ github.sha }}
           path: |
-            publicar/maparede.exe
-            publicar/maparede.exe.sha256.txt
+            publicar/mapnet.exe
+            publicar/mapnet.exe.sha256.txt
           retention-days: 14
 
       - name: Conferir a versao da marca
@@ -75,8 +75,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          name: MapaRede - MT ${{ github.ref_name }}
+          name: MapNet - MT ${{ github.ref_name }}
           files: |
-            publicar/maparede.exe
-            publicar/maparede.exe.sha256.txt
+            publicar/mapnet.exe
+            publicar/mapnet.exe.sha256.txt
           generate_release_notes: true

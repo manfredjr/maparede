@@ -2,7 +2,7 @@
 # Tarefas do botao Deploy HEAD Commit do Git Version Control do cPanel.
 #
 # O que vai ao ar e o site estatico em public/, raiz do subdominio
-# maparede.manfred.com.br. O programa em si nao roda no servidor; o executavel
+# mapnet.manfred.com.br. O programa em si nao roda no servidor; o executavel
 # e baixado do GitHub Releases, pelo link do proprio site.
 #
 # O Update from Remote ja troca os arquivos. O deploy so confere e acerta
@@ -12,13 +12,13 @@
 # um comando. O YAML entende como separador e o arquivo inteiro fica invalido.
 deployment:
     tasks:
-        - export REPO=/home/manfredjr/repositories/maparede
+        - export REPO=/home/manfredjr/repositories/mapnet
         - echo "=== deploy em $REPO ==="
         - cd $REPO && git log --oneline -1
         - test -f $REPO/public/index.html
         - test -f $REPO/public/img/favicon-32.png
         - test -f $REPO/public/img/logo-128.webp
-        - test -f $REPO/public/img/maparede-logo.webp
+        - test -f $REPO/public/img/mapnet-simbolo.webp
         - chmod 755 $REPO
         - cd $REPO && find public -type d -exec chmod 755 {} \;
         - cd $REPO && find public -type f -exec chmod 644 {} \;

@@ -1,22 +1,22 @@
-# MapaRede - MT
+# MapNet - MT
 
 Scanner de inventário de rede para Windows, da MT - Manfred Tecnologia. Roda na rede do cliente e mostra quais equipamentos estão ligados nela, com IP, MAC, fabricante e nome, num relatório HTML que abre em qualquer navegador.
 
-Página do programa: **https://maparede.manfred.com.br**. Download da versão mais recente: [maparede.exe](https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe).
+Página do programa: **https://mapnet.manfred.com.br**. Download da versão mais recente: [mapnet.exe](https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe).
 
 Software livre, sob licença [GPL-3.0](LICENSE).
 
 Não é scanner de vulnerabilidade: o programa não testa senha nem tenta entrar em nada. Ele só registra o que a rede já mostra para qualquer computador ligado nela.
 
-As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/superpowers/specs/2026-09-25-maparede-design.md`](docs/superpowers/specs/2026-09-25-maparede-design.md).
+As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-design.md`](docs/superpowers/specs/2026-09-25-mapnet-design.md).
 
 ## Situação do projeto
 
 | Fatia | Conteúdo | Ramo | Pull Request | Situação |
 |---|---|---|---|---|
-| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/maparede/pull/1) | Em revisão |
-| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/maparede/pull/2) | Em teste |
-| 1b | Página maparede.manfred.com.br, código aberto (GPL-3.0), nome MapaRede - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/maparede/pull/3) | Em revisão |
+| 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/mapnet/pull/1) | Em revisão |
+| 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/mapnet/pull/2) | Em teste |
+| 1b | Página mapnet.manfred.com.br, código aberto (GPL-3.0), nome MapNet - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/mapnet/pull/3) | Em revisão |
 | 2 | Portas TCP comuns, com lista configurável | a definir | - | A fazer |
 | 3 | Identificação leve: título HTTP, banners SSH e FTP, certificado HTTPS, UPnP/SSDP | a definir | - | A fazer |
 | 4 | Classificação por heurística (roteador, impressora, câmera, servidor...) | a definir | - | A fazer |
@@ -26,22 +26,22 @@ O que ficou de fora de cada fatia está em [`docs/superpowers/pendencias.md`](do
 
 ## Como usar
 
-O programa é um arquivo só, `maparede.exe`. Não precisa instalar nada no computador do cliente, nem o .NET, e não pede administrador.
+O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no computador do cliente, nem o .NET, e não pede administrador.
 
 ### Pela janela
 
-1. Abra o `maparede.exe`.
+1. Abra o `mapnet.exe`.
 2. Escolha a interface de rede. A primeira da lista é a que tem gateway, normalmente a certa.
 3. Clique em **Iniciar varredura**. A lista vai se enchendo enquanto os hosts respondem.
-4. No fim, o relatório é gravado em `Documentos\MapaRede - MT`. O botão **Abrir relatório** abre no navegador, e **Salvar relatório como...** grava em outro lugar.
+4. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Abrir relatório** abre no navegador, e **Salvar relatório como...** grava em outro lugar.
 
 ### Pela linha de comando
 
 ```bat
-maparede --interfaces
-maparede --varrer
-maparede --varrer --interface 2 --saida C:\Relatorios --abrir
-maparede --ajuda
+mapnet --interfaces
+mapnet --varrer
+mapnet --varrer --interface 2 --saida C:\Relatorios --abrir
+mapnet --ajuda
 ```
 
 | Opção | Para que serve |
@@ -55,7 +55,7 @@ maparede --ajuda
 | `--paralelo <n>` | Endereços sondados ao mesmo tempo, de 1 a 256. Padrão: 64 |
 | `--sem-arp` | Descobre hosts só pelo ping |
 
-O `.exe` é de janela, então o Prompt de Comando devolve o cursor antes de o programa terminar. Para esperar o fim, use `start /wait maparede --varrer` no Prompt de Comando ou termine a linha com `| Out-Host` no PowerShell. Redirecionar para arquivo (`> saida.txt`) funciona direto, em UTF-8.
+O `.exe` é de janela, então o Prompt de Comando devolve o cursor antes de o programa terminar. Para esperar o fim, use `start /wait mapnet --varrer` no Prompt de Comando ou termine a linha com `| Out-Host` no PowerShell. Redirecionar para arquivo (`> saida.txt`) funciona direto, em UTF-8.
 
 Códigos de saída: `0` concluído, `1` erro nos argumentos, `2` interface não encontrada, `3` falha, `4` interrompido com Ctrl+C.
 
@@ -68,7 +68,7 @@ Códigos de saída: `0` concluído, `1` erro nos argumentos, `2` interface não 
 3. Pelo PowerShell, na pasta do arquivo:
 
 ```powershell
-Unblock-File .\maparede.exe
+Unblock-File .\mapnet.exe
 ```
 
 Copiar o `.exe` por pen drive ou pasta de rede não aplica a Marca da Web, e o programa abre direto. Cada versão nova começa sem reputação no SmartScreen, então o aviso tende a aparecer nos primeiros dias depois de cada publicação.
@@ -79,10 +79,10 @@ Se o computador tiver o **Controle de Aplicativo Inteligente** (Smart App Contro
 
 ### Conferir se o arquivo chegou íntegro
 
-Cada versão publicada leva um arquivo `maparede.exe.sha256.txt`. Na máquina que recebeu o `.exe`:
+Cada versão publicada leva um arquivo `mapnet.exe.sha256.txt`. Na máquina que recebeu o `.exe`:
 
 ```powershell
-Get-FileHash .\maparede.exe -Algorithm SHA256
+Get-FileHash .\mapnet.exe -Algorithm SHA256
 ```
 
 Se o valor bater com o do `.txt`, o executável é exatamente o que foi publicado.
@@ -100,8 +100,8 @@ Sub-rede maior que /22 (1022 endereços) é varrida só no bloco /22 em volta do
 ## Primeira vez na máquina
 
 ```bat
-git clone https://github.com/manfredjr/maparede.git MAPA-REDE-MT
-cd MAPA-REDE-MT
+git clone https://github.com/manfredjr/mapnet.git MAPNET-MT
+cd MAPNET-MT
 git config core.hooksPath .githooks
 ```
 
@@ -117,14 +117,14 @@ Para compilar na máquina, precisa do [SDK do .NET 8](https://dotnet.microsoft.c
 ferramentas\publicar.cmd
 ```
 
-O roteiro roda os testes e, se passarem, gera `publicar\maparede.exe` (cerca de 67 MB, já com o .NET dentro).
+O roteiro roda os testes e, se passarem, gera `publicar\mapnet.exe` (cerca de 67 MB, já com o .NET dentro).
 
 Comandos avulsos:
 
 ```bat
-dotnet build maparede.sln -c Release
-dotnet test maparede.sln -c Release
-dotnet publish src\maparede\maparede.csproj -c Release -o publicar
+dotnet build mapnet.sln -c Release
+dotnet test mapnet.sln -c Release
+dotnet publish src\mapnet\mapnet.csproj -c Release -o publicar
 ```
 
 ## Publicação
@@ -133,14 +133,14 @@ São duas publicações, que não se misturam:
 
 | O quê | Para onde | Como |
 |---|---|---|
-| O programa (`maparede.exe`) | GitHub Releases | Enviar a marca da versão (`git tag v0.1.0` e `git push origin v0.1.0`). O CI testa, gera o `.exe` e publica a Release |
-| A página (pasta `public/`) | maparede.manfred.com.br | Git Version Control do cPanel, com o `.cpanel.yml` |
+| O programa (`mapnet.exe`) | GitHub Releases | Enviar a marca da versão (`git tag v0.1.0` e `git push origin v0.1.0`). O CI testa, gera o `.exe` e publica a Release |
+| A página (pasta `public/`) | mapnet.manfred.com.br | Git Version Control do cPanel, com o `.cpanel.yml` |
 
 O passo a passo, com "Antes de publicar" e "Depois de publicar", está em [`docs/publicacao.md`](docs/publicacao.md).
 
 ## Tabela de fabricantes
 
-A tabela fica em `src/maparede.nucleo/dados/oui.txt.gz`. Para atualizar a partir do site do IEEE:
+A tabela fica em `src/mapnet.nucleo/dados/oui.txt.gz`. Para atualizar a partir do site do IEEE:
 
 ```bat
 powershell -ExecutionPolicy Bypass -File ferramentas\atualizar-oui.ps1
@@ -152,11 +152,11 @@ Depois, compile e rode os testes de novo antes do commit.
 
 | Pasta | Conteúdo |
 |---|---|
-| `src/maparede.nucleo` | Biblioteca sem janela: interfaces, sub-rede, ping, ARP, OUI, nomes, relatório e linha de comando |
-| `src/maparede` | Aplicativo WinForms que gera o `maparede.exe` |
-| `testes/maparede.testes` | Testes do núcleo (xUnit) |
+| `src/mapnet.nucleo` | Biblioteca sem janela: interfaces, sub-rede, ping, ARP, OUI, nomes, relatório e linha de comando |
+| `src/mapnet` | Aplicativo WinForms que gera o `mapnet.exe` |
+| `testes/mapnet.testes` | Testes do núcleo (xUnit) |
 | `ferramentas/` | Roteiros de compilação e de atualização da tabela OUI |
-| `public/` | Página do programa em maparede.manfred.com.br |
+| `public/` | Página do programa em mapnet.manfred.com.br |
 | `docs/superpowers/` | Desenho, planos e pendências |
 | `.githooks/` | Ganchos que enviam cada commit ao GitHub |
 | `.github/workflows/` | CI em Windows: compila, testa e gera o `.exe` |

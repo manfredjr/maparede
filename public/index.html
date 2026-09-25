@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MapaRede - MT - inventário da rede para Windows</title>
+<title>MapNet - MT - inventário da rede para Windows</title>
 <meta name="description" content="Programa para Windows que levanta os equipamentos de uma rede local, com IP, MAC, fabricante e nome, e gera um relatório em HTML. Arquivo único, sem instalar nada e sem administrador. Software livre, da MT - Manfred Tecnologia.">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<meta property="og:title" content="MapaRede - MT - inventário da rede para Windows">
+<meta property="og:title" content="MapNet - MT - inventário da rede para Windows">
 <meta property="og:description" content="Levanta os equipamentos da rede local, com fabricante e nome, e gera um relatório em HTML. Gratuito e de código aberto.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://maparede.manfred.com.br/">
-<meta property="og:image" content="https://maparede.manfred.com.br/img/maparede-logo.png">
-<link rel="canonical" href="https://maparede.manfred.com.br/">
+<meta property="og:url" content="https://mapnet.manfred.com.br/">
+<meta property="og:image" content="https://mapnet.manfred.com.br/img/mapnet-simbolo.png">
+<link rel="canonical" href="https://mapnet.manfred.com.br/">
 <style>
   /* Montserrat servida pela própria página, os mesmos arquivos do site da MT. */
   @font-face {
@@ -125,8 +125,8 @@
     color: var(--verde-escuro); background: var(--branco); border: 1px solid var(--cinza-borda);
     padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
   }
-  .hero__logo { margin-bottom: 24px; }
-  .hero__logo img { width: min(360px, 80%); height: auto; }
+  .hero__logo { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; font-size: clamp(2.4rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -1px; }
+  .hero__logo img { width: clamp(72px, 12vw, 104px); height: auto; flex-shrink: 0; }
   .hero__lead { font-size: 1.15rem; color: var(--cinza-medio); margin-bottom: 32px; max-width: 34em; }
   .hero__acoes { display: flex; flex-wrap: wrap; gap: 12px; }
   .hero__nota { font-size: 0.85rem; color: var(--cinza-medio); margin-top: 16px; }
@@ -222,7 +222,7 @@
       <a href="#o-que-faz">O que faz</a>
       <a href="#como-usar">Como usar</a>
       <a href="#codigo-aberto">Código aberto</a>
-      <a class="nav__cta" href="https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe">Baixar</a>
+      <a class="nav__cta" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar</a>
     </nav>
   </div>
 </header>
@@ -233,15 +233,15 @@
   <div class="container hero__grid">
     <div>
       <span class="hero__tag">Software livre da MT - Manfred Tecnologia</span>
-      <h1 class="hero__logo"><img src="img/maparede-logo.webp" alt="MapaRede - MT" width="720" height="358"></h1>
+      <h1 class="hero__logo"><img src="img/mapnet-simbolo.webp" alt="" width="240" height="240"><span><span class="text-gradient">MapNet</span> - MT</span></h1>
       <p class="hero__lead">
         Inventário da rede local para Windows. Descobre os equipamentos ligados na
         rede e mostra o IP, o MAC, o fabricante e o nome de cada um, num relatório
         que abre em qualquer navegador.
       </p>
       <div class="hero__acoes">
-        <a class="btn btn--primary btn--lg" href="https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe">Baixar para Windows</a>
-        <a class="btn btn--ghost btn--lg" href="https://github.com/manfredjr/maparede">Ver o código</a>
+        <a class="btn btn--primary btn--lg" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a>
+        <a class="btn btn--ghost btn--lg" href="https://github.com/manfredjr/mapnet">Ver o código</a>
       </div>
       <p class="hero__nota">Windows 10 ou 11, 64 bits. Arquivo único, sem instalador e sem pedir administrador.</p>
     </div>
@@ -277,7 +277,7 @@
         quantos computadores e celulares estão conectados.
       </p>
       <p>
-        O <strong>MapaRede</strong> faz esse levantamento a partir de um notebook ligado à rede e
+        O <strong>MapNet</strong> faz esse levantamento a partir de um notebook ligado à rede e
         deixa o resultado num arquivo que você guarda com a documentação do cliente.
       </p>
     </div>
@@ -315,13 +315,13 @@
       <div class="section__divider"></div>
     </div>
     <ol class="passos">
-      <li><span>Baixe o <a href="https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe">maparede.exe</a> e copie para qualquer pasta, ou para um pendrive.</span></li>
+      <li><span>Baixe o <a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">mapnet.exe</a> e copie para qualquer pasta, ou para um pendrive.</span></li>
       <li><span>Dê um duplo clique nele e escolha a interface de rede. A primeira da lista costuma ser a certa.</span></li>
-      <li><span>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapaRede - MT</em>.</span></li>
+      <li><span>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapNet - MT</em>.</span></li>
     </ol>
     <div class="texto"><p>Pela linha de comando:</p></div>
-    <pre>maparede --interfaces
-maparede --varrer --interface 1 --abrir</pre>
+    <pre>mapnet --interfaces
+mapnet --varrer --interface 1 --abrir</pre>
     <div class="aviso">
       <h3>Antes da primeira vez</h3>
       <p>
@@ -345,7 +345,7 @@ maparede --varrer --interface 1 --abrir</pre>
     </div>
     <div class="texto">
       <p>
-        O MapaRede não é scanner de vulnerabilidade. Ele não testa senha, não tenta
+        O MapNet não é scanner de vulnerabilidade. Ele não testa senha, não tenta
         entrar em nenhum equipamento e não muda configuração. Registra só o que a
         rede já mostra para qualquer computador ligado nela.
       </p>
@@ -366,14 +366,14 @@ maparede --varrer --interface 1 --abrir</pre>
     </div>
     <div class="texto">
       <p>
-        O MapaRede - MT é software livre, sob licença
-        <a href="https://github.com/manfredjr/maparede/blob/main/LICENSE">GPL-3.0</a>.
+        O MapNet - MT é software livre, sob licença
+        <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">GPL-3.0</a>.
         Qualquer pessoa pode usar, estudar e adaptar o programa. Quem distribuir uma
         versão modificada precisa abrir o código dela também.
       </p>
       <p>
         Encontrou um problema ou tem uma sugestão? Escreva nas
-        <a href="https://github.com/manfredjr/maparede/issues">Issues</a>.
+        <a href="https://github.com/manfredjr/mapnet/issues">Issues</a>.
       </p>
     </div>
   </div>
@@ -387,16 +387,16 @@ maparede --varrer --interface 1 --abrir</pre>
       <a href="https://www.manfred.com.br" target="_blank" rel="noopener">
         <img class="footer__logo" src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="85" height="64" loading="lazy">
       </a>
-      <p>MapaRede - MT, desenvolvido e publicado pela MT - Manfred Tecnologia.</p>
+      <p>MapNet - MT, desenvolvido e publicado pela MT - Manfred Tecnologia.</p>
     </div>
     <div>
-      <h4>MapaRede</h4>
+      <h4>MapNet</h4>
       <ul>
-        <li><a href="https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe">Baixar para Windows</a></li>
-        <li><a href="https://github.com/manfredjr/maparede#readme">Manual de uso</a></li>
-        <li><a href="https://github.com/manfredjr/maparede">Código-fonte</a></li>
-        <li><a href="https://github.com/manfredjr/maparede/blob/main/LICENSE">Licença GPL-3.0</a></li>
-        <li><a href="https://github.com/manfredjr/maparede/issues">Avisar um problema</a></li>
+        <li><a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a></li>
+        <li><a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a></li>
+        <li><a href="https://github.com/manfredjr/mapnet">Código-fonte</a></li>
+        <li><a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a></li>
+        <li><a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a></li>
         <li><a href="https://www.manfred.com.br" target="_blank" rel="noopener">manfred.com.br</a></li>
       </ul>
     </div>

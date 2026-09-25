@@ -8,8 +8,8 @@ O que ficou de fora, com o motivo e o que fecha o item.
 |---|---|---|
 | Enquadramento jurídico inicial | Texto e regra jurídica passam pela `legal-br` e não saem de memória. Pontos: a MT é controladora ou operadora dos dados da varredura, base legal, autorização do responsável pela rede, aviso ao cliente, guarda e descarte do relatório, e a frase de uso responsável da página | Análise pela `legal-br`, gravada em `docs/legal/verificacao-varredura-e-lgpd-AAAA-MM-DD.md`, e seção de privacidade da spec atualizada |
 | Assinatura digital do `.exe` | Sem certificado de assinatura de código, o SmartScreen avisa em todo `.exe` baixado da internet ("Fornecedor desconhecido"), e o Smart App Control, onde estiver ativo, bloqueia sem oferecer saída. Algum antivírus também pode desconfiar de um programa que varre a rede. O ícone já está em DIB, que evita o bloqueio visto no CronoAula | Decisão do Manfred sobre comprar o certificado. O tipo EV tira o aviso na hora; o OV, depois de um tempo de circulação |
-| Primeira Release no GitHub | Depende do repositório existir, do teste no Windows e da autorização | Marca `v0.1.0` enviada, como em `docs/publicacao.md`. Até lá, o botão de download da página responde 404 |
-| Primeira publicação da página | O subdomínio foi criado no cPanel antes do clone, e a pasta `repositories/maparede` pode ter nascido com `public` vazia dentro | Seguir `docs/publicacao.md`, seção 3, a partir da conferência da pasta |
+| Página no endereço novo | O nome mudou para MapNet - MT em 25/09/2026, e a página passa para `mapnet.manfred.com.br`. O endereço antigo foi desligado sem redirecionamento, porque ainda não havia usuários | Seguir `docs/publicacao.md`, seção 3 |
+| Logo do MapNet | A arte atual diz "MAPA REDE". A página usa só o símbolo de rede com o nome em texto | O Manfred enviar a arte com "MAPNET", de preferência com fundo transparente |
 | Revisão do texto da página | O texto de `public/index.html` segue as regras de estilo, mas é texto público e merece a leitura do Manfred antes de ir ao ar | O Manfred ler a página e aprovar ou pedir ajustes |
 
 ## Fatia 1: descoberta de hosts

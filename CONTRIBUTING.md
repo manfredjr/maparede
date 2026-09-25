@@ -1,6 +1,6 @@
-# Como contribuir com o MapaRede - MT
+# Como contribuir com o MapNet - MT
 
-O MapaRede nasceu do atendimento a redes de pequenas e médias empresas. Se você usa o programa nesse trabalho, relatar o que atrapalha já é contribuir, mesmo sem escrever uma linha de código.
+O MapNet nasceu do atendimento a redes de pequenas e médias empresas. Se você usa o programa nesse trabalho, relatar o que atrapalha já é contribuir, mesmo sem escrever uma linha de código.
 
 ## Sem escrever código
 
@@ -26,15 +26,15 @@ O MapaRede nasceu do atendimento a redes de pequenas e médias empresas. Se voc�
 ### Preparar o ambiente
 
 ```bash
-git clone https://github.com/manfredjr/maparede.git
+git clone https://github.com/manfredjr/mapnet.git
 ```
 
 ```bash
-dotnet build maparede.sln -c Release
+dotnet build mapnet.sln -c Release
 ```
 
 ```bash
-dotnet test maparede.sln -c Release
+dotnet test mapnet.sln -c Release
 ```
 
 Os testes devem passar numa cópia limpa antes de você mexer em qualquer coisa. Se algum falhar, isso já é uma issue.
@@ -45,7 +45,7 @@ Os testes devem passar numa cópia limpa antes de você mexer em qualquer coisa.
 ferramentas\publicar.cmd
 ```
 
-O roteiro roda os testes e recusa gerar o `.exe` se algum falhar. O resultado sai em `publicar\maparede.exe`.
+O roteiro roda os testes e recusa gerar o `.exe` se algum falhar. O resultado sai em `publicar\mapnet.exe`.
 
 ### O fluxo
 
@@ -57,7 +57,7 @@ O roteiro roda os testes e recusa gerar o `.exe` se algum falhar. O resultado sa
 
 ### Regras da casa
 
-**Só olhar, nunca entrar.** O MapaRede levanta o que a rede já mostra. Contribuição que teste senha, explore falha, tente login ou mude configuração de equipamento não será aceita.
+**Só olhar, nunca entrar.** O MapNet levanta o que a rede já mostra. Contribuição que teste senha, explore falha, tente login ou mude configuração de equipamento não será aceita.
 
 **Sem internet e sem telemetria.** O programa não manda nada para fora da rede local e não coleta dado de uso. Isso é promessa feita a quem usa.
 
@@ -65,7 +65,7 @@ O roteiro roda os testes e recusa gerar o `.exe` se algum falhar. O resultado sa
 
 **Sem dependência externa.** Um arquivo só, sem Npcap, sem Nmap e sem instalador. Um pacote NuGet novo precisa de justificativa forte.
 
-**Testes acompanham a lógica.** Tudo em `src/maparede.nucleo` é testável sem janela, e é assim que deve continuar. Mudou a interpretação de um pacote, uma conta de sub-rede ou o relatório? Traga o teste junto.
+**Testes acompanham a lógica.** Tudo em `src/mapnet.nucleo` é testável sem janela, e é assim que deve continuar. Mudou a interpretação de um pacote, uma conta de sub-rede ou o relatório? Traga o teste junto.
 
 **Português nos textos.** Interface, relatório, comentários e nomes de código são em português do Brasil. O teste `CaracteresProibidosTestes` confere a regra de caracteres.
 
@@ -75,4 +75,4 @@ Se a ideia for grande (um recurso novo, uma mudança de arquitetura), abra uma i
 
 ## Licença das contribuições
 
-O MapaRede - MT é distribuído sob a [GNU General Public License v3.0](LICENSE). Ao enviar um pull request, você concorda que sua contribuição seja licenciada nos mesmos termos.
+O MapNet - MT é distribuído sob a [GNU General Public License v3.0](LICENSE). Ao enviar um pull request, você concorda que sua contribuição seja licenciada nos mesmos termos.

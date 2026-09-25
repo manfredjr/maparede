@@ -1,21 +1,21 @@
 # Publicação
 
-O MapaRede - MT tem duas publicações, e elas não se misturam:
+O MapNet - MT tem duas publicações, e elas não se misturam:
 
 | O quê | Para onde | Como |
 |---|---|---|
-| O programa (`maparede.exe`) | GitHub Releases | Marca de versão enviada ao GitHub. O CI testa, gera e publica |
-| A página (pasta `public/`) | `maparede.manfred.com.br`, no cPanel da GoDaddy, atrás do Cloudflare | Git Version Control do cPanel |
+| O programa (`mapnet.exe`) | GitHub Releases | Marca de versão enviada ao GitHub. O CI testa, gera e publica |
+| A página (pasta `public/`) | `mapnet.manfred.com.br`, no cPanel da GoDaddy, atrás do Cloudflare | Git Version Control do cPanel |
 
 As duas só acontecem com autorização do Manfred. A página segue o roteiro padrão de publicação pelo Git do cPanel (documento interno do método), com as diferenças abaixo.
 
 ## 1. Como fica neste projeto
 
-- O cPanel clona este próprio repositório em `~/repositories/maparede`. Não há repositório de publicação: a página é estática, versionada e vem de um lugar só.
-- A raiz do subdomínio é `repositories/maparede/public`. O código C# fica fora da raiz e não é servido.
+- O cPanel clona este próprio repositório em `~/repositories/mapnet`. Não há repositório de publicação: a página é estática, versionada e vem de um lugar só.
+- A raiz do subdomínio é `repositories/mapnet/public`. O código C# fica fora da raiz e não é servido.
 - O clone é por **HTTPS**, sem chave: o repositório é público. Nada em `~/.ssh` é tocado.
 - Não há PHP, banco, `.env` nem tarefa agendada.
-- O botão de download da página aponta para `releases/latest/download/maparede.exe`. Antes da primeira Release, esse link responde 404.
+- O botão de download da página aponta para `releases/latest/download/mapnet.exe`. Antes da primeira Release, esse link responde 404.
 
 Tudo que entra em `public/` fica público. O teste `SiteTestes` recusa o que não for arquivo de site ali dentro e confere que o link de download usa o nome do executável.
 
@@ -40,11 +40,11 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-O CI roda os testes, gera o `maparede.exe` e cria a Release `MapaRede - MT v0.1.0` com o arquivo anexado. Acompanhar em **Actions**.
+O CI roda os testes, gera o `mapnet.exe` e cria a Release `MapNet - MT v0.1.0` com o arquivo anexado. Acompanhar em **Actions**.
 
 ### Depois de publicar
 
-1. Abrir `https://github.com/manfredjr/maparede/releases/latest/download/maparede.exe` e conferir que o download começa. A Release leva também o `maparede.exe.sha256.txt`, para quem baixou conferir o arquivo.
+1. Abrir `https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe` e conferir que o download começa. A Release leva também o `mapnet.exe.sha256.txt`, para quem baixou conferir o arquivo.
 2. Atualizar a "Situação do projeto" do README.
 3. Anotar em `docs/superpowers/pendencias.md` o que o uso em campo mostrar.
 
@@ -52,41 +52,34 @@ O CI roda os testes, gera o `maparede.exe` e cria a Release `MapaRede - MT v0.1.
 
 Com o Pull Request que traz o `.cpanel.yml` já juntado ao `main`.
 
-**Ordem importa.** O clone vem antes do subdomínio. Se o subdomínio for criado primeiro, o cPanel cria a pasta `public` dentro de `repositories/maparede`, e o Git Version Control recusa clonar em pasta que não está vazia. Neste projeto o subdomínio já foi criado antes (25/09/2026), então o passo 1 confere a pasta.
+**Ordem importa.** O clone vem antes do subdomínio. Se o subdomínio for criado primeiro, o cPanel cria a pasta `public` (com uma `cgi-bin` vazia) dentro de `repositories/mapnet`, e o Git Version Control recusa clonar em pasta que não está vazia. Foi o que aconteceu na primeira publicação, ainda com o nome MapaRede.
 
 **1. Conferir a pasta** (Terminal do cPanel, colar o resultado):
 
 ```bash
-if [ -e ~/repositories/maparede ]; then find ~/repositories/maparede -maxdepth 2 -ls; else echo "nao existe: ~/repositories/maparede"; fi
+if [ -e ~/repositories/mapnet ]; then find ~/repositories/mapnet -maxdepth 2 -ls; else echo "nao existe: ~/repositories/mapnet"; fi
 ```
 
-- Se aparecer "nao existe", seguir para o passo 2.
-- Se aparecerem só as pastas `maparede` e `maparede/public`, **vazias**, removê-las com o comando abaixo. O `rmdir` só apaga pasta vazia e recusa se houver qualquer arquivo dentro:
-
-```bash
-rmdir ~/repositories/maparede/public && rmdir ~/repositories/maparede && echo "pastas vazias removidas"
-```
-
-- Se aparecer qualquer arquivo, parar e mandar o resultado. Nada se apaga sem conferir.
+Se aparecerem só pastas vazias, removê-las com `rmdir`, da mais funda para a de fora. O `rmdir` recusa pasta com arquivo. Se aparecer qualquer arquivo, parar e mandar o resultado.
 
 **2. Criar o clone** em Git Version Control, botão Criar:
 
 | Campo | Valor |
 |---|---|
 | Clone a Repository | ligado |
-| Clone URL | `https://github.com/manfredjr/maparede.git` |
-| Repository Path | `repositories/maparede` |
-| Repository Name | `maparede` |
+| Clone URL | `https://github.com/manfredjr/mapnet.git` |
+| Repository Path | `repositories/mapnet` |
+| Repository Name | `mapnet` |
 
 **3. Abrir a pasta para o Apache** (colar o resultado, deve mostrar `755`):
 
 ```bash
-chmod 755 ~/repositories/maparede && stat -c '%a %n' ~/repositories/maparede ~/repositories/maparede/public/index.html
+chmod 755 ~/repositories/mapnet && stat -c '%a %n' ~/repositories/mapnet ~/repositories/mapnet/public/index.html
 ```
 
-**4. Subdomínio.** Já existe, com a raiz `repositories/maparede/public`. Conferir em Domínios que a raiz continua a mesma depois do clone.
+**4. Subdomínio.** No Cloudflare, criar o registro `A` com o nome `mapnet`, apontando para o IP da hospedagem e com proxy ligado. No cPanel, em Domínios, criar `mapnet.manfred.com.br` com **Compartilhar raiz com o domínio principal desligado** e a raiz `repositories/mapnet/public`.
 
-**5. Certificado.** Em Status SSL/TLS, rodar o AutoSSL e conferir que `maparede.manfred.com.br` ganhou certificado. Sem ele, o Cloudflare responde **erro 526**. Se o AutoSSL falhar para esse nome, deixar o registro `maparede` como "DNS only" no Cloudflare, rodar de novo e voltar para o modo com proxy.
+**5. Certificado.** Em Status SSL/TLS, rodar o AutoSSL e conferir que `mapnet.manfred.com.br` ganhou certificado. Sem ele, o Cloudflare responde **erro 526**. Se o AutoSSL falhar para esse nome, deixar o registro `mapnet` como "DNS only" no Cloudflare, rodar de novo e voltar para o modo com proxy.
 
 **6. Primeiro deploy.** Em Git Version Control, Gerenciar, aba Pull or Deploy: Update from Remote, F5, Deploy HEAD Commit. Acompanhar:
 
@@ -94,8 +87,12 @@ chmod 755 ~/repositories/maparede && stat -c '%a %n' ~/repositories/maparede ~/r
 tail -40 "$(ls -t ~/.cpanel/logs/vc_*deploy*.log | head -1)"
 ```
 
-**7. Conferir.** Purgar o cache do Cloudflare e abrir `https://maparede.manfred.com.br/`. Conferir que a página abre com o logo da MT e que o botão de download baixa o executável do GitHub. Depois, ligar o Force HTTPS Redirect do subdomínio no cPanel.
+**7. Conferir.** Purgar o cache do Cloudflare e abrir `https://mapnet.manfred.com.br/`. Conferir que a página abre com o logo da MT e que o botão de download baixa o executável do GitHub. Depois, ligar o Force HTTPS Redirect do subdomínio no cPanel.
 
-## 4. Publicar a página: versão nova
+## 4. Nome anterior
+
+O programa se chamou MapaRede - MT até 25/09/2026. Como ainda não havia usuários, a publicação recomeçou do zero com o nome MapNet - MT: o endereço `maparede.manfred.com.br` foi desligado sem redirecionamento. O GitHub redireciona sozinho o endereço antigo do repositório para o novo.
+
+## 5. Publicar a página: versão nova
 
 Merge no `main`, depois no cPanel **Update from Remote**, **F5** e **Deploy HEAD Commit**. Com o Cloudflare na frente, purgar o cache antes de conferir a página.
