@@ -59,6 +59,34 @@ O `.exe` é de janela, então o Prompt de Comando devolve o cursor antes de o pr
 
 Códigos de saída: `0` concluído, `1` erro nos argumentos, `2` interface não encontrada, `3` falha, `4` interrompido com Ctrl+C.
 
+## Primeira execução
+
+**O Windows pode avisar antes de abrir.** O executável não tem assinatura digital, e todo arquivo baixado da internet recebe do navegador a **Marca da Web** (*Mark of the Web*), que faz o Windows mostrar "O Windows protegeu o seu computador" (SmartScreen). O arquivo está perfeito; o aviso vem da falta de assinatura. Para abrir, escolha um caminho:
+
+1. Na tela de aviso, clique em **Mais informações** e depois em **Executar assim mesmo**.
+2. Clique com o botão direito no arquivo, abra **Propriedades**, marque **Desbloquear** e confirme em **OK**.
+3. Pelo PowerShell, na pasta do arquivo:
+
+```powershell
+Unblock-File .\maparede.exe
+```
+
+Copiar o `.exe` por pen drive ou pasta de rede não aplica a Marca da Web, e o programa abre direto. Cada versão nova começa sem reputação no SmartScreen, então o aviso tende a aparecer nos primeiros dias depois de cada publicação.
+
+Se o computador tiver o **Controle de Aplicativo Inteligente** (Smart App Control) ligado, em **Segurança do Windows**, **Controle de aplicativos e navegador**, o bloqueio não oferece a opção de executar assim mesmo. Nesse caso, só a assinatura digital resolve.
+
+**A primeira execução demora alguns segundos**, porque o Windows descompacta o conteúdo do executável numa pasta temporária. Da segunda vez em diante, abre rápido.
+
+### Conferir se o arquivo chegou íntegro
+
+Cada versão publicada leva um arquivo `maparede.exe.sha256.txt`. Na máquina que recebeu o `.exe`:
+
+```powershell
+Get-FileHash .\maparede.exe -Algorithm SHA256
+```
+
+Se o valor bater com o do `.txt`, o executável é exatamente o que foi publicado.
+
 ## O que a fatia 1 faz
 
 - **Interfaces:** lê as placas ativas com IPv4 e calcula a sub-rede pelo IP e pela máscara. Adaptadores virtuais (Hyper-V, VMware, VPN) vão para o fim da lista.
