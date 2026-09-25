@@ -8,7 +8,7 @@ publicar/
 TestResults/
 
 # Relatorios gerados em rede de cliente nunca vao para o repositorio
-relatorios/
+/relatorios/
 mapa-rede-*.html
 mapa-rede-*.xml
 mapa-rede-*.csv
