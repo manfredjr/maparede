@@ -11,7 +11,7 @@
 <meta property="og:description" content="Levanta os equipamentos da rede local, com fabricante e nome, e gera um relatório em HTML. Gratuito e de código aberto.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://maparede.manfred.com.br/">
-<meta property="og:image" content="https://maparede.manfred.com.br/img/logo.webp">
+<meta property="og:image" content="https://maparede.manfred.com.br/img/maparede-logo.png">
 <link rel="canonical" href="https://maparede.manfred.com.br/">
 <style>
   /* Montserrat servida pela própria página, os mesmos arquivos do site da MT. */
@@ -90,7 +90,7 @@
   .header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 24px; }
   .header__marca { display: flex; align-items: center; gap: 14px; }
   .header__marca img { height: 46px; width: auto; }
-  .header__produto { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.3px; }
+  .header__produto { font-weight: 600; font-size: 0.85rem; color: var(--cinza-medio); }
   .nav { display: flex; align-items: center; gap: 4px; }
   .nav a { padding: 8px 12px; font-size: 0.9rem; font-weight: 500; border-radius: 8px; }
   .nav a:hover { color: var(--verde-principal); }
@@ -125,7 +125,8 @@
     color: var(--verde-escuro); background: var(--branco); border: 1px solid var(--cinza-borda);
     padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
   }
-  .hero h1 { font-size: clamp(2.3rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -1px; margin-bottom: 20px; }
+  .hero__logo { margin-bottom: 24px; }
+  .hero__logo img { width: min(360px, 80%); height: auto; }
   .hero__lead { font-size: 1.15rem; color: var(--cinza-medio); margin-bottom: 32px; max-width: 34em; }
   .hero__acoes { display: flex; flex-wrap: wrap; gap: 12px; }
   .hero__nota { font-size: 0.85rem; color: var(--cinza-medio); margin-top: 16px; }
@@ -215,7 +216,7 @@
   <div class="container header__inner">
     <a class="header__marca" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
       <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="61" height="46">
-      <span class="header__produto">MapaRede - MT</span>
+      <span class="header__produto">Um produto da MT</span>
     </a>
     <nav class="nav" aria-label="Seções">
       <a href="#o-que-faz">O que faz</a>
@@ -232,7 +233,7 @@
   <div class="container hero__grid">
     <div>
       <span class="hero__tag">Software livre da MT - Manfred Tecnologia</span>
-      <h1><span class="text-gradient">MapaRede</span> - MT</h1>
+      <h1 class="hero__logo"><img src="img/maparede-logo.webp" alt="MapaRede - MT" width="720" height="358"></h1>
       <p class="hero__lead">
         Inventário da rede local para Windows. Descobre os equipamentos ligados na
         rede e mostra o IP, o MAC, o fabricante e o nome de cada um, num relatório
