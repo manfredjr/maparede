@@ -1,0 +1,17 @@
+# Saidas de compilacao
+bin/
+obj/
+publicar/
+*.user
+.vs/
+.vscode/
+TestResults/
+
+# Relatorios gerados em rede de cliente nunca vao para o repositorio
+relatorios/
+mapa-rede-*.html
+mapa-rede-*.xml
+mapa-rede-*.csv
+
+# Rascunhos locais
+.superpowers/
