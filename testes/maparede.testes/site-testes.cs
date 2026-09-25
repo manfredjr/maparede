@@ -9,7 +9,7 @@ namespace MapaRede.Testes;
 /// </summary>
 public partial class SiteTestes
 {
-    private static readonly string[] _extensoesDeSite = [".html", ".css", ".js", ".svg", ".png", ".ico", ".txt", ".webmanifest"];
+    private static readonly string[] _extensoesDeSite = [".html", ".css", ".js", ".svg", ".png", ".webp", ".ico", ".woff2", ".txt", ".webmanifest"];
 
     [Fact]
     public void Public_so_tem_arquivo_de_site()
