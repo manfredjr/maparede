@@ -70,18 +70,25 @@ Se aparecer o aviso de que o commit não chegou ao GitHub, enviar à mão assim 
 
 ## Autonomia
 
+Regra geral, combinada com o Manfred em 25/09/2026:
+
+- **Reversível e sem efeito no andamento:** o agente executa pela própria recomendação, sem perguntar, e conta na resposta o que fez e por quê.
+- **Irreversível, ou que afeta o andamento:** o agente pergunta antes, com as opções e a recomendação dele, e só segue com a resposta do Manfred.
+
+A tabela abaixo aplica a regra aos casos comuns:
+
 | O agente faz direto | O agente pergunta antes |
 |---|---|
 | Criar e editar arquivo do projeto | Apagar arquivo ou pasta |
-| Rodar build, testes e portões | Instalar ou remover pacote NuGet fora do plano |
-| Instalar pacote NuGet previsto no plano | Fazer merge (só com a frase de autorização) |
-| Criar ramo, commitar e abrir Pull Request | Criar ou apagar repositório |
-| Ler a documentação oficial da Microsoft e do IEEE | Reescrever histórico do git |
-| Gravar rascunho em `.superpowers/` | Publicar versão para cliente (Release, envio do `.exe`) |
-| Rodar o programa na rede de teste do próprio ambiente | Rodar o programa em rede que não seja a do Manfred ou a de teste |
-| | Enviar qualquer coisa para serviço externo ou em nome do Manfred |
+| Rodar build, testes e portões | Fazer merge (só com a frase de autorização) |
+| Instalar, atualizar ou remover pacote NuGet, com o motivo na resposta | Criar ou apagar repositório |
+| Criar ramo, commitar e abrir Pull Request | Reescrever histórico do git |
+| Corrigir o próprio Pull Request quando o CI falha ou quando o teste do Manfred aponta erro | Publicar versão para cliente (Release, envio do `.exe`) |
+| Ler a documentação oficial da Microsoft e do IEEE | Rodar o programa em rede que não seja a do Manfred ou a de teste |
+| Gravar rascunho em `.superpowers/` | Enviar qualquer coisa para serviço externo ou em nome do Manfred |
+| Rodar o programa na rede de teste do próprio ambiente | Mudar decisão já aprovada no desenho ou no plano |
 
-Na dúvida, perguntar. Pergunta boa é fechada, com opções e uma recomendação.
+Na dúvida sobre se algo é reversível, tratar como irreversível e perguntar. Pergunta boa é fechada, com opções e uma recomendação.
 
 ## Onde ler e gravar
 
@@ -151,7 +158,12 @@ Passo a passo em `docs/publicacao.md`.
 
 ## Comunicação
 
+- Respostas claras e objetivas: o que mudou, o que falta e o que o agente recomenda, sem rodeio.
 - Toda resposta termina com os blocos **Feito**, **Você precisa fazer**, **Fica comigo** e **Etapa**, nessa ordem. Detalhes em `.superpowers/metodo/briefing-fechamento-das-respostas.md`.
+  - **Feito:** o que foi concluído nesta resposta, inclusive o que o agente executou sozinho pela regra da Autonomia.
+  - **Você precisa fazer:** o que depende do Manfred, cada item com a recomendação do agente. Decisão irreversível aparece aqui como pergunta, com as opções e a recomendada.
+  - **Fica comigo:** o que o agente vai fazer em seguida.
+  - **Etapa:** o status do projeto: versão publicada, fatia em andamento, Pull Request aberto e em que ponto está.
 - Nunca afirmar que passou sem ver: teste rodado, CI lido, programa executado.
 
 ## Ao terminar
