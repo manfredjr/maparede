@@ -269,10 +269,15 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         await aba.ExecutarAsync();
     }
 
-    /// <summary>Abre o host no navegador, na área de trabalho remota ou no Explorer.</summary>
-    public void AcaoNoHost(AcaoHost acao)
+    /// <summary>
+    /// Abre o host no navegador, na área de trabalho remota ou no Explorer. O Windows pode levar
+    /// segundos para desistir de um endereço que não responde, então a abertura roda fora da
+    /// linha da tela, e os botões ficam desligados até ela terminar: clique repetido não vira
+    /// fila de tentativas.
+    /// </summary>
+    public async Task AcaoNoHostAsync(AcaoHost acao)
     {
-        if (_hostSelecionado is not { } h || _dep.Abrir is not { } abrir)
+        if (_abrindo || _hostSelecionado is not { } h || _dep.Abrir is not { } abrir)
         {
             return;
         }
@@ -284,10 +289,12 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             _ => null,
         };
         var (arquivo, argumentos) = DetalheHost.Destino(acao, h.Host.Ip, porta);
+        _abrindo = true;
+        AvisarDetalhe();
+        Console.Escrever($"Abrindo {arquivo}{(argumentos is null ? "" : " " + argumentos)}...");
         try
         {
-            abrir(arquivo, argumentos);
-            Console.Escrever($"Abrindo {arquivo}{(argumentos is null ? "" : " " + argumentos)}.");
+            await Task.Run(() => abrir(arquivo, argumentos));
         }
         catch (Win32Exception e)
         {
@@ -299,10 +306,17 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         {
             Console.Escrever($"Não foi possível abrir {arquivo}: {e.Message}");
         }
+        finally
+        {
+            _abrindo = false;
+            AvisarDetalhe();
+        }
     }
 
+    private bool _abrindo;
+
     private Comando ComandoDe(AcaoHost acao) =>
-        new(() => AcaoNoHost(acao), () => _hostSelecionado is { } h && _dep.Abrir != null && DetalheHost.Disponivel(h.Host, acao));
+        new(() => _ = AcaoNoHostAsync(acao), () => !_abrindo && _hostSelecionado is { } h && _dep.Abrir != null && DetalheHost.Disponivel(h.Host, acao));
 
     private void AoMudarHost(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => AvisarDetalhe();
 

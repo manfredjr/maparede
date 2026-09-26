@@ -523,12 +523,38 @@ public class PainelTestes
         await varredura;
         painel.HostSelecionado = painel.Hosts[1];
 
-        painel.AcaoNoHost(AcaoHost.PastaCompartilhada);
+        await painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
 
         var linha = painel.Console.Linhas[^1];
         Assert.Contains(@"Não foi possível abrir \\192.0.2.20:", linha);
         Assert.DoesNotContain("An error occurred", linha);
         Assert.DoesNotContain("pasta", linha);
+    }
+
+    [Fact]
+    public async Task Clique_repetido_enquanto_abre_nao_vira_fila()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        var liberar = new ManualResetEventSlim();
+        var aberturas = 0;
+        dependencias.Abrir = (_, _) => { Interlocked.Increment(ref aberturas); liberar.Wait(TimeSpan.FromSeconds(5)); };
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        var varredura = painel.VarrerAsync();
+        simulador.Terminar(Resultado());
+        await varredura;
+        painel.HostSelecionado = painel.Hosts[1];
+
+        var primeira = painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
+        Assert.False(painel.ComandoPastaCompartilhada.CanExecute(null));
+        await painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
+        await painel.AcaoNoHostAsync(AcaoHost.AbrirHttp);
+        liberar.Set();
+        await primeira;
+
+        Assert.Equal(1, aberturas);
+        Assert.True(painel.ComandoPastaCompartilhada.CanExecute(null));
     }
 
     [Fact]
