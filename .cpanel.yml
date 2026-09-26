@@ -16,6 +16,7 @@ deployment:
         - echo "=== deploy em $REPO ==="
         - cd $REPO && git log --oneline -1
         - test -f $REPO/public/index.html
+        - test -f $REPO/public/css/site.css
         - test -f $REPO/public/img/favicon-32.png
         - test -f $REPO/public/img/logo-128.webp
         - test -f $REPO/public/img/mapnet-simbolo.webp

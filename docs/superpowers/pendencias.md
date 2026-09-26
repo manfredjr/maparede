@@ -56,3 +56,9 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 |---|---|---|
 | Portas abertas no detalhe | O desenho prevê as portas no detalhe quando a fatia de portas existir | Versão 1, fatia de portas TCP |
 | Esc e novo clique na linha testados só no modelo | O agente não teve acesso ao teclado e ao mouse na janela de teste. A lógica de fechar está coberta por teste, e a ligação na janela é curta | O Manfred abrir e fechar o detalhe com Esc e com novo clique |
+
+## Página de privacidade
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Prazo de guarda dos registros de acesso do site | A página de privacidade diz que a hospedagem e a Cloudflare registram IP, data, página e navegador de cada acesso, mas não diz por quanto tempo: o prazo depende da configuração do cPanel e da conta da Cloudflare, que o agente não vê | O Manfred conferir os prazos no cPanel e na Cloudflare, e a página passar a informar |

@@ -4,429 +4,106 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MapNet - MT - inventário da rede para Windows</title>
-<meta name="description" content="Programa para Windows que levanta os equipamentos de uma rede local, com IP, MAC, fabricante e nome, e gera um relatório em HTML. Arquivo único, sem instalar nada e sem administrador. Software livre, da MT - Manfred Tecnologia.">
+<meta name="description" content="Programa para Windows que mostra quem já está na rede local, em qual endereço e de onde vêm as configurações, para o técnico saber onde ligar o próximo equipamento. Arquivo único, sem instalar e sem administrador. Software livre, da MT - Manfred Tecnologia.">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <meta property="og:title" content="MapNet - MT - inventário da rede para Windows">
-<meta property="og:description" content="Levanta os equipamentos da rede local, com fabricante e nome, e gera um relatório em HTML. Gratuito e de código aberto.">
+<meta property="og:description" content="Mostra quem já está na rede, em qual endereço e de onde vêm as configurações. Gratuito e de código aberto.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mapnet.manfred.com.br/">
 <meta property="og:image" content="https://mapnet.manfred.com.br/img/mapnet-simbolo.png">
 <link rel="canonical" href="https://mapnet.manfred.com.br/">
-<style>
-  /* Montserrat servida pela própria página, os mesmos arquivos do site da MT. */
-  @font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 300 800;
-    font-display: swap;
-    src: url(fonts/montserrat-latin-ext.woff2) format('woff2');
-    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-  }
-  @font-face {
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 300 800;
-    font-display: swap;
-    src: url(fonts/montserrat-latin.woff2) format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
-  /* Identidade visual da MT - Manfred Tecnologia: as mesmas cores, gradiente,
-     botões, títulos e rodapé do site institucional (manfred.com.br). */
-  :root {
-    --verde-escuro: #006B2D;
-    --verde-principal: #0F8F2F;
-    --verde-medio: #43A92C;
-    --verde-claro: #9AD52B;
-    --cinza-claro: #F4F4F4;
-    --grafite: #202020;
-    --branco: #ffffff;
-    --cinza-medio: #6b7280;
-    --cinza-borda: #e5e7eb;
-    --gradiente: linear-gradient(90deg, var(--verde-escuro) 0%, var(--verde-principal) 50%, var(--verde-claro) 100%);
-    --radius: 14px;
-    --shadow-sm: 0 2px 8px rgba(0, 107, 45, 0.06);
-    --shadow: 0 10px 30px rgba(0, 107, 45, 0.10);
-    --shadow-lg: 0 24px 60px rgba(0, 107, 45, 0.14);
-    --t: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; overflow-x: hidden; }
-  body {
-    font-family: 'Montserrat', Arial, system-ui, -apple-system, sans-serif;
-    font-size: 16px; line-height: 1.6;
-    color: var(--grafite); background: var(--branco);
-    -webkit-font-smoothing: antialiased; overflow-x: hidden;
-  }
-  img { max-width: 100%; display: block; height: auto; }
-  a { color: inherit; text-decoration: none; }
-  .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-  .text-gradient {
-    background: var(--gradiente);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent; color: transparent;
-  }
-
-  /* ---------- botões ---------- */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 14px 28px; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.3px;
-    border-radius: 999px; border: 2px solid transparent; transition: all var(--t); text-align: center;
-  }
-  .btn--primary { background: var(--gradiente); color: var(--branco); box-shadow: 0 8px 20px rgba(15, 143, 47, 0.35); }
-  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(15, 143, 47, 0.45); }
-  .btn--ghost { background: transparent; color: var(--verde-escuro); border-color: var(--verde-principal); }
-  .btn--ghost:hover { background: var(--verde-principal); color: var(--branco); }
-  .btn--lg { padding: 18px 36px; font-size: 1.05rem; }
-
-  /* ---------- cabeçalho ---------- */
-  .header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--cinza-borda);
-  }
-  .header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 24px; }
-  .header__marca { display: flex; align-items: center; gap: 14px; }
-  .header__marca img { height: 46px; width: auto; }
-  .header__produto { font-weight: 600; font-size: 0.85rem; color: var(--cinza-medio); }
-  .nav { display: flex; align-items: center; gap: 4px; }
-  .nav a { padding: 8px 12px; font-size: 0.9rem; font-weight: 500; border-radius: 8px; }
-  .nav a:hover { color: var(--verde-principal); }
-  .nav .nav__cta {
-    background: var(--gradiente); color: var(--branco); padding: 9px 20px; border-radius: 999px;
-    margin-left: 8px; box-shadow: 0 4px 12px rgba(15, 143, 47, 0.3);
-  }
-  .nav .nav__cta:hover { color: var(--branco); transform: translateY(-2px); }
-  @media (max-width: 760px) { .nav a:not(.nav__cta) { display: none; } .header__produto { display: none; } }
-
-  /* ---------- topo ---------- */
-  .hero {
-    position: relative; overflow: hidden; padding: 80px 0 90px;
-    background:
-      radial-gradient(circle at 85% 20%, rgba(154, 213, 43, 0.12) 0%, transparent 50%),
-      radial-gradient(circle at 15% 80%, rgba(15, 143, 47, 0.10) 0%, transparent 50%),
-      var(--cinza-claro);
-  }
-  /* Padrão de pontos do manual da marca, o mesmo do topo do site da MT. */
-  .hero::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background-image: radial-gradient(circle, rgba(67, 169, 44, 0.18) 1.5px, transparent 1.5px);
-    background-size: 28px 28px;
-    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    opacity: 0.55;
-  }
-  .hero__grid { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
-  @media (max-width: 900px) { .hero__grid { grid-template-columns: 1fr; } }
-  .hero__tag {
-    display: inline-block; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-    color: var(--verde-escuro); background: var(--branco); border: 1px solid var(--cinza-borda);
-    padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
-  }
-  .hero__logo { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; font-size: clamp(2.4rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -1px; }
-  .hero__logo img { width: clamp(72px, 12vw, 104px); height: auto; flex-shrink: 0; }
-  .hero__lead { font-size: 1.15rem; color: var(--cinza-medio); margin-bottom: 32px; max-width: 34em; }
-  .hero__acoes { display: flex; flex-wrap: wrap; gap: 12px; }
-  .hero__nota { font-size: 0.85rem; color: var(--cinza-medio); margin-top: 16px; }
-
-  /* Tela do programa, tirada do modo --demonstracao (só endereços reservados para documentação). */
-  .tela { margin: 0; }
-  .tela button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
-  .ampliada { border: 0; padding: 0; background: none; max-width: 96vw; max-height: 94vh; cursor: zoom-out; }
-  .ampliada::backdrop { background: rgba(0, 0, 0, 0.78); }
-  .ampliada img { display: block; max-width: 96vw; max-height: 94vh; width: auto; height: auto; border-radius: 8px; }
-  .tela img { display: block; width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow-lg); border: 1px solid var(--cinza-borda); }
-  .tela figcaption { font-size: 0.72rem; color: var(--cinza-medio); text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; text-align: center; }
-
-  /* ---------- seções ---------- */
-  .section { padding: 90px 0; }
-  .section--cinza { background: var(--cinza-claro); }
-  .section__head { margin-bottom: 44px; max-width: 760px; }
-  .section__num { display: inline-block; font-size: 1rem; font-weight: 700; color: var(--verde-principal); margin-bottom: 8px; letter-spacing: 1px; }
-  .section__title { font-size: clamp(1.7rem, 3.2vw, 2.4rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 16px; }
-  .section__divider { width: 60px; height: 4px; background: var(--gradiente); border-radius: 2px; }
-  .texto { max-width: 760px; }
-  .texto p { color: var(--cinza-medio); margin-bottom: 16px; font-size: 1.05rem; }
-  .texto strong { color: var(--verde-escuro); }
-
-  .cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-  .cartao {
-    padding: 24px; border-radius: var(--radius); background: var(--branco);
-    border-left: 4px solid var(--verde-principal); box-shadow: var(--shadow-sm); transition: all var(--t);
-  }
-  .cartao:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-  .cartao h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 6px; }
-  .cartao p { font-size: 0.95rem; color: var(--cinza-medio); }
-  .proximas { margin-top: 28px; font-size: 0.92rem; color: var(--cinza-medio); }
-  .proximas strong { color: var(--verde-escuro); }
-
-  .passos { list-style: none; counter-reset: passo; display: grid; gap: 14px; margin-bottom: 28px; max-width: 760px; }
-  .passos li { counter-increment: passo; display: flex; gap: 16px; align-items: flex-start; color: var(--cinza-medio); font-size: 1.02rem; }
-  .passos li::before {
-    content: counter(passo); flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
-    background: var(--gradiente); color: var(--branco); font-weight: 700;
-    display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
-  }
-  .passos strong, .passos em { color: var(--grafite); }
-  .passos a { color: var(--verde-principal); font-weight: 600; text-decoration: underline; }
-  pre {
-    max-width: 760px; background: var(--grafite); color: #e8f5d8; border-radius: var(--radius);
-    padding: 18px 20px; overflow-x: auto; margin-bottom: 28px;
-    font: 0.9rem/1.6 Consolas, "Courier New", monospace; border-top: 4px solid var(--verde-medio);
-  }
-  .aviso {
-    max-width: 760px; background: var(--cinza-claro); border-left: 4px solid var(--verde-escuro);
-    border-radius: var(--radius); padding: 22px 24px;
-  }
-  .aviso h3 { font-size: 1rem; font-weight: 700; color: var(--verde-escuro); margin-bottom: 8px; }
-  .aviso p { color: var(--grafite); font-size: 0.95rem; margin-bottom: 10px; }
-  .aviso p:last-child { margin-bottom: 0; }
-  .texto a { color: var(--verde-principal); font-weight: 600; text-decoration: underline; }
-  .centro { text-align: center; margin-top: 8px; }
-
-  /* ---------- rodapé ---------- */
-  .footer { background: var(--grafite); color: rgba(255, 255, 255, 0.75); position: relative; }
-  .footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gradiente); }
-  .footer__inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; padding: 56px 24px 40px; }
-  @media (max-width: 760px) { .footer__inner { grid-template-columns: 1fr; } }
-  .footer__logo { height: 64px; width: auto; filter: brightness(1.05); }
-  .footer__marca p { margin-top: 16px; font-size: 0.92rem; max-width: 320px; line-height: 1.55; }
-  .footer h4 {
-    color: var(--branco); font-size: 0.9rem; font-weight: 700; margin-bottom: 16px;
-    text-transform: uppercase; letter-spacing: 1px; position: relative; padding-bottom: 10px;
-  }
-  .footer h4::after { content: ''; position: absolute; bottom: 0; left: 0; width: 28px; height: 2px; background: var(--verde-claro); border-radius: 2px; }
-  .footer ul { list-style: none; columns: 2; column-gap: 24px; }
-  .footer li { padding: 5px 0; font-size: 0.92rem; }
-  .footer a:hover { color: var(--verde-claro); }
-  .footer__base { border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 18px 24px; font-size: 0.85rem; display: flex; align-items: center; justify-content: flex-end; gap: 20px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
-  .footer__credito { text-align: right; line-height: 1.7; }
-  .footer__credito strong { color: #fff; }
-  .footer__links a { text-decoration: none; }
-  .footer__links a:hover { text-decoration: underline; }
-  .footer__direitos { font-size: 0.78rem; opacity: 0.7; }  .footer__selo { display: inline-flex; background: #fff; border-radius: 8px; padding: 4px 6px; }
-  .footer__selo img { height: 40px; width: auto; }
-  @media (max-width: 600px) { .footer__credito { text-align: center; } }
-</style>
+<link rel="stylesheet" href="css/site.css">
 </head>
 <body>
 
-<header class="header">
-  <div class="container header__inner">
-    <a class="header__marca" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
-      <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="61" height="46">
-      <span class="header__produto">Um produto da MT</span>
-    </a>
-    <nav class="nav" aria-label="Seções">
-      <a href="#o-que-faz">O que faz</a>
-      <a href="#como-usar">Como usar</a>
-      <a href="#codigo-aberto">Código aberto</a>
-      <a class="nav__cta" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar</a>
-    </nav>
-  </div>
-</header>
-
 <main>
 
-<section class="hero">
-  <div class="container hero__grid">
-    <div>
-      <span class="hero__tag">Software livre da MT - Manfred Tecnologia</span>
-      <h1 class="hero__logo"><img src="img/mapnet-simbolo.webp" alt="" width="240" height="240"><span><span class="text-gradient">MapNet</span> - MT</span></h1>
-      <p class="hero__lead">
-        Inventário da rede local para Windows. Descobre os equipamentos ligados na
-        rede e mostra o IP, o MAC, o fabricante e o nome de cada um, num relatório
-        que abre em qualquer navegador.
-      </p>
-      <div class="hero__acoes">
-        <a class="btn btn--primary btn--lg" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a>
-        <a class="btn btn--ghost btn--lg" href="https://github.com/manfredjr/mapnet">Ver o código</a>
-      </div>
-      <p class="hero__nota">Windows 10 ou 11, 64 bits. Arquivo único, sem instalador e sem pedir administrador.</p>
-      <p class="hero__nota"><strong>Uso autorizado.</strong> O MapNet - MT serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação. Para achar os equipamentos, ele manda ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida. Confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados. O programa não testa senhas, não contorna autenticação e não explora vulnerabilidades.</p>
-    </div>
+<header class="topo">
+  <img class="topo__simbolo" src="img/mapnet-simbolo.webp" alt="" width="56" height="56">
+  <h1>MapNet - MT</h1>
+  <p class="topo__frase">Inventário da rede local para Windows. Mostra quem já está na rede, em qual endereço e de onde vêm as configurações, para você saber onde ligar o próximo equipamento.</p>
+  <figure class="tela">
+    <button type="button" id="abrir-tela" aria-label="Ampliar a tela do programa"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></button>
+    <dialog class="ampliada" id="tela-ampliada" aria-label="Tela do programa ampliada"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT ampliada"></dialog>
+  </figure>
+  <div class="acoes">
+    <a class="btn btn--primario" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a>
+    <a class="btn btn--secundario" href="https://github.com/manfredjr/mapnet">Ver o código</a>
+  </div>
+  <p class="nota">Windows 10 ou 11, 64 bits. Arquivo único, sem instalar e sem administrador. Tela com dados de exemplo: clique para ampliar.</p>
+  <p class="nota">Use só em redes que você tem autorização para verificar. <a href="#uso-autorizado">Veja o que o programa envia</a>.</p>
+</header>
 
-    <figure class="tela">
-      <button type="button" id="abrir-tela" aria-label="Ampliar a tela do programa"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></button>
-      <figcaption>Tela do programa com dados de exemplo. Clique para ampliar.</figcaption>
-      <dialog class="ampliada" id="tela-ampliada" aria-label="Tela do programa ampliada"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT ampliada"></dialog>
-    </figure>
+<section>
+  <h2>Por que ele existe</h2>
+  <p>No atendimento em campo, a dúvida aparece toda hora: preciso ligar uma impressora, um access point ou uma central telefônica nesta rede. Que endereço eu posso usar?</p>
+  <p>Para responder, o técnico precisa entender a rede antes de mexer nela: se o DHCP está funcionando, de onde vêm o gateway e o DNS, quais equipamentos já estão ligados e em quais endereços.</p>
+  <p>O MapNet responde isso a partir do notebook do técnico. Ele lista os equipamentos que já estão na rede, com IP, MAC, fabricante e nome, e mostra de onde vêm as configurações do computador. Com esse retrato na mão, dá para ver que endereço já está ocupado antes de ligar o equipamento novo.</p>
+</section>
+
+<section>
+  <h2>O que ele faz</h2>
+  <div class="itens">
+    <div><h3>Todos os equipamentos da sub-rede</h3><p>Por ping e por ARP. Quem bloqueia ping também aparece.</p></div>
+    <div><h3>Fabricante e nome</h3><p>Pelo MAC, na tabela do IEEE, e por DNS, NetBIOS e mDNS.</p></div>
+    <div><h3>De onde vem a rede</h3><p>DHCP, gateway, DNS, Wi-Fi e, com um clique, o IP público.</p></div>
+    <div><h3>Detalhe de cada equipamento</h3><p>Nomes, TTL e atalhos para ping, navegador e área de trabalho remota.</p></div>
+    <div><h3>Ferramentas de rede</h3><p>Ping, tracert, DNS, ARP, conexões e rotas, com a saída em português.</p></div>
+    <div><h3>Manutenção</h3><p>Limpar o cache DNS, renovar o IP, limpar o ARP e resetar o Winsock.</p></div>
+    <div><h3>Relatório em HTML</h3><p>Arquivo único para guardar com a documentação do cliente.</p></div>
+    <div><h3>Sem instalar nada</h3><p>Um arquivo só, sem administrador e sem precisar de internet.</p></div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section__head">
-      <span class="section__num">01</span>
-      <h2 class="section__title">Para que serve</h2>
-      <div class="section__divider"></div>
-    </div>
-    <div class="texto">
-      <p>
-        Quem chega para atender uma rede que não conhece precisa, antes de tudo,
-        saber o que está ligado nela: onde está o roteador, quais são as impressoras,
-        quantos computadores e celulares estão conectados.
-      </p>
-      <p>
-        O <strong>MapNet</strong> faz esse levantamento a partir de um notebook ligado à rede e
-        deixa o resultado num arquivo que você guarda com a documentação do cliente.
-      </p>
-    </div>
-  </div>
-</section>
-
-<section class="section section--cinza" id="o-que-faz">
-  <div class="container">
-    <div class="section__head">
-      <span class="section__num">02</span>
-      <h2 class="section__title">O que ele levanta</h2>
-      <div class="section__divider"></div>
-    </div>
-    <div class="cartoes">
-      <div class="cartao"><h3>Todos os equipamentos da sub-rede</h3><p>Por ping e por ARP. Quem bloqueia ping no firewall também aparece.</p></div>
-      <div class="cartao"><h3>Fabricante pelo MAC</h3><p>Pela tabela oficial do IEEE, que vai dentro do programa. Não precisa de internet.</p></div>
-      <div class="cartao"><h3>Nome de cada equipamento</h3><p>Por DNS reverso, NetBIOS (com o grupo de trabalho ou domínio) e mDNS.</p></div>
-      <div class="cartao"><h3>Celular com MAC aleatório</h3><p>Identificado como tal, em vez de aparecer como fabricante desconhecido.</p></div>
-      <div class="cartao"><h3>Relatório em HTML</h3><p>Arquivo único, com resumo, tabela com filtro e o detalhe de cada equipamento.</p></div>
-      <div class="cartao"><h3>Janela e linha de comando</h3><p>O mesmo programa serve para o uso no dia a dia e para roteiros.</p></div>
-      <div class="cartao"><h3>Retrato do computador do técnico</h3><p>Nome, placa, endereços, DHCP, Wi-Fi e, com um clique, o IP público.</p></div>
-      <div class="cartao"><h3>Ferramentas de rede no console</h3><p>Ping, tracert, consulta DNS, tabela ARP, conexões e rotas, com a saída em português.</p></div>
-      <div class="cartao"><h3>Detalhe de cada equipamento</h3><p>Um clique na linha mostra nomes, TTL e pista do sistema, com atalhos para ping, tracert, navegador, área de trabalho remota e pasta compartilhada.</p></div>
-      <div class="cartao"><h3>Manutenção da rede</h3><p>Limpar o cache DNS, renovar o IP, limpar a tabela ARP e resetar o Winsock, pelos comandos do próprio Windows.</p></div>
-    </div>
-    <p class="proximas">
-      <strong>Nas próximas versões:</strong> portas abertas mais comuns, identificação leve do
-      equipamento (página web, SSH, UPnP) e classificação por tipo, como roteador,
-      impressora, câmera e servidor.
-    </p>
-  </div>
-</section>
-
-<section class="section" id="como-usar">
-  <div class="container">
-    <div class="section__head">
-      <span class="section__num">03</span>
-      <h2 class="section__title">Como usar</h2>
-      <div class="section__divider"></div>
-    </div>
-    <ol class="passos">
-      <li><span>Baixe o <a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">mapnet.exe</a> e copie para qualquer pasta, ou para um pendrive.</span></li>
-      <li><span>Dê um duplo clique nele e escolha a interface de rede. A primeira da lista costuma ser a certa.</span></li>
-      <li><span>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapNet - MT</em>.</span></li>
-    </ol>
-    <div class="texto"><p>Pela linha de comando:</p></div>
-    <pre>mapnet --interfaces
+<section>
+  <h2>Como usar</h2>
+  <ol>
+    <li>Baixe o <a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">mapnet.exe</a> e copie para qualquer pasta, ou para um pendrive.</li>
+    <li>Dê um duplo clique nele e escolha a interface de rede. A primeira da lista costuma ser a certa.</li>
+    <li>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapNet - MT</em>.</li>
+  </ol>
+  <p>Na primeira vez, o Windows pode exibir "O Windows protegeu o seu computador". O motivo é a falta de assinatura digital, que é um certificado pago. Clique em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>.</p>
+  <p>Pela linha de comando:</p>
+  <pre>mapnet --interfaces
 mapnet --varrer --interface 1 --abrir</pre>
-    <div class="aviso">
-      <h3>Antes da primeira vez</h3>
-      <p>
-        O Windows pode exibir <em>"O Windows protegeu o seu computador"</em>. O
-        motivo é a falta de assinatura digital, que é um certificado pago. Clique
-        em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>.
-        Outra forma: clique com o botão direito no arquivo, abra <strong>Propriedades</strong>,
-        marque <strong>Desbloquear</strong> e confirme em <strong>OK</strong>.
-      </p>
-      <p>Use o programa só em redes que você administra ou em que o responsável autorizou o levantamento.</p>
-    </div>
-  </div>
+  <p>O manual completo está no <a href="https://github.com/manfredjr/mapnet#readme">README do projeto</a>.</p>
 </section>
 
-<section class="section section--cinza">
-  <div class="container">
-    <div class="section__head">
-      <span class="section__num">04</span>
-      <h2 class="section__title">O que ele não faz</h2>
-      <div class="section__divider"></div>
-    </div>
-    <div class="texto">
-      <p>
-        O MapNet não é scanner de vulnerabilidade. Ele não testa senha, não contorna
-        autenticação, não explora vulnerabilidade e não muda configuração de nada na
-        rede. Para achar os equipamentos, manda ping, pedidos ARP e consultas de nome
-        (DNS, NetBIOS e mDNS), as mesmas que os computadores de uma rede trocam entre
-        si. As ações de manutenção mexem apenas no computador do próprio técnico, e
-        só quando ele clica.
-      </p>
-      <p>
-        O programa só sai da rede local quando o técnico pede: na consulta do IP
-        público e quando aponta o ping, o tracert ou a consulta DNS para um
-        endereço de fora. Fora isso, não manda nada para a internet e não coleta
-        dado de uso. O relatório fica só no computador em que a varredura foi
-        feita.
-      </p>
-    </div>
-  </div>
+<section id="uso-autorizado">
+  <h2>Uso autorizado</h2>
+  <p>O MapNet serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação.</p>
+  <ul>
+    <li><strong>O que ele envia:</strong> ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida, as mesmas mensagens que os computadores de uma rede trocam entre si.</li>
+    <li><strong>O que ele não faz:</strong> não testa senhas, não contorna autenticação, não explora vulnerabilidades e não muda configuração de nada na rede. A manutenção mexe só no computador de quem usa, e só com o clique.</li>
+    <li><strong>Sua parte:</strong> confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados.</li>
+  </ul>
+  <p>O programa só sai da rede local quando você pede: na consulta do IP público e quando aponta o ping, o tracert ou o DNS para um endereço de fora. Não coleta dado de uso, e o relatório fica só no seu computador.</p>
 </section>
 
-<section class="section" id="codigo-aberto">
-  <div class="container">
-    <div class="section__head">
-      <span class="section__num">05</span>
-      <h2 class="section__title">Código aberto</h2>
-      <div class="section__divider"></div>
-    </div>
-    <div class="texto">
-      <p>
-        O MapNet - MT é software livre, sob licença
-        <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">GPL-3.0</a>.
-        Qualquer pessoa pode usar, estudar e adaptar o programa. Quem distribuir uma
-        versão modificada precisa abrir o código dela também.
-      </p>
-      <p>
-        <strong>Licença e garantias.</strong> O MapNet - MT é distribuído de graça sob a
-        GPL-3.0. O inventário depende das respostas dos dispositivos e pode sair
-        incompleto ou impreciso. A licença não promete funcionamento em toda rede nem
-        inclui suporte técnico. Quem executa o programa deve definir uma rede autorizada
-        e conferir o alcance da verificação antes de iniciar. As disposições da GPL-3.0
-        sobre garantias e responsabilidade valem nos limites da lei brasileira e não
-        restringem direitos que a lei assegura ao consumidor.
-      </p>
-      <p>
-        Encontrou um problema ou tem uma sugestão? Escreva nas
-        <a href="https://github.com/manfredjr/mapnet/issues">Issues</a>.
-      </p>
-    </div>
-  </div>
+<section>
+  <h2>Código aberto</h2>
+  <p>O MapNet - MT é software livre, sob licença <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">GPL-3.0</a>. Qualquer pessoa pode usar, estudar e adaptar o programa. Quem distribuir uma versão modificada precisa abrir o código dela também.</p>
+  <p><strong>Licença e garantias.</strong> O MapNet - MT é distribuído de graça sob a GPL-3.0. O inventário depende das respostas dos dispositivos e pode sair incompleto ou impreciso. A licença não promete funcionamento em toda rede nem inclui suporte técnico. Quem executa o programa deve definir uma rede autorizada e conferir o alcance da verificação antes de iniciar. As disposições da GPL-3.0 sobre garantias e responsabilidade valem nos limites da lei brasileira e não restringem direitos que a lei assegura ao consumidor.</p>
+  <p>Se alguma coisa atrapalhou no seu atendimento ou você tem uma sugestão, escreva nas <a href="https://github.com/manfredjr/mapnet/issues">Issues</a>.</p>
 </section>
 
 </main>
 
-<footer class="footer">
-  <div class="container footer__inner">
-    <div class="footer__marca">
-      <a href="https://www.manfred.com.br" target="_blank" rel="noopener">
-        <img class="footer__logo" src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="85" height="64" loading="lazy">
-      </a>
-      <p>MapNet - MT, software de apoio ao suporte de TI e infraestrutura da plataforma manfred.com.br, desenvolvido e publicado pela MT - Manfred Tecnologia.</p>
-    </div>
-    <div>
-      <h4>MapNet</h4>
-      <ul>
-        <li><a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a></li>
-        <li><a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a></li>
-        <li><a href="https://github.com/manfredjr/mapnet">Código-fonte</a></li>
-        <li><a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a></li>
-        <li><a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a></li>
-        <li><a href="https://www.manfred.com.br" target="_blank" rel="noopener">manfred.com.br</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer__base">
-    <div class="footer__credito">
-      <p>Software de apoio ao suporte de TI e infraestrutura da plataforma <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>manfred.com.br</strong></a></p>
-      <p>Desenvolvido e publicado por <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>MT - Manfred Tecnologia</strong></a></p>
-      <p class="footer__links">
+<footer class="rodape">
+  <div class="rodape__base">
+    <div class="rodape__credito">
+      <p>Software de apoio ao suporte de TI da plataforma <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>manfred.com.br</strong></a>, por <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>MT - Manfred Tecnologia</strong></a></p>
+      <p>
         <a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a> &middot;
         <a href="https://github.com/manfredjr/mapnet">Código-fonte</a> &middot;
         <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a> &middot;
-        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a>
+        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a> &middot;
+        <a href="privacidade.html">Privacidade</a>
       </p>
-      <p class="footer__direitos">&copy; 2026 MANFRED TECNOLOGIA LTDA. Software livre sob a GPL-3.0.</p>
     </div>
-    <a class="footer__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
-      <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="53" height="40" loading="lazy">
+    <a class="rodape__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
+      <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="85" height="64" loading="lazy">
     </a>
   </div>
 </footer>
