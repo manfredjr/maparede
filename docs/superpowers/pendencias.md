@@ -6,7 +6,7 @@ O que ficou de fora, com o motivo e o que fecha o item.
 
 | Item | Motivo | O que fecha |
 |---|---|---|
-| Enquadramento jurídico inicial | Análise feita pela `legal-br` em 26/09/2026, em `docs/legal/verificacao-varredura-e-lgpd-2026-09-26.md`. A MT só desenvolve e distribui o programa; quem roda é o usuário. Ficaram 2 questões para advogado (distribuição pública e relação de consumo com a GPL), em `docs/legal/CONSULTA-ADVOGADO-varredura-e-lgpd-2026-09-26.md` | Resposta do advogado, que define o texto da página e do aviso ao lado da licença |
+| Enquadramento jurídico inicial | Fechado em 26/09/2026. Análise em `docs/legal/verificacao-varredura-e-lgpd-2026-09-26.md` e parecer em `docs/legal/parecer-distribuicao-2026-09-26.md`. Avisos "Uso autorizado" e "Licença e garantias" na página e no README | A cada fatia, a página, o README e a tela descrevem exatamente o que a versão publicada envia (na identificação de serviços, requisição HTTP e TLS) |
 | Assinatura digital do `.exe` | Sem certificado de assinatura de código, o SmartScreen avisa em todo `.exe` baixado da internet ("Fornecedor desconhecido"), e o Smart App Control, onde estiver ativo, bloqueia sem oferecer saída. Algum antivírus também pode desconfiar de um programa que varre a rede. O ícone já está em DIB, que evita o bloqueio visto no CronoAula | Decisão do Manfred sobre comprar o certificado. O tipo EV tira o aviso na hora; o OV, depois de um tempo de circulação |
 | Página no endereço novo | O nome mudou para MapNet - MT em 25/09/2026, e a página passa para `mapnet.manfred.com.br`. O endereço antigo foi desligado sem redirecionamento, porque ainda não havia usuários | Seguir `docs/publicacao.md`, seção 3 |
 | Logo do MapNet | A arte atual diz "MAPA REDE". A página usa só o símbolo de rede com o nome em texto | O Manfred enviar a arte com "MAPNET", de preferência com fundo transparente |
@@ -56,3 +56,9 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 |---|---|---|
 | Portas abertas no detalhe | O desenho prevê as portas no detalhe quando a fatia de portas existir | Versão 1, fatia de portas TCP |
 | Esc e novo clique na linha testados só no modelo | O agente não teve acesso ao teclado e ao mouse na janela de teste. A lógica de fechar está coberta por teste, e a ligação na janela é curta | O Manfred abrir e fechar o detalhe com Esc e com novo clique |
+
+## Página de privacidade
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Prazo de guarda dos registros de acesso do site | A página de privacidade diz que a hospedagem e a Cloudflare registram IP, data, página e navegador de cada acesso, mas não diz por quanto tempo: o prazo depende da configuração do cPanel e da conta da Cloudflare, que o agente não vê | O Manfred conferir os prazos no cPanel e na Cloudflare, e a página passar a informar |
