@@ -4,63 +4,102 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MapNet - MT - inventário da rede para Windows</title>
-<meta name="description" content="Programa para Windows que levanta os equipamentos de uma rede local, com IP, MAC, fabricante e nome, e gera um relatório em HTML. Arquivo único, sem instalar nada e sem administrador. Software livre, da MT - Manfred Tecnologia.">
+<meta name="description" content="Programa para Windows que mostra quem já está na rede local, em qual endereço e de onde vêm as configurações, para o técnico saber onde ligar o próximo equipamento. Arquivo único, sem instalar e sem administrador. Software livre, da MT - Manfred Tecnologia.">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<link rel="canonical" href="https://mapnet.manfred.com.br/">
 <meta property="og:title" content="MapNet - MT - inventário da rede para Windows">
-<meta property="og:description" content="Levanta os equipamentos da rede local, com fabricante e nome, e gera um relatório em HTML. Gratuito e de código aberto.">
+<meta property="og:description" content="Mostra quem já está na rede, em qual endereço e de onde vêm as configurações. Gratuito e de código aberto.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mapnet.manfred.com.br/">
 <meta property="og:image" content="https://mapnet.manfred.com.br/img/mapnet-simbolo.png">
+<link rel="canonical" href="https://mapnet.manfred.com.br/">
 <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
 
-<header class="cabecalho">
-  <div class="container cabecalho__inner">
-    <a class="marca" href="./"><img src="img/mapnet-simbolo.webp" alt="" width="32" height="32">MapNet - MT</a>
-    <nav class="nav" aria-label="Páginas">
-      <a href="recursos.html">Recursos</a>
-      <a href="como-usar.html">Como usar</a>
-      <a href="uso-autorizado.html">Uso autorizado</a>
-      <a href="codigo-aberto.html">Código aberto</a>
-      <a class="nav__baixar" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar</a>
-    </nav>
+<main>
+
+<header class="topo">
+  <img class="topo__simbolo" src="img/mapnet-simbolo.webp" alt="" width="56" height="56">
+  <h1>MapNet - MT</h1>
+  <p class="topo__frase">Inventário da rede local para Windows. Mostra quem já está na rede, em qual endereço e de onde vêm as configurações, para você saber onde ligar o próximo equipamento.</p>
+  <figure class="tela">
+    <button type="button" id="abrir-tela" aria-label="Ampliar a tela do programa"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></button>
+    <dialog class="ampliada" id="tela-ampliada" aria-label="Tela do programa ampliada"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT ampliada"></dialog>
+  </figure>
+  <div class="acoes">
+    <a class="btn btn--primario" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a>
+    <a class="btn btn--secundario" href="https://github.com/manfredjr/mapnet">Ver o código</a>
   </div>
+  <p class="nota">Windows 10 ou 11, 64 bits. Arquivo único, sem instalar e sem administrador. Tela com dados de exemplo: clique para ampliar.</p>
+  <p class="nota">Use só em redes que você tem autorização para verificar. <a href="#uso-autorizado">Veja o que o programa envia</a>.</p>
 </header>
 
-<main>
-<section class="inicio">
-  <div class="container inicio__grade">
-    <div>
-      <h1>MapNet <span>- MT</span></h1>
-      <p class="inicio__frase">Inventário da rede local para Windows. Mostra o IP, o MAC, o fabricante e o nome de cada equipamento, num relatório que abre em qualquer navegador.</p>
-      <div class="inicio__acoes">
-        <a class="btn btn--primario" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar para Windows</a>
-        <a class="btn btn--secundario" href="recursos.html">Ver recursos</a>
-      </div>
-      <p class="nota">Windows 10 ou 11, 64 bits. Arquivo único, sem instalar e sem administrador. Gratuito e de código aberto.</p>
-      <p class="nota">Use só em redes que você tem autorização para verificar. <a href="uso-autorizado.html">Veja o que o programa envia</a>.</p>
-    </div>
-    <figure class="tela">
-      <button type="button" id="abrir-tela" aria-label="Ampliar a tela do programa"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></button>
-      <figcaption>Tela com dados de exemplo. Clique para ampliar.</figcaption>
-      <dialog class="ampliada" id="tela-ampliada" aria-label="Tela do programa ampliada"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT ampliada"></dialog>
-    </figure>
+<section>
+  <h2>Por que ele existe</h2>
+  <p>No atendimento em campo, a dúvida aparece toda hora: preciso ligar uma impressora, um access point ou uma central telefônica nesta rede. Que endereço eu posso usar?</p>
+  <p>Para responder, o técnico precisa entender a rede antes de mexer nela: se o DHCP está funcionando, de onde vêm o gateway e o DNS, quais equipamentos já estão ligados e em quais endereços.</p>
+  <p>O MapNet responde isso a partir do notebook do técnico. Ele lista os equipamentos que já estão na rede, com IP, MAC, fabricante e nome, e mostra de onde vêm as configurações do computador. Com esse retrato na mão, dá para ver que endereço já está ocupado antes de ligar o equipamento novo.</p>
+</section>
+
+<section>
+  <h2>O que ele faz</h2>
+  <div class="itens">
+    <div><h3>Todos os equipamentos da sub-rede</h3><p>Por ping e por ARP. Quem bloqueia ping também aparece.</p></div>
+    <div><h3>Fabricante e nome</h3><p>Pelo MAC, na tabela do IEEE, e por DNS, NetBIOS e mDNS.</p></div>
+    <div><h3>De onde vem a rede</h3><p>DHCP, gateway, DNS, Wi-Fi e, com um clique, o IP público.</p></div>
+    <div><h3>Detalhe de cada equipamento</h3><p>Nomes, TTL e atalhos para ping, navegador e área de trabalho remota.</p></div>
+    <div><h3>Ferramentas de rede</h3><p>Ping, tracert, DNS, ARP, conexões e rotas, com a saída em português.</p></div>
+    <div><h3>Manutenção</h3><p>Limpar o cache DNS, renovar o IP, limpar o ARP e resetar o Winsock.</p></div>
+    <div><h3>Relatório em HTML</h3><p>Arquivo único para guardar com a documentação do cliente.</p></div>
+    <div><h3>Sem instalar nada</h3><p>Um arquivo só, sem administrador e sem precisar de internet.</p></div>
   </div>
 </section>
+
+<section>
+  <h2>Como usar</h2>
+  <ol>
+    <li>Baixe o <a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">mapnet.exe</a> e copie para qualquer pasta, ou para um pendrive.</li>
+    <li>Dê um duplo clique nele e escolha a interface de rede. A primeira da lista costuma ser a certa.</li>
+    <li>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapNet - MT</em>.</li>
+  </ol>
+  <p>Na primeira vez, o Windows pode exibir "O Windows protegeu o seu computador". O motivo é a falta de assinatura digital, que é um certificado pago. Clique em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>.</p>
+  <p>Pela linha de comando:</p>
+  <pre>mapnet --interfaces
+mapnet --varrer --interface 1 --abrir</pre>
+  <p>O manual completo está no <a href="https://github.com/manfredjr/mapnet#readme">README do projeto</a>.</p>
+</section>
+
+<section id="uso-autorizado">
+  <h2>Uso autorizado</h2>
+  <p>O MapNet serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação.</p>
+  <ul>
+    <li><strong>O que ele envia:</strong> ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida, as mesmas mensagens que os computadores de uma rede trocam entre si.</li>
+    <li><strong>O que ele não faz:</strong> não testa senhas, não contorna autenticação, não explora vulnerabilidades e não muda configuração de nada na rede. A manutenção mexe só no computador de quem usa, e só com o clique.</li>
+    <li><strong>Sua parte:</strong> confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados.</li>
+  </ul>
+  <p>O programa só sai da rede local quando você pede: na consulta do IP público e quando aponta o ping, o tracert ou o DNS para um endereço de fora. Não coleta dado de uso, e o relatório fica só no seu computador.</p>
+</section>
+
+<section>
+  <h2>Código aberto</h2>
+  <p>O MapNet - MT é software livre, sob licença <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">GPL-3.0</a>. Qualquer pessoa pode usar, estudar e adaptar o programa. Quem distribuir uma versão modificada precisa abrir o código dela também.</p>
+  <p><strong>Licença e garantias.</strong> O MapNet - MT é distribuído de graça sob a GPL-3.0. O inventário depende das respostas dos dispositivos e pode sair incompleto ou impreciso. A licença não promete funcionamento em toda rede nem inclui suporte técnico. Quem executa o programa deve definir uma rede autorizada e conferir o alcance da verificação antes de iniciar. As disposições da GPL-3.0 sobre garantias e responsabilidade valem nos limites da lei brasileira e não restringem direitos que a lei assegura ao consumidor.</p>
+  <p>Se alguma coisa atrapalhou no seu atendimento ou você tem uma sugestão, escreva nas <a href="https://github.com/manfredjr/mapnet/issues">Issues</a>.</p>
+</section>
+
 </main>
 
 <footer class="rodape">
   <div class="rodape__base">
     <div class="rodape__credito">
       <p>Software de apoio ao suporte de TI da plataforma <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>manfred.com.br</strong></a>, por <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>MT - Manfred Tecnologia</strong></a></p>
-      <p class="rodape__links">
+      <p>
         <a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a> &middot;
         <a href="https://github.com/manfredjr/mapnet">Código-fonte</a> &middot;
         <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a> &middot;
-        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a>
+        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a> &middot;
+        <a href="privacidade.html">Privacidade</a>
       </p>
     </div>
     <a class="rodape__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
@@ -68,6 +107,7 @@
     </a>
   </div>
 </footer>
+
 <script>
   // Amplia a tela do programa. O Esc fecha pelo proprio dialog; o clique na imagem ampliada tambem fecha.
   (function () {
