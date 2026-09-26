@@ -22,3 +22,7 @@ O que ficou de fora, com o motivo e o que fecha o item.
 | Faixa manual e sub-rede maior que /22 | Escopo da fatia 1 é a sub-rede local. Rede maior é varrida só no /22 em volta do computador | Fatia futura de faixa manual |
 | IPv6 | Fora do escopo da versão 1 | A decidir |
 | Prompt de Comando devolve o cursor antes do fim | O `.exe` é de janela, para abrir sem console no clique duplo | Aceito por ora, com `start /wait` documentado no README. Revisitar se incomodar no uso |
+
+## Tela WPF: nomes longos na tabela
+
+No tamanho padrão da janela (1180 pixels), nomes longos de fabricante (como "Aruba, a Hewlett Packard Enterprise Company") e a observação "Não responde a ping" aparecem cortados. O técnico pode alargar a coluna arrastando o título ou maximizar a janela. Fecha o item: dica com o texto inteiro ao passar o mouse, ou o painel de detalhe do host da fatia 6.
