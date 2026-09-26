@@ -25,4 +25,12 @@ O que ficou de fora, com o motivo e o que fecha o item.
 
 ## Tela WPF: nomes longos na tabela
 
-No tamanho padrão da janela (1180 pixels), nomes longos de fabricante (como "Aruba, a Hewlett Packard Enterprise Company") e a observação "Não responde a ping" aparecem cortados. O técnico pode alargar a coluna arrastando o título ou maximizar a janela. Fecha o item: dica com o texto inteiro ao passar o mouse, ou o painel de detalhe do host da fatia 6.
+Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, MAC, Fabricante até "MAC aleatório (privativo)", Ping e as marcas sozinhas da Observação aparecem inteiros. Nome e Observação com duas marcas ("Este computador, MAC aleatório") podem ter qualquer tamanho e continuam cortados na célula, com o texto inteiro na dica. Abaixo da largura padrão aparece a rolagem lateral. Fecha o resto: o painel de detalhe do host da fatia 6.
+
+## Fatia 3: painel "Minha máquina"
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Wi-Fi com a Localização do Windows desligada | O caso está coberto por teste com fonte simulada, mas não foi visto num Windows de verdade: no computador do teste a Localização estava ligada e o nome da rede apareceu | Abrir o programa com a Localização desligada e conferir a mensagem no bloco Wi-Fi |
+| Wi-Fi de 6 GHz | A banda sai da frequência do ponto de acesso, com teste para 6 GHz, mas o teste real foi numa rede de 5 GHz | Conferir numa placa e numa rede Wi-Fi 6E |
+| Consulta real ao 1.1.1.1 | Os testes não usam a rede, e o teste da tela foi no modo de demonstração, que não consulta nada. A consulta de verdade só roda no `.exe` com o clique | O Manfred clicar em **Consultar IP público** no `.exe` do PR e comparar com o que `https://1.1.1.1/cdn-cgi/trace` mostra no navegador |

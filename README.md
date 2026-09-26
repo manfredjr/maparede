@@ -35,10 +35,11 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 ### Pela janela
 
 1. Abra o `mapnet.exe`.
-2. Na faixa verde do topo, escolha a interface de rede. A primeira da lista é a que tem gateway, normalmente a certa. A coluna **Minha máquina** mostra a placa, o IP, o gateway, o DNS e a sub-rede que vai ser varrida.
-3. Clique em **Iniciar varredura**. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante ou observação, e cada coluna ordena com um clique no título.
-4. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo.
-5. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
+2. Na faixa verde do topo, escolha a interface de rede. A primeira da lista é a que tem gateway, quase sempre a certa. A coluna **Minha máquina** mostra o computador (nome, grupo de trabalho ou domínio, usuário), a placa (tipo, MAC, velocidade, MTU), os endereços (IPv4, IPv6, gateway, DNS, sufixo e a sub-rede que vai ser varrida) e o DHCP com a validade da concessão. No Wi-Fi, mostra também a rede, a banda, o canal e o sinal.
+3. O botão **Consultar IP público** pergunta o IP ao serviço `1.1.1.1`, do Cloudflare. É a única consulta do programa fora da rede local e só acontece com o clique. Se o relatório for gravado depois da consulta, o IP público vai junto.
+4. Clique em **Iniciar varredura**. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante ou observação, e cada coluna ordena com um clique no título.
+5. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo.
+6. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
 
 ### Pela linha de comando
 
@@ -123,6 +124,8 @@ ferramentas\publicar.cmd
 ```
 
 O roteiro roda os testes e, se passarem, gera `publicar\mapnet.exe` (cerca de 67 MB, já com o .NET dentro).
+
+Para ver a tela com dados de exemplo, sem varrer nem consultar nada, abra `mapnet --demonstracao`. As imagens da documentação saem dele, com endereços reservados para documentação.
 
 Comandos avulsos:
 
