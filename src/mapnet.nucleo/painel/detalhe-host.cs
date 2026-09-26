@@ -107,6 +107,7 @@ public static class DetalheHost
             new("IP", h.Ip.ToString()),
             new("MAC", h.MacTexto.Length > 0 ? h.MacTexto : "não obtido"),
             new("Fabricante", h.Fabricante.Length > 0 ? h.Fabricante : "não identificado"),
+            new("Tipo provável", h.Classificacao.Texto),
             new("Nome pelo DNS reverso", h.NomeDns ?? "sem resposta"),
             new("Nome NetBIOS", h.NomeNetBios ?? "sem resposta"),
             new("Grupo de trabalho ou domínio", h.GrupoNetBios ?? "sem resposta"),

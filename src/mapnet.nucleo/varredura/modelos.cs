@@ -113,6 +113,9 @@ public sealed class HostEncontrado
         ?? Servicos.Select(s => s.Servidor).FirstOrDefault(t => t != null)
         ?? string.Empty;
 
+    /// <summary>Tipo provável, calculado na hora com o que já se sabe do host. Não consulta a rede.</summary>
+    public Classificacao Classificacao => Classificador.Classificar(this);
+
     /// <summary>Portas para a tabela: "22, 80, 443".</summary>
     public string PortasTexto => string.Join(", ", PortasAbertas);
 

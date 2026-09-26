@@ -73,6 +73,13 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 | HTTP pedido pelo IP | O `GET /` vai com o IP no cabeçalho `Host`. Servidor que hospeda vários sites por nome pode mostrar uma página genérica | Usar o nome do DNS reverso no `Host`, se fizer falta no campo |
 | Janela da identificação vista só no modo de demonstração | A identificação de verdade rodou na rede do Manfred pela linha de comando, com roteador, câmera, TV e Windows respondendo. A janela foi conferida com dados de exemplo | O Manfred varrer pela janela com as portas ligadas |
 
+## Fatia 9: classificação
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Tabela de sinais | Os fabricantes e as palavras que apontam cada tipo saíram do que é comum em escritório e do teste na rede do Manfred. Equipamento de marca que não está na lista cai em Desconhecido | Acrescentar fabricante ou palavra quando o técnico achar um caso errado no campo |
+| Switch gerenciável | Switch quase não se mostra: não costuma ter nome, porta aberta diferente nem UPnP. A fatia não arrisca esse tipo | Rever se aparecer sinal confiável, como título de página de switch conhecido |
+
 ## Página de privacidade
 
 | Item | Motivo | O que fecha |

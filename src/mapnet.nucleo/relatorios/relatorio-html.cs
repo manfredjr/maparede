@@ -44,6 +44,12 @@ public static class RelatorioHtml
             .OrderByDescending(g => g.Count())
             .ThenBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
             .ToList();
+        var tipos = hosts
+            .GroupBy(h => h.Classificacao.Nome)
+            .OrderBy(g => g.Key == Classificador.Nome(TipoEquipamento.Desconhecido))
+            .ThenByDescending(g => g.Count())
+            .ThenBy(g => g.Key, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
         var i = r.Interface;
 
         var html = new StringBuilder(64 * 1024);
@@ -119,6 +125,7 @@ public static class RelatorioHtml
                   <th data-tipo="texto">Nome</th>
                   <th data-tipo="texto">MAC</th>
                   <th data-tipo="texto">Fabricante</th>
+                  <th data-tipo="texto">Tipo</th>
                   <th data-tipo="numero">Ping (ms)</th>
                   <th data-tipo="texto">Portas</th>
                   <th data-tipo="texto">Serviço</th>
@@ -137,6 +144,14 @@ public static class RelatorioHtml
               </table>
             </section>
             """);
+
+        html.Append("<section class=\"tipos\"><h2>Tipos prováveis</h2><p class=\"dica\">Palpite pelo fabricante, pelos nomes, pelas portas e pelos serviços. O detalhe de cada host diz o motivo.</p><table class=\"lista curta\"><thead><tr><th>Tipo</th><th>Hosts</th></tr></thead><tbody>");
+        foreach (var grupo in tipos)
+        {
+            html.Append($"<tr><td>{C(grupo.Key)}</td><td class=\"num\">{grupo.Count()}</td></tr>");
+        }
+
+        html.Append("</tbody></table></section>");
 
         html.Append("<section class=\"fabricantes\"><h2>Fabricantes</h2><table class=\"lista curta\"><thead><tr><th>Fabricante</th><th>Hosts</th></tr></thead><tbody>");
         foreach (var grupo in fabricantes)
@@ -180,7 +195,7 @@ public static class RelatorioHtml
     private static void AcrescentarHost(StringBuilder html, HostEncontrado h)
     {
         var marcas = h.Marcas;
-        var busca = string.Join(' ', h.Ip, h.Nome, h.NomeDns, h.NomeNetBios, h.NomeMdns, h.GrupoNetBios, h.MacTexto, h.Fabricante, string.Join(' ', marcas), h.PortasTexto, string.Join(' ', h.Servicos.Select(s => s.Texto)))
+        var busca = string.Join(' ', h.Ip, h.Nome, h.NomeDns, h.NomeNetBios, h.NomeMdns, h.GrupoNetBios, h.MacTexto, h.Fabricante, string.Join(' ', marcas), h.PortasTexto, string.Join(' ', h.Servicos.Select(s => s.Texto)), h.Classificacao.Nome)
             .ToLowerInvariant();
         var classe = h.EhGateway ? " class=\"host gateway\"" : h.EhEsteComputador ? " class=\"host proprio\"" : " class=\"host\"";
 
@@ -189,16 +204,19 @@ public static class RelatorioHtml
         html.Append($"<td>{C(h.Nome)}</td>");
         html.Append($"<td class=\"mono\">{C(h.MacTexto)}</td>");
         html.Append($"<td>{C(h.Fabricante)}</td>");
+        var classificacao = h.Classificacao;
+        html.Append($"<td title=\"{C(classificacao.Texto)}\">{C(classificacao.Tipo == TipoEquipamento.Desconhecido ? string.Empty : classificacao.Nome)}</td>");
         html.Append($"<td class=\"num\" data-valor=\"{(h.TempoPingMs ?? -1)}\">{(h.TempoPingMs.HasValue ? h.TempoPingMs.Value.ToString(_ptBr) : "-")}</td>");
         html.Append($"<td class=\"mono\" title=\"{C(h.PortasAbertas.Count > 0 ? ListaPortas.Texto(h.PortasAbertas) : null)}\">{C(h.PortasTexto)}</td>");
         html.Append($"<td title=\"{C(string.Join("\n", h.Servicos.Select(s => s.Texto)))}\">{C(h.ServicoResumo)}</td>");
         html.Append($"<td>{string.Concat(marcas.Select(m => $"<span class=\"etiqueta\">{C(m)}</span>"))}</td>");
         html.Append("</tr>");
 
-        html.Append("<tr class=\"detalhe\" hidden><td colspan=\"8\"><dl>");
+        html.Append("<tr class=\"detalhe\" hidden><td colspan=\"9\"><dl>");
         Item(html, "IP", h.Ip.ToString());
         Item(html, "MAC", h.MacTexto.Length > 0 ? h.MacTexto : "não obtido");
         Item(html, "Fabricante", h.Fabricante.Length > 0 ? h.Fabricante : "não identificado");
+        Item(html, "Tipo provável", h.Classificacao.Texto);
         Item(html, "Nome pelo DNS reverso", h.NomeDns ?? "sem resposta");
         Item(html, "Nome NetBIOS", h.NomeNetBios ?? "sem resposta");
         Item(html, "Grupo de trabalho ou domínio (NetBIOS)", h.GrupoNetBios ?? "sem resposta");

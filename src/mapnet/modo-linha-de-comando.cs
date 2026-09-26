@@ -142,7 +142,8 @@ internal static partial class ModoLinhaDeComando
             var marcas = h.Marcas.Count > 0 ? $"  [{string.Join(", ", h.Marcas)}]" : string.Empty;
             var portas = h.PortasAbertas.Count > 0 ? $"  portas {h.PortasTexto}" : string.Empty;
             var servico = h.ServicoResumo.Length > 0 ? $"  ({Cortar(h.ServicoResumo, 50)})" : string.Empty;
-            Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {h.Nome}{marcas}{portas}{servico}");
+            var tipo = h.Classificacao.Tipo == TipoEquipamento.Desconhecido ? "-" : h.Classificacao.Nome;
+            Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {Cortar(tipo, 20),-20}  {h.Nome}{marcas}{portas}{servico}");
         }
 
         // Na linha de comando não há clique, então o relatório sai sem o IP público.

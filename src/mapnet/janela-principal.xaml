@@ -204,10 +204,20 @@
                             -->
                             <DataGridTextColumn Header="IP" Binding="{Binding Ip}" SortMemberPath="IpNumero" Width="118" MinWidth="118"
                                                 FontFamily="{StaticResource FonteConsole}" ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="1.3*" MinWidth="80"
-                                                ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Origem" Binding="{Binding OrigemNome}" Width="88" MinWidth="88"
-                                                ElementStyle="{StaticResource CelulaComDica}" />
+                            <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="1.3*" MinWidth="80">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="ToolTip" Value="{Binding NomeDica}" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="104" MinWidth="88">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="ToolTip" Value="{Binding TipoDica}" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTextColumn Header="MAC" Binding="{Binding Mac}" Width="132" MinWidth="132"
                                                 FontFamily="{StaticResource FonteConsole}" ElementStyle="{StaticResource CelulaComDica}" />
                             <DataGridTextColumn Header="Fabricante" Binding="{Binding Fabricante}" Width="1.4*" MinWidth="110"
