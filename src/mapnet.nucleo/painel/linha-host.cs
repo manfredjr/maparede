@@ -39,6 +39,12 @@ public sealed class LinhaHost : INotifyPropertyChanged
 
     public string Observacao => string.Join(", ", _host.Marcas);
 
+    /// <summary>O texto mais útil que os serviços deram: modelo, título da página, certificado ou banner.</summary>
+    public string Servico => _host.ServicoResumo;
+
+    /// <summary>Dica da coluna Serviço: uma linha por serviço identificado.</summary>
+    public string? ServicoDica => _host.Servicos.Count > 0 ? string.Join(Environment.NewLine, _host.Servicos.Select(s => s.Texto)) : null;
+
     /// <summary>Portas abertas, só os números: "22, 80, 443".</summary>
     public string Portas => _host.PortasTexto;
 
@@ -80,6 +86,7 @@ public sealed class LinhaHost : INotifyPropertyChanged
             || (macBusca.Length > 0 && Mac.Replace(":", string.Empty).Contains(macBusca, StringComparison.OrdinalIgnoreCase))
             || Fabricante.Contains(t, StringComparison.OrdinalIgnoreCase)
             || Observacao.Contains(t, StringComparison.OrdinalIgnoreCase)
+            || _host.Servicos.Any(s => s.Texto.Contains(t, StringComparison.OrdinalIgnoreCase))
             || _host.PortasAbertas.Any(p => p.ToString(System.Globalization.CultureInfo.InvariantCulture) == t);
     }
 

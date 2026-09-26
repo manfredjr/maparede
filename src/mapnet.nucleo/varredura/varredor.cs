@@ -18,13 +18,15 @@ public sealed class Varredor
     private readonly TabelaOui _oui;
     private readonly ISondaArp? _arp;
     private readonly ISondaPorta _portas;
+    private readonly IIdentificador _identificador;
 
-    public Varredor(OpcoesVarredura? opcoes = null, TabelaOui? oui = null, ISondaArp? arp = null, ISondaPorta? portas = null)
+    public Varredor(OpcoesVarredura? opcoes = null, TabelaOui? oui = null, ISondaArp? arp = null, ISondaPorta? portas = null, IIdentificador? identificador = null)
     {
         _opcoes = opcoes ?? new OpcoesVarredura();
         _oui = oui ?? TabelaOui.Embutida;
         _arp = _opcoes.UsarArp ? arp ?? SondaArp.Padrao() : null;
         _portas = portas ?? new SondaPortaTcp();
+        _identificador = identificador ?? new IdentificadorRede();
     }
 
     /// <summary>
@@ -104,6 +106,19 @@ public sealed class Varredor
             catch (OperationCanceledException)
             {
                 resultado.Cancelada = true;
+            }
+
+            if (!resultado.Cancelada && _opcoes.IdentificarServicos)
+            {
+                resultado.IdentificacaoFeita = true;
+                try
+                {
+                    await EtapaIdentificacao.IdentificarAsync(resultado.Hosts, interfaceRede.Ip, _opcoes, _identificador, progresso, cancelamento).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    resultado.Cancelada = true;
+                }
             }
 
             var fora = resultado.Hosts.Count(h => h.MotivoSemPortas == EtapaPortas.MotivoMacAleatorio);

@@ -39,6 +39,13 @@ public sealed class OpcoesVarredura
     public int ConexoesPorHost { get; set; } = 8;
 
     public int TempoPortaMs { get; set; } = 800;
+
+    /// <summary>Identifica os serviços das portas abertas. Só vale com <see cref="OlharPortas"/>. Ligado por padrão, decisão de 26/09/2026.</summary>
+    public bool IdentificarServicos { get; set; } = true;
+
+    public int TempoIdentificacaoMs { get; set; } = 3000;
+
+    public int IdentificacoesSimultaneas { get; set; } = 16;
 }
 
 /// <summary>Andamento da varredura, para barra de progresso e mensagem na tela.</summary>
@@ -88,6 +95,23 @@ public sealed class HostEncontrado
 
     /// <summary>Por que as portas deste host não foram verificadas. Null quando foram, ou quando a etapa não rodou.</summary>
     public string? MotivoSemPortas { get; set; }
+
+    /// <summary>Serviços identificados nas portas abertas, em ordem de porta, com o UPnP primeiro.</summary>
+    public IReadOnlyList<ServicoIdentificado> Servicos { get; set; } = [];
+
+    public bool ServicosIdentificados { get; set; }
+
+    /// <summary>
+    /// O texto mais útil para a tabela: modelo pelo UPnP, título da página, nome do certificado,
+    /// banner e, por fim, o servidor. Título de página de erro (403, 404...) não serve de resumo.
+    /// </summary>
+    public string ServicoResumo =>
+        Servicos.Select(s => s.Modelo).FirstOrDefault(t => t != null)
+        ?? Servicos.Where(s => s.CodigoHttp is null or < 400).Select(s => s.Titulo).FirstOrDefault(t => t != null)
+        ?? Servicos.Select(s => s.CertificadoNome).FirstOrDefault(t => t != null)
+        ?? Servicos.Select(s => s.Banner).FirstOrDefault(t => t != null)
+        ?? Servicos.Select(s => s.Servidor).FirstOrDefault(t => t != null)
+        ?? string.Empty;
 
     /// <summary>Portas para a tabela: "22, 80, 443".</summary>
     public string PortasTexto => string.Join(", ", PortasAbertas);
@@ -155,6 +179,9 @@ public sealed class ResultadoVarredura
 
     /// <summary>Lista de portas que a etapa de portas usou. Null quando a etapa não rodou.</summary>
     public IReadOnlyList<int>? PortasVerificadas { get; set; }
+
+    /// <summary>A etapa de identificação de serviços rodou.</summary>
+    public bool IdentificacaoFeita { get; set; }
 
     public string NomeComputador { get; init; } = Environment.MachineName;
 
