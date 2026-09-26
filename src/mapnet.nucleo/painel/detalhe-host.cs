@@ -60,6 +60,25 @@ public static class DetalheHost
         return alternativas.FirstOrDefault(h.PortasAbertas.Contains) is var a and > 0 ? a : null;
     }
 
+    /// <summary>
+    /// Diz se vale oferecer a ação. Sem verificação de portas, ou quando nenhuma porta do serviço
+    /// entrou na lista, não há como saber, e a ação fica ligada. Quando as portas do serviço foram
+    /// verificadas e todas estão fechadas, a ação desliga: abrir daria só erro.
+    /// </summary>
+    public static bool Disponivel(HostEncontrado h, AcaoHost acao)
+    {
+        int[] portas = acao switch
+        {
+            AcaoHost.AbrirHttp => [80, 8080, 8000],
+            AcaoHost.AbrirHttps => [443, 8443],
+            AcaoHost.AreaDeTrabalhoRemota => [3389],
+            AcaoHost.PastaCompartilhada => [445, 139],
+            _ => [],
+        };
+        var testadas = portas.Where(h.PortasTestadas.Contains).ToList();
+        return testadas.Count == 0 || testadas.Any(h.PortasAbertas.Contains);
+    }
+
     /// <summary>Texto das portas para o detalhe e o relatório.</summary>
     public static string TextoPortas(HostEncontrado h) =>
         h.PortasVerificadas

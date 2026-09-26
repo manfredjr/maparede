@@ -289,6 +289,12 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             abrir(arquivo, argumentos);
             Console.Escrever($"Abrindo {arquivo}{(argumentos is null ? "" : " " + argumentos)}.");
         }
+        catch (Win32Exception e)
+        {
+            // A mensagem do .NET vem em inglês e com a pasta do programa. A do Windows, pelo
+            // código do erro, vem no idioma do sistema e diz só o motivo.
+            Console.Escrever($"Não foi possível abrir {arquivo}: {new Win32Exception(e.NativeErrorCode).Message}");
+        }
         catch (Exception e)
         {
             Console.Escrever($"Não foi possível abrir {arquivo}: {e.Message}");
@@ -296,7 +302,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     }
 
     private Comando ComandoDe(AcaoHost acao) =>
-        new(() => AcaoNoHost(acao), () => _hostSelecionado != null && _dep.Abrir != null);
+        new(() => AcaoNoHost(acao), () => _hostSelecionado is { } h && _dep.Abrir != null && DetalheHost.Disponivel(h.Host, acao));
 
     private void AoMudarHost(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => AvisarDetalhe();
 

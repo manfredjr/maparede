@@ -182,6 +182,36 @@ public class PortasTestes
         Assert.Equal(esperada, DetalheHost.PortaWeb(h, https));
     }
 
+    [Theory]
+    [InlineData(AcaoHost.PastaCompartilhada, new[] { 80 }, false)]
+    [InlineData(AcaoHost.PastaCompartilhada, new[] { 139 }, true)]
+    [InlineData(AcaoHost.AreaDeTrabalhoRemota, new int[0], false)]
+    [InlineData(AcaoHost.AreaDeTrabalhoRemota, new[] { 3389 }, true)]
+    [InlineData(AcaoHost.AbrirHttp, new[] { 8000 }, true)]
+    [InlineData(AcaoHost.AbrirHttps, new[] { 80 }, false)]
+    public void Acao_desliga_quando_as_portas_do_servico_estao_fechadas(AcaoHost acao, int[] abertas, bool esperado)
+    {
+        var h = Host("192.0.2.5");
+        h.PortasTestadas = ListaPortas.Padrao;
+        h.PortasAbertas = abertas;
+        h.PortasVerificadas = true;
+
+        Assert.Equal(esperado, DetalheHost.Disponivel(h, acao));
+    }
+
+    [Fact]
+    public void Acao_fica_ligada_sem_verificacao_ou_quando_a_porta_nao_estava_na_lista()
+    {
+        var semEtapa = Host("192.0.2.5");
+        var outraLista = Host("192.0.2.6");
+        outraLista.PortasTestadas = [80];
+        outraLista.PortasVerificadas = true;
+
+        Assert.True(DetalheHost.Disponivel(semEtapa, AcaoHost.PastaCompartilhada));
+        Assert.True(DetalheHost.Disponivel(outraLista, AcaoHost.AreaDeTrabalhoRemota));
+        Assert.False(DetalheHost.Disponivel(outraLista, AcaoHost.AbrirHttp));
+    }
+
     [Fact]
     public void Atalho_web_sem_verificacao_fica_na_porta_comum()
     {

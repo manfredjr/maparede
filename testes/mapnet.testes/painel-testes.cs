@@ -511,6 +511,27 @@ public class PainelTestes
     }
 
     [Fact]
+    public async Task Erro_ao_abrir_mostra_so_o_motivo_do_windows()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        dependencias.Abrir = (_, _) => throw new System.ComponentModel.Win32Exception(67, "An error occurred trying to start process with working directory C:\\pasta");
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        var varredura = painel.VarrerAsync();
+        simulador.Terminar(Resultado());
+        await varredura;
+        painel.HostSelecionado = painel.Hosts[1];
+
+        painel.AcaoNoHost(AcaoHost.PastaCompartilhada);
+
+        var linha = painel.Console.Linhas[^1];
+        Assert.Contains(@"Não foi possível abrir \\192.0.2.20:", linha);
+        Assert.DoesNotContain("An error occurred", linha);
+        Assert.DoesNotContain("pasta", linha);
+    }
+
+    [Fact]
     public async Task Opcoes_de_portas_nao_mudam_durante_a_varredura()
     {
         var simulador = new Simulador();

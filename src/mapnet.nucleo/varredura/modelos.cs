@@ -83,6 +83,9 @@ public sealed class HostEncontrado
 
     public bool PortasVerificadas { get; set; }
 
+    /// <summary>Lista de portas que foi verificada neste host. Vazia quando a etapa não rodou nele.</summary>
+    public IReadOnlyList<int> PortasTestadas { get; set; } = [];
+
     /// <summary>Por que as portas deste host não foram verificadas. Null quando foram, ou quando a etapa não rodou.</summary>
     public string? MotivoSemPortas { get; set; }
 

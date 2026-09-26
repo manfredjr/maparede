@@ -288,6 +288,7 @@ public static class Demonstracao
             {
                 var h = alvos[n];
                 h.PortasAbertas = _portasExemplo.TryGetValue(h.Ip.GetAddressBytes()[3], out var p) ? p.Where(opcoes.Portas.Contains).ToList() : [];
+                h.PortasTestadas = opcoes.Portas;
                 h.PortasVerificadas = true;
                 progresso.Report(new ProgressoVarredura(EtapaPortas.Nome, n + 1, alvos.Count, h));
                 await Task.Delay(120, CancellationToken.None).ConfigureAwait(true);

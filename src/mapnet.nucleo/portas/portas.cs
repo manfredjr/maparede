@@ -193,6 +193,7 @@ public static class EtapaPortas
             await Task.WhenAll(portas).ConfigureAwait(false);
 
             host.PortasAbertas = abertas.Order().ToList();
+            host.PortasTestadas = opcoes.Portas;
             host.PortasVerificadas = true;
             var feitos = Interlocked.Increment(ref concluidos);
             progresso?.Report(new ProgressoVarredura(Nome, feitos, total, host));
