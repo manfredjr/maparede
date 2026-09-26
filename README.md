@@ -17,7 +17,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/mapnet/pull/1) | Concluída |
 | 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/mapnet/pull/2) | Publicada na v0.1.2 |
 | 1b | Página mapnet.manfred.com.br, código aberto (GPL-3.0), nome MapNet - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/mapnet/pull/3) | Concluída |
-| 2 | Tela WPF do painel do técnico, com a identidade da MT (versão 0.2.0) | `tela-wpf` | - | Em teste |
+| 2 | Tela WPF do painel do técnico, com a identidade da MT (v0.2.0 com erro no fim da varredura, corrigida na v0.2.1) | `tela-wpf` | [#10](https://github.com/manfredjr/mapnet/pull/10), [#12](https://github.com/manfredjr/mapnet/pull/12) | Em teste |
 | 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda | a definir | - | A fazer |
 | 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões, rotas e `ipconfig /all` | a definir | - | A fazer |
 | 5 | Ações de manutenção com elevação sob demanda | a definir | - | A fazer |
