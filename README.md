@@ -40,6 +40,7 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 4. Clique em **Iniciar varredura**. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante ou observação, e cada coluna ordena com um clique no título.
 5. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo. O console tem também uma aba para cada ferramenta: Ping (normal ou contínuo), Tracert, DNS com escolha do servidor, ARP, Conexões e Rotas. Os campos de host e de servidor DNS já vêm com o gateway e o DNS da interface. Enquanto a ferramenta roda, **Executar** vira **Parar**. **Copiar** e **Limpar** valem para a aba aberta.
 6. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
+7. A aba **Manutenção** tem quatro botões, que rodam os comandos oficiais do Windows e mostram a saída ali mesmo: **Limpar cache DNS** (`ipconfig /flushdns`), **Liberar e renovar IP** (`ipconfig /release` e `/renew`), **Limpar tabela ARP** (`netsh interface ip delete arpcache`) e **Resetar Winsock e TCP/IP** (`netsh winsock reset` e `netsh int ip reset`). O programa continua abrindo como usuário comum. Quando a ação pede administrador, o Windows mostra a tela do UAC só para aquele comando. Renovar o IP e resetar o Winsock derrubam a rede por alguns segundos e pedem confirmação antes. O reset só vale depois de reiniciar o computador.
 
 ### Pela linha de comando
 
