@@ -19,6 +19,7 @@ deployment:
         - test -f $REPO/public/img/favicon-32.png
         - test -f $REPO/public/img/logo-128.webp
         - test -f $REPO/public/img/mapnet-simbolo.webp
+        - cd $REPO && sh ferramentas/implantacao.sh
         - chmod 755 $REPO
         - cd $REPO && find public -type d -exec chmod 755 {} \;
         - cd $REPO && find public -type f -exec chmod 644 {} \;
