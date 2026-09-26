@@ -24,6 +24,7 @@
   <ItemGroup>
     <Resource Include="recursos\mapnet.ico" />
     <Resource Include="recursos\mapnet-simbolo.png" />
+    <Resource Include="recursos\mt-logo.png" />
     <Resource Include="recursos\fontes\*.ttf" />
     <Resource Include="recursos\fontes\ofl.txt" />
   </ItemGroup>

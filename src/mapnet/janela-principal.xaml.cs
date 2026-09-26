@@ -17,12 +17,12 @@ public partial class JanelaPrincipal : Window
 {
     private readonly PainelVarredura _painel;
 
-    public JanelaPrincipal()
+    public JanelaPrincipal(DependenciasPainel dependencias, string complementoTitulo)
     {
         InitializeComponent();
-        _painel = new PainelVarredura(DependenciasPainel.Padrao());
+        _painel = new PainelVarredura(dependencias);
         DataContext = _painel;
-        Title = PainelVarredura.Titulo;
+        Title = PainelVarredura.Titulo + complementoTitulo;
 
         var vista = CollectionViewSource.GetDefaultView(_painel.Hosts);
         vista.Filter = _painel.Aceita;
@@ -112,6 +112,11 @@ public partial class JanelaPrincipal : Window
     }
 
     private void AoLimparConsole(object sender, RoutedEventArgs e) => _painel.Console.Limpar();
+
+    /// <summary>O navegador abre o site da MT. O programa em si não manda nada para a internet.</summary>
+    private void AoClicarMarcaMt(object sender, RoutedEventArgs e) => AbrirNoSistema(SiteMt);
+
+    public const string SiteMt = "https://www.manfred.com.br";
 
     private void AbrirNoSistema(string? caminho)
     {

@@ -47,6 +47,70 @@ public class RelatorioTestes
         Assert.Empty(CaracteresProibidosTestes.Proibidos(html));
     }
 
+    [Fact]
+    public void Secao_minha_maquina_vem_antes_dos_hosts()
+    {
+        var resultado = Exemplo();
+        resultado.Maquina = LeitorMaquina.Ler(MaquinaTestes.Interface(TipoInterface.Cabo), MaquinaTestes.Fontes(), 22);
+
+        var html = Texto(resultado);
+
+        Assert.Contains("<h2>Minha máquina</h2>", html);
+        Assert.Contains("<h3>Computador</h3>", html);
+        Assert.Contains("<h3>DHCP</h3>", html);
+        Assert.Contains("escritorio.example", html);
+        Assert.True(html.IndexOf("Minha máquina", StringComparison.Ordinal) < html.IndexOf("<h2>Hosts</h2>", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Sem_dados_da_maquina_a_secao_nao_aparece()
+    {
+        var html = RelatorioHtml.Gerar(Exemplo());
+
+        Assert.DoesNotContain("<h2>Minha máquina</h2>", html);
+    }
+
+    [Fact]
+    public void Ip_publico_so_aparece_quando_foi_consultado()
+    {
+        var resultado = Exemplo();
+        resultado.Maquina = LeitorMaquina.Ler(MaquinaTestes.Interface(TipoInterface.Cabo), MaquinaTestes.Fontes(), 22);
+
+        Assert.DoesNotContain("IP público", Texto(resultado));
+
+        resultado.IpPublico = "203.0.113.7";
+        var html = Texto(resultado);
+
+        Assert.Contains("<h3>IP público</h3>", html);
+        Assert.Contains("203.0.113.7", html);
+    }
+
+    [Fact]
+    public void Nome_da_rede_wifi_e_codificado()
+    {
+        var resultado = Exemplo();
+        var wifi = new FontesMaquina
+        {
+            Computador = () => null,
+            Placa = _ => null,
+            Wifi = new WifiFixo(new DadosWifi { Ssid = "<img src=x onerror=alert(1)>" }),
+        };
+        resultado.Maquina = LeitorMaquina.Ler(MaquinaTestes.Interface(TipoInterface.WiFi), wifi, 22);
+
+        var html = RelatorioHtml.Gerar(resultado);
+
+        Assert.DoesNotContain("<img src=x", html);
+        Assert.Contains("&lt;img src=x onerror=alert(1)&gt;", html);
+    }
+
+    /// <summary>HTML com as entidades decodificadas: o relatório grava "á" como "&amp;#225;".</summary>
+    private static string Texto(ResultadoVarredura resultado) => WebUtility.HtmlDecode(RelatorioHtml.Gerar(resultado));
+
+    private sealed class WifiFixo(DadosWifi dados) : IFonteWifi
+    {
+        public DadosWifi? Ler(string idInterface) => dados;
+    }
+
     [Theory]
     [InlineData(12, "12 s")]
     [InlineData(83, "1 min 23 s")]

@@ -133,6 +133,8 @@ internal static partial class ModoLinhaDeComando
             Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {h.Nome}{marcas}");
         }
 
+        // Na linha de comando não há clique, então o relatório sai sem o IP público.
+        resultado.Maquina = LeitorMaquina.Ler(interfaceRede, FontesMaquina.Padrao(), argumentos.Opcoes.PrefixoMinimo);
         var caminho = DefinirCaminho(argumentos.Saida, resultado);
         caminho = await RelatorioHtml.SalvarAsync(resultado, caminho).ConfigureAwait(false);
         Console.WriteLine();

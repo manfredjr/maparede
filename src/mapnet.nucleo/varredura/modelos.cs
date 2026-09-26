@@ -125,6 +125,12 @@ public sealed class ResultadoVarredura
 
     public string NomeComputador { get; init; } = Environment.MachineName;
 
+    /// <summary>Dados da coluna "Minha máquina" para a seção do relatório. Null quando não foram lidos.</summary>
+    public InformacoesMaquina? Maquina { get; set; }
+
+    /// <summary>IP público, só quando o técnico consultou antes de gravar o relatório.</summary>
+    public string? IpPublico { get; set; }
+
     public static string VersaoPrograma =>
         typeof(ResultadoVarredura).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
         ?? "0.0.0";
