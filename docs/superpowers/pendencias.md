@@ -61,7 +61,7 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 
 | Item | Motivo | O que fecha |
 |---|---|---|
-| Portas desligadas por padrão | O plano da versão 1.0 previa as portas ligadas, com `--sem-portas` para desligar. A análise jurídica de 26/09/2026 recomendou pedir o escopo antes da sondagem e deixar aparelhos pessoais de fora por padrão. A fatia seguiu a recomendação: a caixa começa desmarcada, a primeira varredura com portas em cada rede pede confirmação e a linha de comando liga com `--portas` | O Manfred confirmar a escolha ou pedir as portas ligadas ao abrir |
+| Portas desligadas por padrão | O plano da versão 1.0 previa as portas ligadas, com `--sem-portas` para desligar. A análise jurídica de 26/09/2026 recomendou pedir o escopo antes da sondagem e deixar aparelhos pessoais de fora por padrão. A fatia seguiu a recomendação: a caixa começa desmarcada, a primeira varredura com portas em cada rede pede confirmação e a linha de comando liga com `--portas` | Fechado em 26/09/2026: o Manfred confirmou as portas desligadas ao abrir, com confirmação por rede |
 | Portas numa rede de verdade | A etapa foi testada com sonda simulada e no modo de demonstração. Não rodou numa rede de verdade no teste do agente | O Manfred varrer a rede da MT com as portas ligadas e conferir, por exemplo, a 80 ou 443 no roteador, a 9100 numa impressora e a 445 num Windows com compartilhamento |
 | Confirmação vale para a sessão | A pergunta aparece uma vez por sub-rede enquanto o programa está aberto. Fechar e abrir de novo pergunta outra vez | Guardar a confirmação, se o Manfred achar a pergunta repetitiva no uso |
 
