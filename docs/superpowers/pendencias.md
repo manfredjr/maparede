@@ -34,3 +34,11 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 | Wi-Fi com a Localização do Windows desligada | O caso está coberto por teste com fonte simulada, mas não foi visto num Windows de verdade: no computador do teste a Localização estava ligada e o nome da rede apareceu | Abrir o programa com a Localização desligada e conferir a mensagem no bloco Wi-Fi |
 | Wi-Fi de 6 GHz | A banda sai da frequência do ponto de acesso, com teste para 6 GHz, mas o teste real foi numa rede de 5 GHz | Conferir numa placa e numa rede Wi-Fi 6E |
 | Consulta real ao 1.1.1.1 | Os testes não usam a rede, e o teste da tela foi no modo de demonstração, que não consulta nada. A consulta de verdade só roda no `.exe` com o clique | O Manfred clicar em **Consultar IP público** no `.exe` do PR e comparar com o que `https://1.1.1.1/cdn-cgi/trace` mostra no navegador |
+
+## Fatia 4: diagnóstico no console
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Resultado das ferramentas no relatório | O desenho prevê levar ao relatório o resumo das ferramentas, quando o técnico pedir. A fatia 4 mostra tudo no console, e o botão Copiar leva o texto para outro lugar | Botão "levar ao relatório" em cada aba, numa fatia futura |
+| ARP e rotas em IPv6 | As tabelas usam `GetIpNetTable` e `GetIpForwardTable`, só IPv4, como a varredura | Trocar pelas versões `2` se o IPv6 fizer falta no campo |
+| Tracert com um pacote por salto | O `tracert` do Windows manda três por salto. Um basta para ver o caminho e deixa a ferramenta três vezes mais rápida | Voltar a três se o Manfred preferir no uso |
