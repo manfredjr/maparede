@@ -71,7 +71,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="10" />
-                <RowDefinition Height="200" />
+                <RowDefinition Height="240" />
             </Grid.RowDefinitions>
 
             <!-- Minha maquina -->
@@ -87,7 +87,7 @@
                     <!-- Consulta do IP publico fixa acima do logo, sempre a mostra -->
                     <Button DockPanel.Dock="Bottom" Style="{StaticResource BotaoContorno}" HorizontalAlignment="Center" Margin="0,10,0,0"
                             Command="{Binding ComandoIpPublico}" Content="{Binding TextoBotaoIpPublico}"
-                            ToolTip="Pergunta o IP público ao serviço 1.1.1.1, do Cloudflare. É a única consulta do programa fora da rede local." />
+                            ToolTip="Pergunta o IP público ao serviço 1.1.1.1, do Cloudflare. Só roda com o clique." />
                     <Border DockPanel.Dock="Bottom" Height="1" Background="{StaticResource PincelBorda}" Margin="0,8,0,0" />
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
                         <Border Style="{StaticResource BarraTitulo}" />
@@ -164,22 +164,44 @@
                 </DockPanel>
             </Border>
 
-            <!-- Console -->
+            <!-- Console: abas Varredura e ferramentas, campos da ferramenta escolhida e o registro da aba -->
             <Border Grid.Column="2" Grid.Row="2" Background="{StaticResource PincelGrafite}" CornerRadius="10">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Background="#2B2B2B" Margin="0">
-                        <Border DockPanel.Dock="Left" Background="{StaticResource PincelGrafite}" CornerRadius="6,6,0,0"
-                                Margin="8,6,0,0" Padding="12,5">
-                            <TextBlock Text="Varredura" FontWeight="SemiBold" FontSize="11.5"
-                                       Foreground="{StaticResource PincelVerdeClaro}" />
-                        </Border>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,8,4">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,4,8,4">
                             <Button Style="{StaticResource BotaoConsole}" Content="Copiar" Click="AoCopiarConsole"
-                                    ToolTip="Copiar o registro para a área de transferência" />
-                            <Button Style="{StaticResource BotaoConsole}" Content="Limpar" Click="AoLimparConsole" />
+                                    ToolTip="Copiar o registro da aba para a área de transferência" />
+                            <Button Style="{StaticResource BotaoConsole}" Content="Limpar" Click="AoLimparConsole"
+                                    ToolTip="Limpar o registro da aba" />
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Abas}" SelectedItem="{Binding AbaSelecionada, Mode=TwoWay}"
+                                 Style="{StaticResource AbasConsole}" Margin="8,6,0,0" />
+                    </DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="10,8,10,2" DataContext="{Binding AbaSelecionada}"
+                               Visibility="{Binding EhFerramenta, Converter={StaticResource VisivelSe}}">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource BotaoExecutar}" MinWidth="86"
+                                Command="{Binding ComandoExecutar}" Content="{Binding TextoBotao}" ToolTip="{Binding Descricao}" />
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding PedeAlvo, Converter={StaticResource VisivelSe}}">
+                                <TextBlock Style="{StaticResource RotuloConsole}" Text="Host:" />
+                                <TextBox Style="{StaticResource CampoConsole}" Width="200" Text="{Binding Alvo, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="IP ou nome do host">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding ComandoExecutar}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding PedeServidor, Converter={StaticResource VisivelSe}}">
+                                <TextBlock Style="{StaticResource RotuloConsole}" Text="Servidor DNS:" />
+                                <TextBox Style="{StaticResource CampoConsole}" Width="130" Text="{Binding Servidor, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="IP do servidor DNS. Vem preenchido com o DNS da interface" />
+                            </StackPanel>
+                            <CheckBox Content="Contínuo" IsChecked="{Binding Continuo}" Foreground="#CFCFCF" VerticalAlignment="Center"
+                                      Margin="4,0,0,0" ToolTip="Pinga sem parar até clicar em Parar"
+                                      Visibility="{Binding PodeContinuo, Converter={StaticResource VisivelSe}}" />
                         </StackPanel>
                     </DockPanel>
-                    <ListBox x:Name="ListaConsole" ItemsSource="{Binding Console.Linhas}"
+                    <ListBox x:Name="ListaConsole" ItemsSource="{Binding AbaSelecionada.Registro.Linhas}"
                              Background="Transparent" BorderThickness="0" Padding="8,6"
                              Foreground="{StaticResource PincelTextoConsole}"
                              FontFamily="{StaticResource FonteConsole}" FontSize="12"

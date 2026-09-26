@@ -250,6 +250,86 @@
         </Setter>
     </Style>
 
+    <BooleanToVisibilityConverter x:Key="VisivelSe" />
+
+    <!-- Abas do console: a escolhida fica grafite com texto verde-claro, as outras em cinza -->
+    <Style TargetType="{x:Type ListBox}" x:Key="AbasConsole">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Titulo}" ToolTip="{Binding Descricao}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="FontSize" Value="11.5" />
+                    <Setter Property="Foreground" Value="#9A9A9A" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border x:Name="Fundo" Background="Transparent" CornerRadius="6,6,0,0" Padding="12,5" Margin="0,0,2,0">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Fundo" Property="Background" Value="{StaticResource PincelGrafite}" />
+                                        <Setter Property="Foreground" Value="{StaticResource PincelVerdeClaro}" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="#E6E6E6" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type TextBlock}" x:Key="RotuloConsole">
+        <Setter Property="Foreground" Value="#CFCFCF" />
+        <Setter Property="FontSize" Value="11.5" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,0,6,0" />
+    </Style>
+
+    <Style TargetType="{x:Type TextBox}" x:Key="CampoConsole">
+        <Setter Property="Background" Value="#2E2E2E" />
+        <Setter Property="Foreground" Value="#F0F0F0" />
+        <Setter Property="CaretBrush" Value="#F0F0F0" />
+        <Setter Property="BorderBrush" Value="#555555" />
+        <Setter Property="FontFamily" Value="{StaticResource FonteConsole}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="5,3" />
+        <Setter Property="Margin" Value="0,0,14,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!-- Executar das ferramentas: pilula verde-clara sobre o grafite -->
+    <Style TargetType="{x:Type Button}" x:Key="BotaoExecutar" BasedOn="{StaticResource BotaoPilula}">
+        <Setter Property="Background" Value="{StaticResource PincelVerdeClaro}" />
+        <Setter Property="Foreground" Value="{StaticResource PincelGrafite}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PincelVerdeClaro}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="14,3" />
+        <Setter Property="FontSize" Value="11.5" />
+    </Style>
+
     <!-- Barra de progresso verde -->
     <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressoMT">
         <Setter Property="Height" Value="8" />

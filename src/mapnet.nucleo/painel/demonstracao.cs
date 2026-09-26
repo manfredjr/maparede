@@ -50,8 +50,113 @@ public static class Demonstracao
             PastaRelatorios = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MapNet - MT", "demonstracao"),
             LerMaquina = i => Task.FromResult(LeitorMaquina.Ler(i, Fontes(), new OpcoesVarredura().PrefixoMinimo)),
             IpPublico = new IpPublicoDemonstracao(),
+            Ferramentas = Ferramentas,
         };
     }
+
+    /// <summary>As ferramentas do console com respostas de exemplo, sem tocar na rede nem no Windows.</summary>
+    public static IReadOnlyList<IFerramenta> Ferramentas()
+    {
+        var pingador = new PingadorDemonstracao();
+        var espera = (TimeSpan t, CancellationToken c) => Task.Delay(TimeSpan.FromMilliseconds(t.TotalMilliseconds / 4), c);
+        var tabelas = new TabelasDemonstracao();
+        return
+        [
+            new FerramentaPing(pingador, espera),
+            new FerramentaTracert(pingador, (ip, _) => Task.FromResult(NomeDoSalto(ip))),
+            new FerramentaDns(RespostaDnsDemonstracao),
+            FerramentaTabela.Arp(tabelas),
+            FerramentaTabela.Conexoes(tabelas),
+            FerramentaTabela.Rotas(tabelas),
+        ];
+    }
+
+    private static string? NomeDoSalto(IPAddress ip) => ip.ToString() switch
+    {
+        "192.0.2.1" => "roteador.escritorio.example",
+        "198.51.100.1" => "borda.provedor.example",
+        _ => null,
+    };
+
+    /// <summary>Caminho de exemplo: roteador, provedor, um salto mudo e o destino.</summary>
+    private sealed class PingadorDemonstracao : IPingador
+    {
+        private static readonly string?[] _caminho = ["192.0.2.1", "198.51.100.1", null, "203.0.113.10"];
+
+        public async Task<RespostaPing> EnviarAsync(IPAddress destino, int ttl, int tempoMs, CancellationToken cancelamento)
+        {
+            await Task.Delay(120, cancelamento).ConfigureAwait(true);
+            if (ttl >= 128 || ttl >= _caminho.Length)
+            {
+                return new RespostaPing(StatusPing.Respondeu, destino, 18 + Random.Shared.Next(0, 6), 57);
+            }
+
+            return _caminho[ttl - 1] is { } salto
+                ? new RespostaPing(StatusPing.TtlExpirou, IPAddress.Parse(salto), 2 + (ttl * 5), null)
+                : new RespostaPing(StatusPing.TempoEsgotado, null, 0, null);
+        }
+    }
+
+    /// <summary>Responde qualquer pergunta com um registro de exemplo, montando o pacote de volta.</summary>
+    private static Task<byte[]?> RespostaDnsDemonstracao(IPEndPoint servidor, byte[] pergunta, int tempoMs, CancellationToken cancelamento)
+    {
+        var tipo = (ushort)((pergunta[^4] << 8) | pergunta[^3]);
+        byte[] dados = tipo switch
+        {
+            ConsultaDns.TipoA => [192, 0, 2, 80],
+            ConsultaDns.TipoAaaa => IPAddress.Parse("2001:db8::80").GetAddressBytes(),
+            _ => NomeEmBytes("servidor-de-arquivos.escritorio.example"),
+        };
+        var resposta = new List<byte>(pergunta);
+        resposta[2] = 0x81;
+        resposta[3] = 0x80;
+        resposta[7] = 1;
+        resposta.AddRange([0xC0, 0x0C, (byte)(tipo >> 8), (byte)tipo, 0, 1, 0, 0, 0x0E, 0x10, 0, (byte)dados.Length]);
+        resposta.AddRange(dados);
+        return Task.FromResult<byte[]?>(resposta.ToArray());
+    }
+
+    private static byte[] NomeEmBytes(string nome)
+    {
+        var bytes = new List<byte>();
+        foreach (var rotulo in nome.Split('.'))
+        {
+            bytes.Add((byte)rotulo.Length);
+            bytes.AddRange(System.Text.Encoding.ASCII.GetBytes(rotulo));
+        }
+
+        bytes.Add(0);
+        return bytes.ToArray();
+    }
+
+    private sealed class TabelasDemonstracao : ITabelasRede
+    {
+        public IReadOnlyList<LinhaArp> Arp() =>
+        [
+            new(IPAddress.Parse("192.0.2.1"), [0x00, 0x00, 0x0C, 0x12, 0x34, 0x01], 3, "Wi-Fi"),
+            new(IPAddress.Parse("192.0.2.5"), [0x00, 0x80, 0x77, 0x12, 0x34, 0x05], 3, "Wi-Fi"),
+            new(IPAddress.Parse("192.0.2.57"), [0x00, 0x0C, 0x29, 0x12, 0x34, 0x57], 3, "Wi-Fi"),
+            new(IPAddress.Parse("192.0.2.255"), [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF], 4, "Wi-Fi"),
+        ];
+
+        public IReadOnlyList<LinhaRota> Rotas() =>
+        [
+            new(IPAddress.Any, IPAddress.Any, IPAddress.Parse("192.0.2.1"), "Wi-Fi", 35),
+            new(IPAddress.Parse("192.0.2.0"), IPAddress.Parse("255.255.255.0"), IPAddress.Any, "Wi-Fi", 291),
+            new(IPAddress.Parse("198.51.100.0"), IPAddress.Parse("255.255.255.0"), IPAddress.Any, "Ethernet", 281),
+        ];
+
+        public IReadOnlyList<LinhaConexao> Conexoes() =>
+        [
+            new("TCP", IPAddress.Any, 135, null, 0, 2, 1044, "svchost"),
+            new("TCP", IPAddress.Any, 445, null, 0, 2, 4, "System"),
+            new("TCP", IPAddress.Parse("192.0.2.23"), 50412, IPAddress.Parse("192.0.2.57"), 445, 5, 4, "System"),
+            new("TCP", IPAddress.Parse("192.0.2.23"), 50433, IPAddress.Parse("203.0.113.10"), 443, 5, 7310, "navegador"),
+            new("UDP", IPAddress.Any, 5353, null, 0, 0, 2210, "svchost"),
+        ];
+    }
+
+
 
     /// <summary>Máquina de exemplo, com Wi-Fi e DHCP.</summary>
     public static FontesMaquina Fontes()

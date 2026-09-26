@@ -19,7 +19,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 1b | Página mapnet.manfred.com.br, código aberto (GPL-3.0), nome MapNet - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/mapnet/pull/3) | Concluída |
 | 2 | Tela WPF do painel do técnico, com a identidade da MT (a v0.2.0 fechava no fim da varredura e teve a Release retirada, a correção saiu na v0.2.1) | `tela-wpf` | [#10](https://github.com/manfredjr/mapnet/pull/10), [#12](https://github.com/manfredjr/mapnet/pull/12), [#13](https://github.com/manfredjr/mapnet/pull/13) | Publicada na v0.2.1 |
 | 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda, e tabela de hosts sem texto cortado (sai como v0.2.2) | `minha-maquina` | Plano em [#14](https://github.com/manfredjr/mapnet/pull/14), código em [#16](https://github.com/manfredjr/mapnet/pull/16) | Em teste |
-| 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões, rotas e `ipconfig /all` | a definir | - | A fazer |
+| 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões e rotas (sai como v0.2.3) | `diagnostico` | [#17](https://github.com/manfredjr/mapnet/pull/17) | Em teste |
 | 5 | Ações de manutenção com elevação sob demanda | a definir | - | A fazer |
 | 6 | Painel de detalhe do host | a definir | - | A fazer |
 | 7 em diante | Portas TCP, identificação leve, classificação e relatório completo em HTML, XML e CSV | a definir | - | A fazer |
@@ -36,9 +36,9 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 
 1. Abra o `mapnet.exe`.
 2. Na faixa verde do topo, escolha a interface de rede. A primeira da lista é a que tem gateway, quase sempre a certa. A coluna **Minha máquina** mostra o computador (nome, grupo de trabalho ou domínio, usuário), a placa (tipo, MAC, velocidade, MTU), os endereços (IPv4, IPv6, gateway, DNS, sufixo e a sub-rede que vai ser varrida) e o DHCP com a validade da concessão. No Wi-Fi, mostra também a rede, a banda, o canal e o sinal.
-3. O botão **Consultar IP público** pergunta o IP ao serviço `1.1.1.1`, do Cloudflare. É a única consulta do programa fora da rede local e só acontece com o clique. Se o relatório for gravado depois da consulta, o IP público vai junto.
+3. O botão **Consultar IP público** pergunta o IP ao serviço `1.1.1.1`, do Cloudflare, e só roda com o clique. Se o relatório for gravado depois da consulta, o IP público vai junto.
 4. Clique em **Iniciar varredura**. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante ou observação, e cada coluna ordena com um clique no título.
-5. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo.
+5. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo. O console tem também uma aba para cada ferramenta: Ping (normal ou contínuo), Tracert, DNS com escolha do servidor, ARP, Conexões e Rotas. Os campos de host e de servidor DNS já vêm com o gateway e o DNS da interface. Enquanto a ferramenta roda, **Executar** vira **Parar**. **Copiar** e **Limpar** valem para a aba aberta.
 6. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
 
 ### Pela linha de comando

@@ -28,6 +28,16 @@ public sealed class RegistroConsole
         }
     }
 
+    /// <summary>Linha sem a hora, para as linhas de tabela das ferramentas.</summary>
+    public void EscreverSemHora(string texto)
+    {
+        Linhas.Add(texto);
+        while (Linhas.Count > LimiteLinhas)
+        {
+            Linhas.RemoveAt(0);
+        }
+    }
+
     public void Limpar() => Linhas.Clear();
 
     /// <summary>Todo o registro num texto só, para o botão de copiar.</summary>
