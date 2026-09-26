@@ -27,7 +27,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 7 | Portas TCP comuns abertas, com lista configurável, desligadas por padrão e com confirmação por rede (sai como v0.3.0) | `portas` | Plano em [#26](https://github.com/manfredjr/mapnet/pull/26), código em [#31](https://github.com/manfredjr/mapnet/pull/31) | Publicada na v0.3.0 |
 | 8 | Identificação leve dos serviços nas portas abertas: título da página, certificado HTTPS, banner SSH, FTP e SMTP, e UPnP (sai como v0.4.0) | `identificacao-servicos` | Plano em [#32](https://github.com/manfredjr/mapnet/pull/32), código em [#34](https://github.com/manfredjr/mapnet/pull/34) | Em revisão |
 | 9 | Classificação por tipo de equipamento, com os motivos à vista (sai como v0.5.0) | `classificacao` | [#35](https://github.com/manfredjr/mapnet/pull/35) | Em revisão |
-| 10 | Relatório também em CSV e XML, pela janela e pela linha de comando (sai como v1.0.0) | `relatorios` | [PREENCHER] | Em revisão |
+| 10 | Relatório também em CSV e XML, pela janela e pela linha de comando (sai como v1.0.0) | `relatorios` | [#36](https://github.com/manfredjr/mapnet/pull/36) | Em revisão |
 
 A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
 
