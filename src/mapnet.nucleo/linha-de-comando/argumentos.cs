@@ -28,7 +28,10 @@ public sealed class ArgumentosCli
         Opções de --varrer:
           --interface <n ou nome>   interface pelo número de --interfaces ou por parte do nome
                                     (padrão: a primeira da lista, que é a que tem gateway)
-          --saida <pasta ou .html>  onde gravar o relatório (padrão: pasta atual)
+          --saida <pasta ou arquivo> onde gravar o relatório (padrão: pasta atual). Arquivo
+                                    terminado em .html, .csv ou .xml define o formato
+          --formato <f>             html, csv, xml ou todos (padrão: html). Com todos,
+                                    grava os três na pasta de --saida
           --abrir                   abre o relatório no navegador ao terminar
           --tempo-ping <ms>         espera de cada ping, de 100 a 10000 (padrão: 1000)
           --paralelo <n>            endereços sondados ao mesmo tempo, de 1 a 256 (padrão: 64)
@@ -58,6 +61,9 @@ public sealed class ArgumentosCli
 
     public bool Abrir { get; private set; }
 
+    /// <summary>Formatos a gravar. Padrão: só o HTML.</summary>
+    public IReadOnlyList<FormatoRelatorio> Formatos { get; private set; } = [FormatoRelatorio.Html];
+
     public OpcoesVarredura Opcoes { get; } = new();
 
     public List<string> Erros { get; } = [];
@@ -69,6 +75,7 @@ public sealed class ArgumentosCli
         var a = new ArgumentosCli();
         var comandos = 0;
         var semIdentificar = false;
+        var formatoDado = false;
 
         for (var i = 0; i < args.Count; i++)
         {
@@ -100,6 +107,25 @@ public sealed class ArgumentosCli
                     break;
                 case "--abrir":
                     a.Abrir = true;
+                    break;
+                case "--formato":
+                    var formato = Valor(args, ref i, arg, a.Erros)?.Trim().ToLowerInvariant();
+                    IReadOnlyList<FormatoRelatorio>? escolhidos = formato switch
+                    {
+                        null => null,
+                        "html" => [FormatoRelatorio.Html],
+                        "csv" => [FormatoRelatorio.Csv],
+                        "xml" => [FormatoRelatorio.Xml],
+                        "todos" => [FormatoRelatorio.Html, FormatoRelatorio.Csv, FormatoRelatorio.Xml],
+                        _ => null,
+                    };
+                    if (escolhidos is null && formato != null)
+                    {
+                        a.Erros.Add($"Formato desconhecido: {formato}. Use html, csv, xml ou todos.");
+                    }
+
+                    a.Formatos = escolhidos ?? a.Formatos;
+                    formatoDado = true;
                     break;
                 case "--sem-arp":
                     a.Opcoes.UsarArp = false;
@@ -149,10 +175,23 @@ public sealed class ArgumentosCli
             a.Erros.Add("Use só um comando por vez: --varrer, --interfaces, --ajuda ou --versao.");
         }
 
-        var opcoesDeVarredura = a.Interface != null || a.Saida != null || a.Abrir || a.Opcoes.OlharPortas;
+        var opcoesDeVarredura = a.Interface != null || a.Saida != null || a.Abrir || a.Opcoes.OlharPortas || formatoDado;
         if (opcoesDeVarredura && a.Comando == ComandoCli.Janela)
         {
-            a.Erros.Add("As opções --interface, --saida, --abrir e --portas pedem o comando --varrer.");
+            a.Erros.Add("As opções --interface, --saida, --formato, --abrir e --portas pedem o comando --varrer.");
+        }
+
+        // Arquivo com extensão conhecida em --saida define o formato. Com mais de um formato, --saida tem que ser pasta.
+        if (a.Saida is { } saida && Path.HasExtension(saida) && Path.GetExtension(saida).ToLowerInvariant() is ".html" or ".htm" or ".csv" or ".xml")
+        {
+            if (a.Formatos.Count > 1)
+            {
+                a.Erros.Add("Com --formato todos, --saida tem que ser uma pasta.");
+            }
+            else
+            {
+                a.Formatos = [Relatorios.FormatoDe(saida)];
+            }
         }
 
         if (a.Opcoes.PortasEmMacAleatorio && !a.Opcoes.OlharPortas)
@@ -166,6 +205,22 @@ public sealed class ArgumentosCli
         }
 
         return a;
+    }
+
+    /// <summary>
+    /// Arquivos a gravar, um por formato. Sem --saida, vão para a pasta atual; com uma pasta, para
+    /// ela; com um arquivo de extensão conhecida, é ele mesmo.
+    /// </summary>
+    public IReadOnlyList<string> Caminhos(ResultadoVarredura resultado, string pastaAtual)
+    {
+        if (Saida is { } saida && Formatos.Count == 1
+            && Path.GetExtension(saida).ToLowerInvariant() is ".html" or ".htm" or ".csv" or ".xml")
+        {
+            return [saida];
+        }
+
+        var pasta = string.IsNullOrWhiteSpace(Saida) ? pastaAtual : Saida;
+        return Formatos.Select(f => Path.Combine(pasta, Relatorios.NomeArquivo(resultado, f))).ToList();
     }
 
     /// <summary>

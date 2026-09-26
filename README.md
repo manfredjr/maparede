@@ -1,6 +1,6 @@
 # MapNet - MT
 
-Scanner de inventário de rede para Windows, da MT - Manfred Tecnologia. Roda na rede do cliente e mostra quais equipamentos estão ligados nela, com IP, MAC, fabricante e nome, num relatório HTML que abre em qualquer navegador.
+Scanner de inventário de rede para Windows, da MT - Manfred Tecnologia. Roda na rede do cliente e mostra quais equipamentos estão ligados nela, com IP, MAC, fabricante, nome, tipo provável e, se você pedir, portas abertas e serviços, num relatório em HTML, CSV ou XML.
 
 Página do programa: **https://mapnet.manfred.com.br**. Download da versão mais recente: [mapnet.exe](https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe).
 
@@ -25,9 +25,9 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 5 | Ações de manutenção com elevação sob demanda, na aba Manutenção do console (sai como v0.2.4) | `manutencao` | [#18](https://github.com/manfredjr/mapnet/pull/18) | Publicada na v0.2.5 |
 | 6 | Painel de detalhe do host, com ping, tracert, navegador, área de trabalho remota e pasta compartilhada (sai como v0.2.5) | `detalhe-host` | [#19](https://github.com/manfredjr/mapnet/pull/19) | Publicada na v0.2.5 |
 | 7 | Portas TCP comuns abertas, com lista configurável, desligadas por padrão e com confirmação por rede (sai como v0.3.0) | `portas` | Plano em [#26](https://github.com/manfredjr/mapnet/pull/26), código em [#31](https://github.com/manfredjr/mapnet/pull/31) | Publicada na v0.3.0 |
-| 8 | Identificação leve dos serviços nas portas abertas: título da página, certificado HTTPS, banner SSH, FTP e SMTP, e UPnP (sai como v0.4.0) | `identificacao-servicos` | Plano em [#32](https://github.com/manfredjr/mapnet/pull/32), código em [#34](https://github.com/manfredjr/mapnet/pull/34) | Em revisão |
-| 9 | Classificação por tipo de equipamento, com os motivos à vista (sai como v0.5.0) | `classificacao` | [#35](https://github.com/manfredjr/mapnet/pull/35) | Em revisão |
-| 10 | Relatório também em XML e CSV (sai como v1.0.0) | a definir | - | A fazer |
+| 8 | Identificação leve dos serviços nas portas abertas: título da página, certificado HTTPS, banner SSH, FTP e SMTP, e UPnP (sai como v0.4.0) | `identificacao-servicos` | Plano em [#32](https://github.com/manfredjr/mapnet/pull/32), código em [#34](https://github.com/manfredjr/mapnet/pull/34) | Publicada na v1.0.0 |
+| 9 | Classificação por tipo de equipamento, com os motivos à vista (sai como v0.5.0) | `classificacao` | [#35](https://github.com/manfredjr/mapnet/pull/35) | Publicada na v1.0.0 |
+| 10 | Relatório também em CSV e XML, pela janela e pela linha de comando (sai como v1.0.0) | `relatorios` | [#36](https://github.com/manfredjr/mapnet/pull/36) | Publicada na v1.0.0 |
 
 A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
 
@@ -45,7 +45,7 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 4. Para saber também as portas abertas de cada equipamento, marque **Verificar portas** acima da tabela. A **Lista** vem com `padrão`, as 24 portas comuns (a dica do campo mostra quais são), ou aceita até 100 portas separadas por vírgula, como `80,443,9100`. Os aparelhos com MAC aleatório, quase sempre celulares e notebooks pessoais, ficam de fora, a não ser que você marque **Incluir aparelhos com MAC aleatório**. **Identificar serviços** vem marcado e preenche a coluna **Serviço** com o que o equipamento diz de si: modelo pelo UPnP, título da página, certificado ou banner. Na primeira varredura com portas em cada rede, o programa diz o que vai enviar e pede confirmação. Use só em rede que você tem autorização para verificar.
 5. Clique em **Iniciar varredura**. Clicar numa linha da tabela abre, ao lado, o detalhe do host: MAC, fabricante, os nomes pelo DNS reverso, NetBIOS e mDNS, o grupo de trabalho, o ping com o TTL, uma pista do sistema pelo TTL e as portas abertas, com o serviço de cada uma. Os botões do detalhe fazem ping contínuo e tracert no console, abrem http e https no navegador (na 8080, 8000 ou 8443 quando só ela está aberta, e desligados quando as portas web foram verificadas e estão fechadas), a área de trabalho remota e a pasta compartilhada, e copiam os dados. Um novo clique na mesma linha, a tecla Esc ou o botão **Fechar** fecham o detalhe. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante, observação ou número de porta aberta (`9100` lista as impressoras), e cada coluna ordena com um clique no título.
 6. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo. O console tem também uma aba para cada ferramenta: Ping (normal ou contínuo), Tracert, DNS com escolha do servidor, ARP, Conexões e Rotas. Os campos de host e de servidor DNS já vêm com o gateway e o DNS da interface. Enquanto a ferramenta roda, **Executar** vira **Parar**. **Copiar** e **Limpar** valem para a aba aberta.
-7. No fim, clique em **Salvar relatório** e escolha onde gravar o arquivo HTML. A janela abre em `Documentos\MapNet - MT` com um nome pronto, e da segunda vez abre na pasta usada por último. O programa não grava sozinho: fechar a janela com a varredura sem salvar pergunta antes. O botão **Abrir** abre o relatório salvo no navegador ou a pasta dele.
+7. No fim, clique em **Salvar relatório**, escolha onde gravar e o tipo: HTML, para abrir no navegador; CSV, para o Excel; ou XML, para outro programa ler. A janela abre em `Documentos\MapNet - MT` com um nome pronto, e da segunda vez abre na pasta usada por último. O programa não grava sozinho: fechar a janela com a varredura sem salvar pergunta antes. O botão **Abrir** abre o relatório salvo no navegador ou a pasta dele.
 8. A aba **Manutenção** tem quatro botões, que rodam os comandos oficiais do Windows e mostram a saída ali mesmo: **Limpar cache DNS** (`ipconfig /flushdns`), **Liberar e renovar IP** (`ipconfig /release` e `/renew`), **Limpar tabela ARP** (`netsh interface ip delete arpcache`) e **Resetar Winsock e TCP/IP** (`netsh winsock reset` e `netsh int ip reset`). O programa continua abrindo como usuário comum. Quando a ação pede administrador, o Windows mostra a tela do UAC só para aquele comando. Renovar o IP e resetar o Winsock derrubam a rede por alguns segundos e pedem confirmação antes. O reset só vale depois de reiniciar o computador.
 
 ### Pela linha de comando
@@ -61,9 +61,10 @@ mapnet --ajuda
 | Opção | Para que serve |
 |---|---|
 | `--interfaces` | Lista as interfaces ativas, numeradas |
-| `--varrer` | Varre a sub-rede e grava o relatório HTML |
+| `--varrer` | Varre a sub-rede e grava o relatório (HTML, ou o formato de `--formato`) |
 | `--interface <n ou nome>` | Escolhe a interface pelo número de `--interfaces`, pelo nome ou pelo IP |
-| `--saida <pasta ou arquivo.html>` | Onde gravar o relatório. Padrão: a pasta atual |
+| `--saida <pasta ou arquivo>` | Onde gravar o relatório. Padrão: a pasta atual. Arquivo terminado em `.html`, `.csv` ou `.xml` define o formato |
+| `--formato <f>` | `html`, `csv`, `xml` ou `todos`. Padrão: `html`. Com `todos`, grava os três na pasta de `--saida` |
 | `--abrir` | Abre o relatório no navegador ao terminar |
 | `--tempo-ping <ms>` | Espera de cada ping, de 100 a 10000. Padrão: 1000 |
 | `--paralelo <n>` | Endereços sondados ao mesmo tempo, de 1 a 256. Padrão: 64 |
@@ -111,6 +112,7 @@ Se o valor bater com o do `.txt`, o executável é exatamente o que foi publicad
 - **Fabricante:** pelos três primeiros bytes do MAC, na tabela OUI do IEEE embutida no programa (35.084 prefixos). MAC com o bit de administração local ligado aparece como "MAC aleatório (privativo)", que é o caso do celular com endereço privado.
 - **Nome:** DNS reverso, NetBIOS (o mesmo do `nbtstat -A`, que traz também o grupo de trabalho ou domínio) e mDNS (nomes `.local` de celulares, Macs, impressoras e aparelhos Linux).
 - **Relatório HTML:** arquivo único, com resumo da varredura, cartões de contagem, tabela filtrável e ordenável, detalhe de cada host ao clicar na linha e a lista de fabricantes.
+- **CSV e XML (desde a v1.0.0):** o CSV tem uma linha por host, com ponto e vírgula e acentos certos no Excel, e protege contra texto que viraria fórmula. O XML traz tudo o que o HTML mostra, para outro programa ler.
 
 - **Portas (desde a v0.3.0, desligadas por padrão):** para cada host encontrado, abre e fecha a conexão TCP em cada porta da lista, sem enviar nenhum dado, com até 128 conexões ao mesmo tempo, 8 por host e 800 ms de espera por porta. Porta que aceita a conexão aparece como aberta. Este computador e os aparelhos com MAC aleatório ficam de fora, e o motivo aparece no detalhe. O relatório ganha a coluna Portas e diz quais portas foram verificadas. 
 - **Tipo provável (desde a v0.5.0):** roteador, impressora, câmera ou gravador, NAS, computador Windows, Linux, access point, TV ou mídia, videogame, celular ou tablet, automação ou desconhecido. É um palpite pelo que as outras etapas levantaram (fabricante, nomes, TTL, portas e serviços), sem mandar nada para a rede, e o detalhe mostra os motivos.
