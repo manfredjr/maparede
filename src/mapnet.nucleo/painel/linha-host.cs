@@ -39,6 +39,15 @@ public sealed class LinhaHost : INotifyPropertyChanged
 
     public string Observacao => string.Join(", ", _host.Marcas);
 
+    /// <summary>Tipo provável para a coluna. Vazio quando não deu para saber.</summary>
+    public string Tipo => _host.Classificacao is { Tipo: not TipoEquipamento.Desconhecido } c ? c.Nome : string.Empty;
+
+    /// <summary>Dica da coluna Tipo: os sinais que levaram ao palpite.</summary>
+    public string? TipoDica => _host.Classificacao is { Tipo: not TipoEquipamento.Desconhecido } c ? "Tipo provável: " + c.Texto : null;
+
+    /// <summary>Dica da coluna Nome: o nome e de onde ele veio.</summary>
+    public string? NomeDica => Nome.Length > 0 ? $"{Nome} (pelo {OrigemNome})" : null;
+
     /// <summary>O texto mais útil que os serviços deram: modelo, título da página, certificado ou banner.</summary>
     public string Servico => _host.ServicoResumo;
 
@@ -86,6 +95,7 @@ public sealed class LinhaHost : INotifyPropertyChanged
             || (macBusca.Length > 0 && Mac.Replace(":", string.Empty).Contains(macBusca, StringComparison.OrdinalIgnoreCase))
             || Fabricante.Contains(t, StringComparison.OrdinalIgnoreCase)
             || Observacao.Contains(t, StringComparison.OrdinalIgnoreCase)
+            || Tipo.Contains(t, StringComparison.OrdinalIgnoreCase)
             || _host.Servicos.Any(s => s.Texto.Contains(t, StringComparison.OrdinalIgnoreCase))
             || _host.PortasAbertas.Any(p => p.ToString(System.Globalization.CultureInfo.InvariantCulture) == t);
     }

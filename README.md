@@ -26,7 +26,8 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 6 | Painel de detalhe do host, com ping, tracert, navegador, área de trabalho remota e pasta compartilhada (sai como v0.2.5) | `detalhe-host` | [#19](https://github.com/manfredjr/mapnet/pull/19) | Publicada na v0.2.5 |
 | 7 | Portas TCP comuns abertas, com lista configurável, desligadas por padrão e com confirmação por rede (sai como v0.3.0) | `portas` | Plano em [#26](https://github.com/manfredjr/mapnet/pull/26), código em [#31](https://github.com/manfredjr/mapnet/pull/31) | Publicada na v0.3.0 |
 | 8 | Identificação leve dos serviços nas portas abertas: título da página, certificado HTTPS, banner SSH, FTP e SMTP, e UPnP (sai como v0.4.0) | `identificacao-servicos` | Plano em [#32](https://github.com/manfredjr/mapnet/pull/32), código em [#34](https://github.com/manfredjr/mapnet/pull/34) | Em revisão |
-| 9 e 10 | Classificação por tipo de equipamento e relatório também em XML e CSV (até a v1.0.0) | a definir | - | A fazer |
+| 9 | Classificação por tipo de equipamento, com os motivos à vista (sai como v0.5.0) | `classificacao` | [PREENCHER] | Em revisão |
+| 10 | Relatório também em XML e CSV (sai como v1.0.0) | a definir | - | A fazer |
 
 A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
 
@@ -112,6 +113,7 @@ Se o valor bater com o do `.txt`, o executável é exatamente o que foi publicad
 - **Relatório HTML:** arquivo único, com resumo da varredura, cartões de contagem, tabela filtrável e ordenável, detalhe de cada host ao clicar na linha e a lista de fabricantes.
 
 - **Portas (desde a v0.3.0, desligadas por padrão):** para cada host encontrado, abre e fecha a conexão TCP em cada porta da lista, sem enviar nenhum dado, com até 128 conexões ao mesmo tempo, 8 por host e 800 ms de espera por porta. Porta que aceita a conexão aparece como aberta. Este computador e os aparelhos com MAC aleatório ficam de fora, e o motivo aparece no detalhe. O relatório ganha a coluna Portas e diz quais portas foram verificadas. 
+- **Tipo provável (desde a v0.5.0):** roteador, impressora, câmera ou gravador, NAS, computador Windows, Linux, access point, TV ou mídia, videogame, celular ou tablet, automação ou desconhecido. É um palpite pelo que as outras etapas levantaram (fabricante, nomes, TTL, portas e serviços), sem mandar nada para a rede, e o detalhe mostra os motivos.
 - **Serviços (desde a v0.4.0, com as portas):** só nas portas abertas. Nas web (80, 8000, 8080, 443, 8443), um `GET /` para ler o título e o servidor, sem seguir redirecionamento, e o certificado HTTPS, aceitando autoassinado e vencido. Em SSH, FTP e SMTP, só lê a primeira linha que o servidor manda. O UPnP é um `M-SEARCH` na rede local, e a descrição do equipamento é lida dele mesmo. Telnet fica de fora. No máximo 16 ao mesmo tempo, 3 s por serviço e 64 KB lidos por resposta.
 
 Sub-rede maior que /22 (1022 endereços) é varrida só no bloco /22 em volta do IP do computador, com aviso no relatório. A faixa manual fica para uma próxima versão.
