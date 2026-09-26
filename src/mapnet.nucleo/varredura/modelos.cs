@@ -23,6 +23,22 @@ public sealed class OpcoesVarredura
 
     /// <summary>Usa o ARP além do ping. Desligar só para teste.</summary>
     public bool UsarArp { get; set; } = true;
+
+    /// <summary>Verifica as portas TCP dos hosts encontrados. Desligado por padrão: quem usa liga.</summary>
+    public bool OlharPortas { get; set; }
+
+    public IReadOnlyList<int> Portas { get; set; } = ListaPortas.Padrao;
+
+    /// <summary>Inclui na verificação de portas os aparelhos com MAC aleatório, quase sempre pessoais.</summary>
+    public bool PortasEmMacAleatorio { get; set; }
+
+    /// <summary>Conexões TCP abertas ao mesmo tempo, somando todos os hosts.</summary>
+    public int ConexoesPortas { get; set; } = 128;
+
+    /// <summary>Conexões TCP ao mesmo tempo num só host.</summary>
+    public int ConexoesPorHost { get; set; } = 8;
+
+    public int TempoPortaMs { get; set; } = 800;
 }
 
 /// <summary>Andamento da varredura, para barra de progresso e mensagem na tela.</summary>
@@ -61,6 +77,17 @@ public sealed class HostEncontrado
     public bool EhGateway { get; set; }
 
     public bool EhEsteComputador { get; set; }
+
+    /// <summary>Portas TCP que aceitaram conexão, em ordem.</summary>
+    public IReadOnlyList<int> PortasAbertas { get; set; } = [];
+
+    public bool PortasVerificadas { get; set; }
+
+    /// <summary>Por que as portas deste host não foram verificadas. Null quando foram, ou quando a etapa não rodou.</summary>
+    public string? MotivoSemPortas { get; set; }
+
+    /// <summary>Portas para a tabela: "22, 80, 443".</summary>
+    public string PortasTexto => string.Join(", ", PortasAbertas);
 
     /// <summary>Melhor nome disponível, na ordem DNS reverso, NetBIOS, mDNS.</summary>
     public string Nome => NomeDns ?? NomeNetBios ?? NomeMdns ?? string.Empty;

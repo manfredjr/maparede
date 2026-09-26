@@ -17,12 +17,14 @@ public sealed class Varredor
     private readonly OpcoesVarredura _opcoes;
     private readonly TabelaOui _oui;
     private readonly ISondaArp? _arp;
+    private readonly ISondaPorta _portas;
 
-    public Varredor(OpcoesVarredura? opcoes = null, TabelaOui? oui = null, ISondaArp? arp = null)
+    public Varredor(OpcoesVarredura? opcoes = null, TabelaOui? oui = null, ISondaArp? arp = null, ISondaPorta? portas = null)
     {
         _opcoes = opcoes ?? new OpcoesVarredura();
         _oui = oui ?? TabelaOui.Embutida;
         _arp = _opcoes.UsarArp ? arp ?? SondaArp.Padrao() : null;
+        _portas = portas ?? new SondaPortaTcp();
     }
 
     /// <summary>
@@ -89,6 +91,24 @@ public sealed class Varredor
             catch (OperationCanceledException)
             {
                 resultado.Cancelada = true;
+            }
+        }
+
+        if (!resultado.Cancelada && _opcoes.OlharPortas)
+        {
+            try
+            {
+                await EtapaPortas.VerificarAsync(resultado.Hosts, _opcoes, _portas, progresso, cancelamento).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                resultado.Cancelada = true;
+            }
+
+            var fora = resultado.Hosts.Count(h => h.MotivoSemPortas == EtapaPortas.MotivoMacAleatorio);
+            if (fora > 0)
+            {
+                resultado.Avisos.Add($"{fora} aparelho(s) com MAC aleatório ficaram fora da verificação de portas, por serem provavelmente pessoais.");
             }
         }
 
