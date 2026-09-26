@@ -60,6 +60,21 @@ public partial class TelaTestes
     }
 
     [Fact]
+    public void Barra_de_estado_tem_a_marca_da_mt_com_o_link_do_site()
+    {
+        var janela = File.ReadAllText(Path.Combine(_app, "janela-principal.xaml"));
+        var codigo = File.ReadAllText(Path.Combine(_app, "janela-principal.xaml.cs"));
+        var projeto = File.ReadAllText(Path.Combine(_app, "mapnet.csproj"));
+        var logo = File.ReadAllBytes(Path.Combine(_app, "recursos", "mt-logo.png"));
+
+        Assert.Contains("recursos/mt-logo.png", janela);
+        Assert.Contains("Click=\"AoClicarMarcaMt\"", janela);
+        Assert.Contains("\"https://www.manfred.com.br\"", codigo);
+        Assert.Contains(@"<Resource Include=""recursos\mt-logo.png"" />", projeto);
+        Assert.Equal([0x89, 0x50, 0x4E, 0x47], logo[..4]);
+    }
+
+    [Fact]
     public void Manifesto_tem_a_mesma_versao_do_programa()
     {
         var raiz = CaracteresProibidosTestes.RaizDoRepositorio();

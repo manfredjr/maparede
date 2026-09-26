@@ -134,12 +134,12 @@
                                 Larguras fixas pelo texto mais longo possivel: IP 255.255.255.255, "DNS reverso",
                                 MAC com 17 caracteres e o titulo "Ping (ms)". Nome, Fabricante e Observacao
                                 dividem o resto, com minimo para "MAC aleatorio (privativo)" e "Nao responde a ping".
-                                Na largura padrao da janela nada fica cortado. Abaixo dela, aparece a rolagem
+                                Na largura padrao da janela, mesmo com a barra de rolagem vertical, nada disso fica cortado. Abaixo dela, aparece a rolagem
                                 lateral. Texto maior que a coluna aparece inteiro na dica.
                             -->
                             <DataGridTextColumn Header="IP" Binding="{Binding Ip}" SortMemberPath="IpNumero" Width="118" MinWidth="118"
                                                 FontFamily="{StaticResource FonteConsole}" ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="1.3*" MinWidth="110"
+                            <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="1.3*" MinWidth="90"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                             <DataGridTextColumn Header="Origem" Binding="{Binding OrigemNome}" Width="96" MinWidth="96"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
@@ -202,6 +202,15 @@
         <Border Grid.Row="2" Background="{StaticResource PincelGrafite}">
             <DockPanel>
                 <Border DockPanel.Dock="Top" Height="3" Background="{StaticResource GradienteLinha}" />
+                <!-- Marca da MT: abre manfred.com.br no navegador, so com o clique -->
+                <Button DockPanel.Dock="Right" x:Name="BotaoMarcaMt" Style="{StaticResource BotaoMarca}" Click="AoClicarMarcaMt"
+                        Margin="0,2,12,2" AutomationProperties.Name="MT - Manfred Tecnologia"
+                        ToolTip="MT - Manfred Tecnologia. Abre o site manfred.com.br no navegador.">
+                    <Border Background="White" CornerRadius="4" Padding="3,1">
+                        <Image Source="pack://application:,,,/mapnet;component/recursos/mt-logo.png"
+                               Height="18" RenderOptions.BitmapScalingMode="HighQuality" />
+                    </Border>
+                </Button>
                 <StackPanel Orientation="Horizontal" Margin="14,6">
                     <TextBlock Style="{StaticResource TextoEstado}" Text="{Binding TextoAndamento}" MinWidth="200" />
                     <ProgressBar Style="{StaticResource ProgressoMT}" Value="{Binding Progresso, Mode=OneWay}"
