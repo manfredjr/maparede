@@ -84,6 +84,10 @@
                         <Image Source="pack://application:,,,/mapnet;component/recursos/mt-logo.png"
                                Height="72" RenderOptions.BitmapScalingMode="HighQuality" />
                     </Button>
+                    <!-- Consulta do IP publico fixa acima do logo, sempre a mostra -->
+                    <Button DockPanel.Dock="Bottom" Style="{StaticResource BotaoContorno}" HorizontalAlignment="Center" Margin="0,10,0,0"
+                            Command="{Binding ComandoIpPublico}" Content="{Binding TextoBotaoIpPublico}"
+                            ToolTip="Pergunta o IP público ao serviço 1.1.1.1, do Cloudflare. É a única consulta do programa fora da rede local." />
                     <Border DockPanel.Dock="Bottom" Height="1" Background="{StaticResource PincelBorda}" Margin="0,8,0,0" />
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
                         <Border Style="{StaticResource BarraTitulo}" />
@@ -112,9 +116,6 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <Button Style="{StaticResource BotaoContorno}" HorizontalAlignment="Left" Margin="0,4,0,4"
-                                    Command="{Binding ComandoIpPublico}" Content="{Binding TextoBotaoIpPublico}"
-                                    ToolTip="Pergunta o IP público ao serviço 1.1.1.1, do Cloudflare. É a única consulta do programa fora da rede local." />
                         </StackPanel>
                     </ScrollViewer>
                 </DockPanel>
