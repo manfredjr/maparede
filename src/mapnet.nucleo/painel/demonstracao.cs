@@ -51,7 +51,25 @@ public static class Demonstracao
             LerMaquina = i => Task.FromResult(LeitorMaquina.Ler(i, Fontes(), new OpcoesVarredura().PrefixoMinimo)),
             IpPublico = new IpPublicoDemonstracao(),
             Ferramentas = Ferramentas,
+            Manutencao = new ManutencaoDemonstracao(),
         };
+    }
+
+    /// <summary>Não roda nada no Windows: devolve a saída que os comandos dariam.</summary>
+    private sealed class ManutencaoDemonstracao : IExecutorManutencao
+    {
+        public async Task<ResultadoManutencao> ExecutarAsync(AcaoManutencao acao, CancellationToken cancelamento)
+        {
+            await Task.Delay(600, cancelamento).ConfigureAwait(true);
+            var saida = acao switch
+            {
+                AcaoManutencao.LimparCacheDns => "> ipconfig /flushdns\nConfiguração de IP do Windows\nCache do DNS Resolver liberado com êxito.",
+                AcaoManutencao.RenovarIp => "> ipconfig /release\nConfiguração de IP do Windows\n> ipconfig /renew\nConfiguração de IP do Windows\n   Endereço IPv4: 192.0.2.23",
+                AcaoManutencao.LimparArp => "> netsh interface ip delete arpcache\nOk.",
+                _ => "> netsh winsock reset\nO Catálogo do Winsock foi redefinido com êxito.\n> netsh int ip reset\nRedefinindo, OK!",
+            };
+            return new ResultadoManutencao(false, 0, saida);
+        }
     }
 
     /// <summary>As ferramentas do console com respostas de exemplo, sem tocar na rede nem no Windows.</summary>

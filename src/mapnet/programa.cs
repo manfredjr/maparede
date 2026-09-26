@@ -13,6 +13,12 @@ internal static class Programa
     [STAThread]
     private static int Main(string[] args)
     {
+        // Modo auxiliar, aberto com elevação pela aba Manutenção: roda uma ação e termina, sem janela.
+        if (args.Length > 0 && args[0] == Auxiliar.Argumento)
+        {
+            return Auxiliar.Executar(args);
+        }
+
         var demonstracao = args is [Demonstracao.Argumento];
         var argumentos = ArgumentosCli.Interpretar(args);
         if (args.Length > 0 && !demonstracao)

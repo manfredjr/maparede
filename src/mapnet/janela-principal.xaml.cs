@@ -20,6 +20,8 @@ public partial class JanelaPrincipal : Window
     public JanelaPrincipal(DependenciasPainel dependencias, string complementoTitulo)
     {
         InitializeComponent();
+        dependencias.Confirmar ??= pergunta =>
+            MessageBox.Show(this, pergunta, "MapNet - MT", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
         _painel = new PainelVarredura(dependencias);
         DataContext = _painel;
         Title = PainelVarredura.Titulo + complementoTitulo;

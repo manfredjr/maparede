@@ -38,13 +38,17 @@ public sealed class AbaConsole : INotifyPropertyChanged
 
     public string Titulo { get; }
 
-    public string Descricao => Ferramenta?.Descricao ?? "Registro da varredura.";
+    public string Descricao => Ferramenta?.Descricao
+        ?? (EhManutencao ? "Limpar cache DNS, renovar IP, limpar ARP e resetar a rede, pelos comandos do Windows." : "Registro da varredura.");
 
     public RegistroConsole Registro { get; }
 
     public IFerramenta? Ferramenta { get; }
 
     public bool EhFerramenta => Ferramenta != null;
+
+    /// <summary>A aba Manutenção, que mostra os botões das ações em vez dos campos de uma ferramenta.</summary>
+    public bool EhManutencao { get; init; }
 
     public bool PedeAlvo => Ferramenta?.PedeAlvo == true;
 
