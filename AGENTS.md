@@ -17,7 +17,7 @@ O repositório `manfredjr/mapnet` é **público**, sob licença GPL-3.0, no mesm
 Este projeto segue o método da MT. Os documentos do método são internos e não entram no repositório público: ficam na pasta local `.superpowers/metodo/`, ignorada pelo git.
 
 - `briefing-metodo-projeto-mt.md`: princípios, ciclo de trabalho, Git, textos, jurídico, limites e autonomia.
-- `briefing-fechamento-das-respostas.md`: como fechar cada resposta ao Manfred.
+- `briefing-fechamento-das-respostas.md`: como fechar cada resposta ao Manfred. Neste projeto vale o formato de dois quadros da seção Comunicação.
 - `roteiro-publicacao-git-cpanel.md`: publicação pelo Git do cPanel. Aqui vale para a página em `public/`, com as diferenças descritas em `docs/publicacao.md`.
 
 O briefing foi escrito para sistemas web em Laravel. Aqui valem os princípios, o ciclo das fatias, as regras de Git, de texto, de jurídico e de autonomia. A stack, o `C:\dev` e o banco não se aplicam. Quando este arquivo e os briefings divergirem, vale este arquivo.
@@ -158,16 +158,40 @@ Passo a passo em `docs/publicacao.md`.
 
 ## Comunicação
 
-- Resposta o mais curta e simples possível, combinado com o Manfred em 26/09/2026. Sempre diz o que já foi feito e o que falta fazer, sem rodeio e sem repetir o que já foi dito.
-- O que pode ser feito de forma automatizada e é reversível, o agente executa sem perguntar e só conta que fez (ver Autonomia).
-- O que não é reversível, o agente pergunta antes, com a sugestão dele.
-- Pergunta sempre objetiva e clara, fechada, com as opções e a recomendação do agente.
-- Toda resposta termina com os blocos **Feito**, **Você precisa fazer**, **Fica comigo** e **Etapa**, nessa ordem. Detalhes em `.superpowers/metodo/briefing-fechamento-das-respostas.md`.
-  - **Feito:** o que foi concluído nesta resposta, inclusive o que o agente executou sozinho pela regra da Autonomia.
-  - **Você precisa fazer:** o que depende do Manfred, cada item com a recomendação do agente. Decisão irreversível aparece aqui como pergunta, com as opções e a recomendada.
-  - **Fica comigo:** o que o agente vai fazer em seguida.
-  - **Etapa:** o status do projeto: versão publicada, fatia em andamento, Pull Request aberto e em que ponto está.
+Combinado com o Manfred em 26/09/2026. Substitui o fechamento antigo em quatro blocos.
+
+- Seja objetivo e claro. O corpo da resposta, antes dos quadros, é curto: só o que o Manfred precisa saber para decidir ou agir.
+- O que o agente consegue executar e é reversível (teste, roteiro, servidor local, conferência, edição de arquivo do projeto), ele executa e só informa. Não pede ao Manfred para rodar o que ele mesmo pode rodar.
+- O que não é reversível (apagar, publicar, fazer merge, mexer em produção, enviar algo para fora) vira a pergunta, com a sugestão do agente.
 - Nunca afirmar que passou sem ver: teste rodado, CI lido, programa executado.
+
+### Formato de fechamento
+
+Toda resposta termina com dois quadros e, embaixo, a pergunta. Vale para todas as respostas, inclusive as curtas.
+
+**Feito**
+
+| O quê | Quem |
+|---|---|
+| resultado conferido, em poucas palavras | eu ou você |
+
+**Falta**
+
+| # | O quê | Quem |
+|---|---|---|
+| 1 | próxima ação, na ordem, com onde clicar ou o comando | eu ou você |
+
+**Pergunta:** no máximo uma, fechada, objetiva e com a recomendação primeiro (responder **a** ou **b**). Autorização vira frase exata (por exemplo, responder **pode publicar**). Sem pergunta: **Nenhuma.**
+
+Regras do fechamento:
+
+- Uma linha por item, frases curtas. No quadro "Falta", as linhas vão na ordem em que devem acontecer.
+- O quadro "Falta" é numerado (1, 2, 3...). O Manfred responde só pelo número: **"2 feito"** quando fez, **"2 ?"** quando não entendeu. Aí o agente detalha só aquele item.
+- A coluna "Quem" diz de quem é a vez: **eu** (o agente) ou **você** (o Manfred).
+- No "Feito" só entra o que foi conferido: teste rodado, log lido, página vista. Erro do agente entra ali, corrigido e dito com franqueza.
+- Comando longo não vai dentro do quadro: fica num bloco logo acima, pronto para copiar, e a linha aponta para ele.
+- Não repetir nos quadros o que o corpo já explicou.
+- A frase de merge continua valendo: "conferi tudo certo, pode juntar o PR #N".
 
 ## Ao terminar
 
