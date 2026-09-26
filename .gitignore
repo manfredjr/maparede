@@ -15,6 +15,3 @@ mapnet-*.csv
 
 # Rascunhos locais
 .superpowers/
-
-# Gerado pelo deploy do cPanel (ferramentas/implantacao.sh)
-/public/implantacao.js

@@ -206,9 +206,7 @@
   .footer__credito strong { color: #fff; }
   .footer__links a { text-decoration: none; }
   .footer__links a:hover { text-decoration: underline; }
-  .footer__direitos { font-size: 0.78rem; opacity: 0.7; }
-  .footer__versao { font-family: Consolas, "Courier New", monospace; font-size: 0.78rem; opacity: 0.7; }
-  .footer__selo { display: inline-flex; background: #fff; border-radius: 8px; padding: 4px 6px; }
+  .footer__direitos { font-size: 0.78rem; opacity: 0.7; }  .footer__selo { display: inline-flex; background: #fff; border-radius: 8px; padding: 4px 6px; }
   .footer__selo img { height: 40px; width: auto; }
   @media (max-width: 600px) { .footer__credito { text-align: center; } }
 </style>
@@ -426,24 +424,12 @@ mapnet --varrer --interface 1 --abrir</pre>
         <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a>
       </p>
       <p class="footer__direitos">&copy; 2026 MANFRED TECNOLOGIA LTDA. Software livre sob a GPL-3.0.</p>
-      <p class="footer__versao" id="implantacao" hidden></p>
     </div>
     <a class="footer__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
       <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="53" height="40" loading="lazy">
     </a>
   </div>
 </footer>
-<!-- implantacao.js é gerado pelo deploy do cPanel (ferramentas/implantacao.sh), com o commit e a hora. Fora do git. -->
-<script src="implantacao.js"></script>
-<script>
-  (function () {
-    var dados = window.MAPNET_IMPLANTACAO;
-    if (!dados) { return; }
-    var linha = document.getElementById("implantacao");
-    linha.textContent = "commit: " + dados.commit + " | implantado: " + dados.data;
-    linha.hidden = false;
-  })();
-</script>
 
 <script>
   // Amplia a tela do programa. O Esc fecha pelo proprio dialog; o clique na imagem ampliada tambem fecha.
