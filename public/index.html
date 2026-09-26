@@ -118,7 +118,7 @@
     -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
     opacity: 0.55;
   }
-  .hero__grid { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .hero__grid { position: relative; display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; }
   @media (max-width: 900px) { .hero__grid { grid-template-columns: 1fr; } }
   .hero__tag {
     display: inline-block; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
@@ -131,20 +131,10 @@
   .hero__acoes { display: flex; flex-wrap: wrap; gap: 12px; }
   .hero__nota { font-size: 0.85rem; color: var(--cinza-medio); margin-top: 16px; }
 
-  /* Miniatura do relatório, com endereços da faixa reservada para documentação. */
-  .mock {
-    background: var(--branco); border-radius: var(--radius); box-shadow: var(--shadow-lg);
-    overflow: hidden; border: 1px solid var(--cinza-borda);
-  }
-  .mock__barra { height: 6px; background: var(--gradiente); }
-  .mock__corpo { padding: 18px 20px 16px; overflow-x: auto; }
-  .mock__titulo { font-weight: 700; font-size: 0.95rem; margin-bottom: 12px; }
-  .mock table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
-  .mock th { text-align: left; color: var(--cinza-medio); font-weight: 600; padding: 6px 10px 6px 0; border-bottom: 2px solid var(--cinza-claro); white-space: nowrap; }
-  .mock td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--cinza-claro); white-space: nowrap; }
-  .mock td.ip { font-family: Consolas, "Courier New", monospace; }
-  .mock .etiqueta { font-size: 0.72rem; font-weight: 600; color: var(--verde-escuro); background: rgba(154, 213, 43, 0.2); border-radius: 999px; padding: 2px 8px; }
-  .mock__rodape { font-size: 0.72rem; color: var(--cinza-medio); text-transform: uppercase; letter-spacing: 1px; margin-top: 12px; }
+  /* Tela do programa, tirada do modo --demonstracao (só endereços reservados para documentação). */
+  .tela { margin: 0 auto; max-width: 1000px; width: 100%; }
+  .tela img { display: block; width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow-lg); border: 1px solid var(--cinza-borda); }
+  .tela figcaption { font-size: 0.72rem; color: var(--cinza-medio); text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; text-align: center; }
 
   /* ---------- seções ---------- */
   .section { padding: 90px 0; }
@@ -246,20 +236,10 @@
       <p class="hero__nota">Windows 10 ou 11, 64 bits. Arquivo único, sem instalador e sem pedir administrador.</p>
     </div>
 
-    <div class="mock" aria-label="Exemplo de relatório">
-      <div class="mock__barra"></div>
-      <div class="mock__corpo">
-        <p class="mock__titulo">Inventário da rede 192.0.2.0/24</p>
-        <table>
-          <tr><th>IP</th><th>Nome</th><th>Fabricante</th><th></th></tr>
-          <tr><td class="ip">192.0.2.1</td><td>roteador</td><td>Cisco Systems, Inc</td><td><span class="etiqueta">Gateway</span></td></tr>
-          <tr><td class="ip">192.0.2.20</td><td>SRV-ARQUIVOS</td><td>Dell Inc.</td><td></td></tr>
-          <tr><td class="ip">192.0.2.35</td><td>impressora.local</td><td>Brother Industries, LTD.</td><td></td></tr>
-          <tr><td class="ip">192.0.2.101</td><td>iPhone-sala.local</td><td>MAC aleatório (privativo)</td><td></td></tr>
-        </table>
-        <p class="mock__rodape">Relatório de exemplo</p>
-      </div>
-    </div>
+    <figure class="tela">
+      <a href="img/mapnet-tela.webp" target="_blank" rel="noopener"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></a>
+      <figcaption>Tela do programa com dados de exemplo</figcaption>
+    </figure>
   </div>
 </section>
 
