@@ -27,14 +27,27 @@ internal static class Programa
         return aplicativo.Run(new JanelaPrincipal());
     }
 
-    /// <summary>Erro que escapou da tela: mostra a mensagem e mantém o programa aberto.</summary>
+    private static bool _erroMostrado;
+
+    /// <summary>
+    /// Erro que escapou da tela: mostra a mensagem uma vez e fecha o programa. Um erro de
+    /// desenho da tela se repete a cada tentativa de redesenhar, e manter o programa aberto
+    /// empilharia uma janela de erro atrás da outra.
+    /// </summary>
     private static void AoErroNaoTratado(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
+        e.Handled = true;
+        if (_erroMostrado)
+        {
+            return;
+        }
+
+        _erroMostrado = true;
         MessageBox.Show(
-            $"Aconteceu um erro inesperado: {e.Exception.Message}",
+            $"Aconteceu um erro inesperado: {e.Exception.Message}\n\nO MapNet vai fechar. Abra de novo e, se o erro voltar, avise a MT.",
             "MapNet - MT",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
-        e.Handled = true;
+        Application.Current.Shutdown(1);
     }
 }
