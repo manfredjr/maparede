@@ -42,3 +42,10 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 | Resultado das ferramentas no relatório | O desenho prevê levar ao relatório o resumo das ferramentas, quando o técnico pedir. A fatia 4 mostra tudo no console, e o botão Copiar leva o texto para outro lugar | Botão "levar ao relatório" em cada aba, numa fatia futura |
 | ARP e rotas em IPv6 | As tabelas usam `GetIpNetTable` e `GetIpForwardTable`, só IPv4, como a varredura | Trocar pelas versões `2` se o IPv6 fizer falta no campo |
 | Tracert com um pacote por salto | O `tracert` do Windows manda três por salto. Um basta para ver o caminho e deixa a ferramenta três vezes mais rápida | Voltar a três se o Manfred preferir no uso |
+
+## Fatia 5: manutenção
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Teste das quatro ações num Windows de verdade | As ações mudam a rede do Windows e abrem o UAC, então não rodaram no teste do agente. Os testes cobrem a lista fechada, a confirmação, o UAC negado e o modo auxiliar com argumento errado | O Manfred rodar cada botão no `.exe` do PR, aceitar e recusar o UAC, e conferir a saída na aba Manutenção |
+| `ipconfig /flushdns` sem administrador | O desenho deixou a confirmar. A fatia roda sem elevação, que é o comportamento conhecido do Windows 10 e 11 | Se o Windows do Manfred devolver "requer elevação", mudar `PedeAdministrador` para incluir a ação |

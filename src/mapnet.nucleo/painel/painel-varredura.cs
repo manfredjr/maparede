@@ -44,6 +44,12 @@ public sealed class DependenciasPainel
 
     public Func<DateTimeOffset> Agora { get; init; } = () => DateTimeOffset.Now;
 
+    /// <summary>Executor das ações de manutenção. Sem ele, a aba Manutenção não aparece.</summary>
+    public IExecutorManutencao? Manutencao { get; init; }
+
+    /// <summary>Pergunta ao técnico antes de uma ação que derruba a rede. Sem resposta, a ação não roda.</summary>
+    public Func<string, bool>? Confirmar { get; set; }
+
     /// <summary>Ferramentas do console, uma aba para cada. Sem esta parte, o console só tem a aba Varredura.</summary>
     public Func<IReadOnlyList<IFerramenta>>? Ferramentas { get; init; }
 
@@ -75,6 +81,7 @@ public sealed class DependenciasPainel
             LerMaquina = i => Task.Run(() => LeitorMaquina.Ler(i, FontesMaquina.Padrao(), prefixo)),
             IpPublico = new IpPublicoCloudflare(),
             Ferramentas = FerramentasPadrao,
+            Manutencao = Environment.ProcessPath is { } exe ? new ExecutorManutencaoWindows(exe) : null,
         };
     }
 }
@@ -103,6 +110,8 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     private string? _textoIpPublico;
     private System.Net.IPAddress? _ipPublico;
     private AbaConsole _abaSelecionada;
+    private AbaConsole? _abaManutencao;
+    private bool _manutencaoRodando;
 
     public PainelVarredura(DependenciasPainel dependencias)
     {
@@ -116,6 +125,16 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             Abas.Add(new AbaConsole(ferramenta.Titulo, new RegistroConsole(), ferramenta));
         }
 
+        if (_dep.Manutencao != null)
+        {
+            _abaManutencao = new AbaConsole("Manutenção", new RegistroConsole()) { EhManutencao = true };
+            Abas.Add(_abaManutencao);
+        }
+
+        ComandoLimparCacheDns = ComandoDe(AcaoManutencao.LimparCacheDns);
+        ComandoRenovarIp = ComandoDe(AcaoManutencao.RenovarIp);
+        ComandoLimparArp = ComandoDe(AcaoManutencao.LimparArp);
+        ComandoResetarRede = ComandoDe(AcaoManutencao.ResetarRede);
         _abaSelecionada = Abas[0];
     }
 
@@ -153,6 +172,80 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             _abaSelecionada = value;
             Avisar();
         }
+    }
+
+    public Comando ComandoLimparCacheDns { get; }
+
+    public Comando ComandoRenovarIp { get; }
+
+    public Comando ComandoLimparArp { get; }
+
+    public Comando ComandoResetarRede { get; }
+
+    public bool ManutencaoRodando => _manutencaoRodando;
+
+    /// <summary>
+    /// Roda uma ação de manutenção, com a saída na aba Manutenção. A que derruba a rede pede
+    /// confirmação antes. A que pede administrador abre a tela do UAC.
+    /// </summary>
+    public async Task ManutencaoAsync(AcaoManutencao acao)
+    {
+        if (_dep.Manutencao is not { } executor || _abaManutencao is not { } aba || _manutencaoRodando)
+        {
+            return;
+        }
+
+        AbaSelecionada = aba;
+        var titulo = Manutencao.Titulo(acao);
+        if (Manutencao.Confirmacao(acao) is { } pergunta && _dep.Confirmar?.Invoke(pergunta) != true)
+        {
+            aba.Registro.Escrever($"{titulo}: cancelado antes de rodar.");
+            return;
+        }
+
+        _manutencaoRodando = true;
+        AvisarManutencao();
+        aba.Registro.Escrever($"{titulo}: {Manutencao.TextoComandos(acao)}"
+            + (Manutencao.PedeAdministrador(acao) ? ". O Windows vai pedir permissão de administrador." : "."));
+        try
+        {
+            var r = await executor.ExecutarAsync(acao, CancellationToken.None);
+            if (r.Cancelada)
+            {
+                aba.Registro.Escrever($"{titulo}: a permissão de administrador foi negada, nada foi feito.");
+                return;
+            }
+
+            foreach (var linha in r.Saida.Replace("\r", string.Empty).Split('\n').Where(l => l.Trim().Length > 0))
+            {
+                aba.Registro.EscreverSemHora(linha.TrimEnd());
+            }
+
+            aba.Registro.Escrever(r.Codigo == 0
+                ? $"{titulo}: concluído." + (acao == AcaoManutencao.ResetarRede ? " Reinicie o computador para valer." : "")
+                : $"{titulo}: o Windows devolveu o código {r.Codigo}. Veja a saída acima.");
+        }
+        catch (Exception e)
+        {
+            aba.Registro.Escrever($"{titulo}: {e.Message}");
+        }
+        finally
+        {
+            _manutencaoRodando = false;
+            AvisarManutencao();
+        }
+    }
+
+    private Comando ComandoDe(AcaoManutencao acao) =>
+        new(() => _ = ManutencaoAsync(acao), () => _dep.Manutencao != null && !_manutencaoRodando);
+
+    private void AvisarManutencao()
+    {
+        Avisar(nameof(ManutencaoRodando));
+        ComandoLimparCacheDns.Reavaliar();
+        ComandoRenovarIp.Reavaliar();
+        ComandoLimparArp.Reavaliar();
+        ComandoResetarRede.Reavaliar();
     }
 
     /// <summary>Para as ferramentas que estão rodando. A janela chama ao fechar.</summary>

@@ -201,6 +201,17 @@
                                       Visibility="{Binding PodeContinuo, Converter={StaticResource VisivelSe}}" />
                         </StackPanel>
                     </DockPanel>
+                    <WrapPanel DockPanel.Dock="Top" Margin="10,8,10,2"
+                               Visibility="{Binding AbaSelecionada.EhManutencao, Converter={StaticResource VisivelSe}}">
+                        <Button Style="{StaticResource BotaoExecutar}" Margin="0,0,8,4" Content="Limpar cache DNS"
+                                Command="{Binding ComandoLimparCacheDns}" ToolTip="ipconfig /flushdns. Não pede administrador." />
+                        <Button Style="{StaticResource BotaoExecutar}" Margin="0,0,8,4" Content="Liberar e renovar IP"
+                                Command="{Binding ComandoRenovarIp}" ToolTip="ipconfig /release e /renew. Pede administrador e derruba a rede por alguns segundos." />
+                        <Button Style="{StaticResource BotaoExecutar}" Margin="0,0,8,4" Content="Limpar tabela ARP"
+                                Command="{Binding ComandoLimparArp}" ToolTip="netsh interface ip delete arpcache. Pede administrador." />
+                        <Button Style="{StaticResource BotaoExecutar}" Margin="0,0,8,4" Content="Resetar Winsock e TCP/IP"
+                                Command="{Binding ComandoResetarRede}" ToolTip="netsh winsock reset e netsh int ip reset. Pede administrador e só vale depois de reiniciar." />
+                    </WrapPanel>
                     <ListBox x:Name="ListaConsole" ItemsSource="{Binding AbaSelecionada.Registro.Linhas}"
                              Background="Transparent" BorderThickness="0" Padding="8,6"
                              Foreground="{StaticResource PincelTextoConsole}"
