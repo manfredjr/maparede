@@ -30,6 +30,12 @@ public sealed class DependenciasPainel
 
     public int PrefixoMinimo { get; init; } = new OpcoesVarredura().PrefixoMinimo;
 
+    /// <summary>
+    /// Opções que a varredura usa. O painel liga e desliga as portas aqui antes de chamar
+    /// <see cref="Varrer"/>, que precisa ler este mesmo objeto.
+    /// </summary>
+    public OpcoesVarredura Opcoes { get; init; } = new();
+
     public string PastaRelatorios { get; init; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapNet - MT");
 
@@ -78,11 +84,13 @@ public sealed class DependenciasPainel
     /// <summary>As partes de verdade: interfaces do Windows, varredor e relatório HTML.</summary>
     public static DependenciasPainel Padrao()
     {
-        var prefixo = new OpcoesVarredura().PrefixoMinimo;
+        var opcoes = new OpcoesVarredura();
+        var prefixo = opcoes.PrefixoMinimo;
         return new()
         {
+            Opcoes = opcoes,
             ListarInterfaces = LeitorInterfaces.Listar,
-            Varrer = (i, p, c) => new Varredor().VarrerAsync(i, p, c),
+            Varrer = (i, p, c) => new Varredor(opcoes).VarrerAsync(i, p, c),
             SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
             LerMaquina = i => Task.Run(() => LeitorMaquina.Ler(i, FontesMaquina.Padrao(), prefixo)),
             IpPublico = new IpPublicoCloudflare(),
@@ -119,6 +127,8 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     private AbaConsole? _abaManutencao;
     private bool _manutencaoRodando;
     private LinhaHost? _hostSelecionado;
+    private string _textoPortas = "padrão";
+    private readonly HashSet<string> _redesConfirmadas = [];
 
     public PainelVarredura(DependenciasPainel dependencias)
     {
@@ -259,28 +269,54 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         await aba.ExecutarAsync();
     }
 
-    /// <summary>Abre o host no navegador, na área de trabalho remota ou no Explorer.</summary>
-    public void AcaoNoHost(AcaoHost acao)
+    /// <summary>
+    /// Abre o host no navegador, na área de trabalho remota ou no Explorer. O Windows pode levar
+    /// segundos para desistir de um endereço que não responde, então a abertura roda fora da
+    /// linha da tela, e os botões ficam desligados até ela terminar: clique repetido não vira
+    /// fila de tentativas.
+    /// </summary>
+    public async Task AcaoNoHostAsync(AcaoHost acao)
     {
-        if (_hostSelecionado is not { } h || _dep.Abrir is not { } abrir)
+        if (_abrindo || _hostSelecionado is not { } h || _dep.Abrir is not { } abrir)
         {
             return;
         }
 
-        var (arquivo, argumentos) = DetalheHost.Destino(acao, h.Host.Ip);
+        var porta = acao switch
+        {
+            AcaoHost.AbrirHttp => DetalheHost.PortaWeb(h.Host, https: false),
+            AcaoHost.AbrirHttps => DetalheHost.PortaWeb(h.Host, https: true),
+            _ => null,
+        };
+        var (arquivo, argumentos) = DetalheHost.Destino(acao, h.Host.Ip, porta);
+        _abrindo = true;
+        AvisarDetalhe();
+        Console.Escrever($"Abrindo {arquivo}{(argumentos is null ? "" : " " + argumentos)}...");
         try
         {
-            abrir(arquivo, argumentos);
-            Console.Escrever($"Abrindo {arquivo}{(argumentos is null ? "" : " " + argumentos)}.");
+            await Task.Run(() => abrir(arquivo, argumentos));
+        }
+        catch (Win32Exception e)
+        {
+            // A mensagem do .NET vem em inglês e com a pasta do programa. A do Windows, pelo
+            // código do erro, vem no idioma do sistema e diz só o motivo.
+            Console.Escrever($"Não foi possível abrir {arquivo}: {new Win32Exception(e.NativeErrorCode).Message}");
         }
         catch (Exception e)
         {
             Console.Escrever($"Não foi possível abrir {arquivo}: {e.Message}");
         }
+        finally
+        {
+            _abrindo = false;
+            AvisarDetalhe();
+        }
     }
 
+    private bool _abrindo;
+
     private Comando ComandoDe(AcaoHost acao) =>
-        new(() => AcaoNoHost(acao), () => _hostSelecionado != null && _dep.Abrir != null);
+        new(() => _ = AcaoNoHostAsync(acao), () => !_abrindo && _hostSelecionado is { } h && _dep.Abrir != null && DetalheHost.Disponivel(h.Host, acao));
 
     private void AoMudarHost(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => AvisarDetalhe();
 
@@ -552,6 +588,70 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
     public bool PodeTrocarInterface => _estado == EstadoPainel.Parado;
 
+    /// <summary>Verifica as portas TCP dos hosts encontrados. Desligado ao abrir: quem usa liga.</summary>
+    public bool OlharPortas
+    {
+        get => _dep.Opcoes.OlharPortas;
+        set
+        {
+            if (_dep.Opcoes.OlharPortas == value || !PodeTrocarInterface)
+            {
+                return;
+            }
+
+            _dep.Opcoes.OlharPortas = value;
+            Avisar();
+        }
+    }
+
+    /// <summary>"padrão" ou a lista digitada, como "22,80,443". Só é conferida ao iniciar.</summary>
+    public string TextoPortas
+    {
+        get => _textoPortas;
+        set
+        {
+            var novo = value ?? string.Empty;
+            if (_textoPortas == novo || !PodeTrocarInterface)
+            {
+                return;
+            }
+
+            _textoPortas = novo;
+            Avisar();
+        }
+    }
+
+    /// <summary>Inclui na verificação de portas os aparelhos com MAC aleatório, quase sempre pessoais.</summary>
+    public bool PortasEmMacAleatorio
+    {
+        get => _dep.Opcoes.PortasEmMacAleatorio;
+        set
+        {
+            if (_dep.Opcoes.PortasEmMacAleatorio == value || !PodeTrocarInterface)
+            {
+                return;
+            }
+
+            _dep.Opcoes.PortasEmMacAleatorio = value;
+            Avisar();
+        }
+    }
+
+    public string DicaPortasPadrao => "Portas da lista padrão: " + ListaPortas.Texto(ListaPortas.Padrao);
+
+    /// <summary>
+    /// Pergunta feita antes da primeira verificação de portas em cada sub-rede. Diz o que vai ser
+    /// enviado e lembra da autorização, como recomenda a análise jurídica de 26/09/2026.
+    /// </summary>
+    public static string PerguntaPortas(SubRede subRede, int quantidade, bool incluiMacAleatorio) =>
+        $"Verificar portas em {subRede}?\n\n"
+        + $"Para cada equipamento encontrado, o MapNet abre e fecha uma conexão TCP em {quantidade} porta(s), sem enviar dados. "
+        + "Não testa senha nem explora falha.\n\n"
+        + (incluiMacAleatorio
+            ? "Os aparelhos com MAC aleatório, quase sempre celulares e notebooks pessoais, também entram.\n\n"
+            : "Os aparelhos com MAC aleatório, quase sempre pessoais, ficam de fora.\n\n")
+        + "Faça isso só em rede que você tem autorização para verificar.";
+
     public bool PodeAcionarPrincipal =>
         (_estado == EstadoPainel.Parado && _interfaceSelecionada != null) || _estado == EstadoPainel.Varrendo;
 
@@ -669,6 +769,11 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             return;
         }
 
+        if (_dep.Opcoes.OlharPortas && !PrepararPortas(interfaceRede))
+        {
+            return;
+        }
+
         _cancelamento = new CancellationTokenSource();
         HostSelecionado = null;
         Hosts.Clear();
@@ -684,6 +789,11 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
         var subRede = Varredor.SubRedeAVarrer(interfaceRede, _dep.PrefixoMinimo, out var aviso);
         Console.Escrever($"Varredura de {subRede} ({subRede.QuantidadeHosts} endereços) pela interface {interfaceRede.Nome}.");
+        if (_dep.Opcoes.OlharPortas)
+        {
+            Console.Escrever($"Portas: {_dep.Opcoes.Portas.Count} porta(s) TCP em cada host encontrado, só abrindo e fechando a conexão.");
+        }
+
         if (aviso != null)
         {
             EscreverAviso(aviso);
@@ -727,11 +837,56 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             EscreverAviso(a);
         }
 
+        // O relatório não é gravado sozinho: quem usa escolhe onde, no botão Salvar relatório.
+        TextoRelatorio = "Relatório ainda não salvo.";
+        Console.Escrever("Para guardar o relatório, clique em Salvar relatório e escolha onde.");
         AvisarBotoes();
-        await SalvarAsync(resultado, Path.Combine(PastaRelatorios, RelatorioHtml.NomeArquivo(resultado)));
     }
 
-    /// <summary>Grava o último resultado em outro lugar, escolhido pelo técnico.</summary>
+    /// <summary>A última varredura ainda não foi salva em nenhum lugar.</summary>
+    public bool RelatorioNaoSalvo => UltimoResultado != null && UltimoRelatorio == null;
+
+    /// <summary>Nome sugerido na janela de salvar, como mapnet-20260926-1430-192-0-2-0-24.html.</summary>
+    public string? NomeSugerido => UltimoResultado is { } r ? RelatorioHtml.NomeArquivo(r) : null;
+
+    /// <summary>Pasta em que a janela de salvar abre: a do último relatório salvo ou Documentos\MapNet - MT.</summary>
+    public string PastaInicial => _ultimaPasta is { } ultimo ? Path.GetDirectoryName(ultimo) ?? PastaRelatorios : PastaRelatorios;
+
+    private string? _ultimaPasta;
+
+    /// <summary>
+    /// Confere a lista de portas e, na primeira vez em cada sub-rede, pede a confirmação. Sem
+    /// lista válida ou sem o sim do técnico, a varredura não começa.
+    /// </summary>
+    private bool PrepararPortas(InterfaceRede interfaceRede)
+    {
+        var portas = ListaPortas.Interpretar(_textoPortas, out var erro);
+        if (portas is null)
+        {
+            Console.Escrever($"Lista de portas: {erro}");
+            Falhou?.Invoke(erro!);
+            return false;
+        }
+
+        _dep.Opcoes.Portas = portas;
+        var subRede = Varredor.SubRedeAVarrer(interfaceRede, _dep.PrefixoMinimo, out _);
+        var chave = $"{subRede}|{_dep.Opcoes.PortasEmMacAleatorio}";
+        if (_redesConfirmadas.Contains(chave))
+        {
+            return true;
+        }
+
+        if (_dep.Confirmar?.Invoke(PerguntaPortas(subRede, portas.Count, _dep.Opcoes.PortasEmMacAleatorio)) != true)
+        {
+            Console.Escrever("Varredura não iniciada: a verificação de portas não foi confirmada.");
+            return false;
+        }
+
+        _redesConfirmadas.Add(chave);
+        return true;
+    }
+
+    /// <summary>Grava o último resultado no lugar escolhido pelo técnico.</summary>
     public Task SalvarComoAsync(string caminho) =>
         UltimoResultado is { } r && _estado == EstadoPainel.Parado ? SalvarAsync(r, caminho) : Task.CompletedTask;
 
@@ -753,6 +908,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
             resultado.IpPublico = _ipPublico?.ToString();
             UltimoRelatorio = await _dep.SalvarEm(resultado, caminho);
+            _ultimaPasta = UltimoRelatorio;
             TextoRelatorio = $"Relatório em {UltimoRelatorio}";
             Console.Escrever($"Relatório gravado em {UltimoRelatorio}");
         }
@@ -846,10 +1002,12 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     {
         Avisar(nameof(PodeTrocarInterface));
         Avisar(nameof(PodeAcionarPrincipal));
+        Avisar(nameof(OlharPortas));
         Avisar(nameof(TextoBotaoPrincipal));
         Avisar(nameof(Varrendo));
         Avisar(nameof(PodeAbrirRelatorio));
         Avisar(nameof(PodeSalvarComo));
+        Avisar(nameof(RelatorioNaoSalvo));
         ComandoPrincipal.Reavaliar();
         ComandoAtualizar.Reavaliar();
     }

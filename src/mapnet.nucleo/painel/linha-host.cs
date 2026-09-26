@@ -39,6 +39,15 @@ public sealed class LinhaHost : INotifyPropertyChanged
 
     public string Observacao => string.Join(", ", _host.Marcas);
 
+    /// <summary>Portas abertas, só os números: "22, 80, 443".</summary>
+    public string Portas => _host.PortasTexto;
+
+    /// <summary>Dica da coluna: cada porta com o serviço, ou o motivo de não ter sido verificada.</summary>
+    public string? PortasDica =>
+        _host.PortasAbertas.Count > 0 ? ListaPortas.Texto(_host.PortasAbertas)
+        : _host.MotivoSemPortas is { } motivo ? char.ToUpperInvariant(motivo[0]) + motivo[1..]
+        : null;
+
     public bool EhGateway => _host.EhGateway;
 
     public bool EhEsteComputador => _host.EhEsteComputador;
@@ -50,7 +59,10 @@ public sealed class LinhaHost : INotifyPropertyChanged
         Avisar(string.Empty);
     }
 
-    /// <summary>O filtro procura o texto no IP, no nome, no MAC, no fabricante e na observação.</summary>
+    /// <summary>
+    /// O filtro procura o texto no IP, no nome, no MAC, no fabricante e na observação. Um número
+    /// que é porta aberta também acha o host: "9100" lista as impressoras.
+    /// </summary>
     public bool Contem(string texto)
     {
         if (string.IsNullOrWhiteSpace(texto))
@@ -67,7 +79,8 @@ public sealed class LinhaHost : INotifyPropertyChanged
             || Mac.Contains(t, StringComparison.OrdinalIgnoreCase)
             || (macBusca.Length > 0 && Mac.Replace(":", string.Empty).Contains(macBusca, StringComparison.OrdinalIgnoreCase))
             || Fabricante.Contains(t, StringComparison.OrdinalIgnoreCase)
-            || Observacao.Contains(t, StringComparison.OrdinalIgnoreCase);
+            || Observacao.Contains(t, StringComparison.OrdinalIgnoreCase)
+            || _host.PortasAbertas.Any(p => p.ToString(System.Globalization.CultureInfo.InvariantCulture) == t);
     }
 
     private void Avisar([CallerMemberName] string? propriedade = null) =>

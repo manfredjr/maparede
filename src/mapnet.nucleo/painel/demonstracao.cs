@@ -41,10 +41,12 @@ public static class Demonstracao
             VelocidadeBps = 1_000_000_000,
         };
 
+        var opcoes = new OpcoesVarredura();
         return new DependenciasPainel
         {
+            Opcoes = opcoes,
             ListarInterfaces = () => [wifi, cabo],
-            Varrer = VarrerAsync,
+            Varrer = (i, p, c) => VarrerAsync(i, opcoes, p, c),
             SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
             // Documentos Públicos: o caminho não traz o nome do usuário, que apareceria nas imagens.
             PastaRelatorios = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MapNet - MT", "demonstracao"),
@@ -235,8 +237,25 @@ public static class Demonstracao
         ];
     }
 
-    /// <summary>Varredura de mentira: anda pelos 254 endereços em uns 4 segundos e relata os hosts de exemplo.</summary>
-    private static async Task<ResultadoVarredura> VarrerAsync(InterfaceRede i, IProgress<ProgressoVarredura> progresso, CancellationToken cancelamento)
+    /// <summary>Portas abertas de exemplo, pelo último número do IP dos <see cref="Hosts"/>.</summary>
+    private static readonly Dictionary<byte, int[]> _portasExemplo = new()
+    {
+        [1] = [53, 80, 443],
+        [5] = [80, 443, 515, 631, 9100],
+        [12] = [22, 80],
+        [31] = [8080],
+        [40] = [80, 443],
+        [57] = [135, 139, 445, 3389],
+        [101] = [5000],
+        [142] = [554, 8000],
+    };
+
+    /// <summary>
+    /// Varredura de mentira: anda pelos 254 endereços em uns 4 segundos e relata os hosts de
+    /// exemplo. Com as portas ligadas, preenche as portas de exemplo, com a mesma regra de quem
+    /// fica de fora que a varredura de verdade usa.
+    /// </summary>
+    private static async Task<ResultadoVarredura> VarrerAsync(InterfaceRede i, OpcoesVarredura opcoes, IProgress<ProgressoVarredura> progresso, CancellationToken cancelamento)
     {
         var inicio = DateTimeOffset.Now;
         var subRede = Varredor.SubRedeAVarrer(i, new OpcoesVarredura().PrefixoMinimo, out _);
@@ -259,6 +278,21 @@ public static class Demonstracao
 
             progresso.Report(new ProgressoVarredura(Varredor.EtapaDescoberta, n, total, host));
             await Task.Delay(15, CancellationToken.None).ConfigureAwait(true);
+        }
+
+        if (!resultado.Cancelada && opcoes.OlharPortas)
+        {
+            resultado.PortasVerificadas = opcoes.Portas;
+            var alvos = EtapaPortas.Escolher(resultado.Hosts, opcoes.PortasEmMacAleatorio);
+            for (var n = 0; n < alvos.Count; n++)
+            {
+                var h = alvos[n];
+                h.PortasAbertas = _portasExemplo.TryGetValue(h.Ip.GetAddressBytes()[3], out var p) ? p.Where(opcoes.Portas.Contains).ToList() : [];
+                h.PortasTestadas = opcoes.Portas;
+                h.PortasVerificadas = true;
+                progresso.Report(new ProgressoVarredura(EtapaPortas.Nome, n + 1, alvos.Count, h));
+                await Task.Delay(120, CancellationToken.None).ConfigureAwait(true);
+            }
         }
 
         resultado.Fim = DateTimeOffset.Now;

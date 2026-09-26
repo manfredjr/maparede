@@ -99,6 +99,7 @@ public static class RelatorioHtml
                 <tr><th>Gateway</th><td>{{C(i.Gateway?.ToString() ?? "não configurado")}}</td></tr>
                 <tr><th>DNS</th><td>{{C(i.Dns.Count > 0 ? string.Join(", ", i.Dns) : "não configurado")}}</td></tr>
                 <tr><th>Início</th><td>{{C(Data(r.Inicio))}}</td></tr>
+                <tr><th>Portas verificadas</th><td>{{C(r.PortasVerificadas is { } portas ? $"{portas.Count} porta(s) TCP, só abrindo e fechando a conexão: {ListaPortas.Texto(portas)}" : "não verificadas nesta varredura")}}</td></tr>
                 <tr><th>Duração</th><td>{{C(Duracao(r.Duracao))}}{{(r.Cancelada ? " (interrompida)" : "")}}</td></tr>
                 <tr><th>Computador</th><td>{{C(r.NomeComputador)}}</td></tr>
               </table>
@@ -118,6 +119,7 @@ public static class RelatorioHtml
                   <th data-tipo="texto">MAC</th>
                   <th data-tipo="texto">Fabricante</th>
                   <th data-tipo="numero">Ping (ms)</th>
+                  <th data-tipo="texto">Portas</th>
                   <th data-tipo="texto">Observação</th>
                 </tr></thead>
                 <tbody>
@@ -146,7 +148,7 @@ public static class RelatorioHtml
             </main>
             <footer>
               Relatório gerado pelo <a href="https://mapnet.manfred.com.br">MapNet - MT</a> {{C(ResultadoVarredura.VersaoPrograma)}}, da MT - Manfred Tecnologia.
-              Levantamento de inventário: o programa só registra o que a rede mostra a qualquer computador ligado nela.
+              Levantamento de inventário por ping, ARP e consultas de nome{{(r.PortasVerificadas is null ? "" : ", com verificação de portas por conexão TCP")}}. O programa não testa senha nem explora falha.
             </footer>
             <script>{{Script}}</script>
             </body>
@@ -176,7 +178,7 @@ public static class RelatorioHtml
     private static void AcrescentarHost(StringBuilder html, HostEncontrado h)
     {
         var marcas = h.Marcas;
-        var busca = string.Join(' ', h.Ip, h.Nome, h.NomeDns, h.NomeNetBios, h.NomeMdns, h.GrupoNetBios, h.MacTexto, h.Fabricante, string.Join(' ', marcas))
+        var busca = string.Join(' ', h.Ip, h.Nome, h.NomeDns, h.NomeNetBios, h.NomeMdns, h.GrupoNetBios, h.MacTexto, h.Fabricante, string.Join(' ', marcas), h.PortasTexto)
             .ToLowerInvariant();
         var classe = h.EhGateway ? " class=\"host gateway\"" : h.EhEsteComputador ? " class=\"host proprio\"" : " class=\"host\"";
 
@@ -186,10 +188,11 @@ public static class RelatorioHtml
         html.Append($"<td class=\"mono\">{C(h.MacTexto)}</td>");
         html.Append($"<td>{C(h.Fabricante)}</td>");
         html.Append($"<td class=\"num\" data-valor=\"{(h.TempoPingMs ?? -1)}\">{(h.TempoPingMs.HasValue ? h.TempoPingMs.Value.ToString(_ptBr) : "-")}</td>");
+        html.Append($"<td class=\"mono\" title=\"{C(h.PortasAbertas.Count > 0 ? ListaPortas.Texto(h.PortasAbertas) : null)}\">{C(h.PortasTexto)}</td>");
         html.Append($"<td>{string.Concat(marcas.Select(m => $"<span class=\"etiqueta\">{C(m)}</span>"))}</td>");
         html.Append("</tr>");
 
-        html.Append("<tr class=\"detalhe\" hidden><td colspan=\"6\"><dl>");
+        html.Append("<tr class=\"detalhe\" hidden><td colspan=\"7\"><dl>");
         Item(html, "IP", h.Ip.ToString());
         Item(html, "MAC", h.MacTexto.Length > 0 ? h.MacTexto : "não obtido");
         Item(html, "Fabricante", h.Fabricante.Length > 0 ? h.Fabricante : "não identificado");
@@ -200,6 +203,7 @@ public static class RelatorioHtml
         Item(html, "Nome exibido vem de", h.OrigemNome.Length > 0 ? h.OrigemNome : "nenhuma fonte respondeu");
         Item(html, "Ping", h.RespondeuPing ? $"respondeu em {h.TempoPingMs} ms" + (h.Ttl.HasValue ? $", TTL {h.Ttl}" : "") : "não respondeu");
         Item(html, "ARP", h.RespondeuArp ? "respondeu" : h.EhEsteComputador ? "não se aplica (este computador)" : "não respondeu");
+        Item(html, "Portas abertas", DetalheHost.TextoPortas(h));
         html.Append("</dl></td></tr>");
     }
 
@@ -222,10 +226,10 @@ public static class RelatorioHtml
     }
 
     private const string Estilo = """
-        :root { --texto: #1f2933; --suave: #52606d; --linha: #d9e2ec; --fundo: #f5f7fa; --destaque: #0b5394; --gateway: #fff4d6; --proprio: #e6f4ea; }
+        :root { --texto: #1f2933; --suave: #52606d; --linha: #dfe4dc; --fundo: #f5f7f2; --destaque: #0b4d24; --verde: #0f8f2f; --verde-claro: #9ad52b; --gateway: #fff4d6; --proprio: #e6f4ea; }
         * { box-sizing: border-box; }
         body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--texto); background: var(--fundo); font-size: 14px; }
-        header { background: var(--destaque); color: #fff; padding: 20px 24px; }
+        header { background: linear-gradient(90deg, var(--destaque), var(--verde)); color: #fff; padding: 20px 24px; border-bottom: 4px solid var(--verde-claro); }
         header h1 { margin: 4px 0; font-size: 22px; }
         .marca { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: .85; }
         .sub { margin: 0; opacity: .9; }
@@ -250,16 +254,16 @@ public static class RelatorioHtml
         .lista.curta { width: auto; min-width: 50%; }
         .lista.curta thead th { cursor: default; }
         tr.host { cursor: pointer; }
-        tr.host:hover { background: #eef4fb; }
+        tr.host:hover { background: #eef7e8; }
         tr.gateway { background: var(--gateway); }
         tr.proprio { background: var(--proprio); }
-        tr.detalhe td { background: #fbfcfe; }
+        tr.detalhe td { background: #fbfdf9; }
         dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 16px; margin: 4px 0; }
         dt { font-size: 12px; color: var(--suave); }
         dd { margin: 0; word-break: break-word; }
         .num { text-align: right; }
         .mono { font-family: Consolas, "Courier New", monospace; }
-        .etiqueta { display: inline-block; font-size: 12px; background: #e4ecf7; color: var(--destaque); border-radius: 10px; padding: 1px 8px; margin: 1px 4px 1px 0; white-space: nowrap; }
+        .etiqueta { display: inline-block; font-size: 12px; background: #e5f3dc; color: var(--destaque); border-radius: 10px; padding: 1px 8px; margin: 1px 4px 1px 0; white-space: nowrap; }
         .filtro { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
         .filtro input { flex: 1; min-width: 220px; padding: 7px 10px; border: 1px solid var(--linha); border-radius: 4px; font: inherit; }
         #contagem, .dica { color: var(--suave); font-size: 12px; }
@@ -270,7 +274,7 @@ public static class RelatorioHtml
         @media (max-width: 600px) { .dados th { width: 42%; } header h1 { font-size: 19px; } }
         @media print {
           body { background: #fff; }
-          header { color: #000; background: none; border-bottom: 2px solid #000; }
+          header { color: #000; background: none; border-bottom: 2px solid var(--destaque); }
           section { border: none; padding: 0; }
           .filtro, .dica { display: none; }
           tr.detalhe { display: none; }

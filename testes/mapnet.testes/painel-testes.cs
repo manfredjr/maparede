@@ -66,20 +66,23 @@ public class PainelTestes
         Assert.Equal(EstadoPainel.Parado, painel.Estado);
         Assert.Equal("Iniciar varredura", painel.TextoBotaoPrincipal);
         Assert.True(painel.PodeTrocarInterface);
-        Assert.True(painel.PodeAbrirRelatorio);
+        Assert.False(painel.PodeAbrirRelatorio);
         Assert.True(painel.PodeSalvarComo);
+        Assert.True(painel.RelatorioNaoSalvo);
         Assert.Equal(100, painel.Progresso);
     }
 
     [Fact]
-    public async Task Estado_volta_a_parado_antes_de_gravar_o_relatorio()
+    public async Task Relatorio_so_e_gravado_quando_o_tecnico_salva()
     {
         var simulador = new Simulador();
         EstadoPainel? estadoAoGravar = null;
+        var gravacoes = 0;
         PainelVarredura? painel = null;
         var dependencias = Dependencias(simulador, salvar: (_, caminho) =>
         {
             estadoAoGravar = painel!.Estado;
+            gravacoes++;
             return Task.FromResult(caminho);
         });
         painel = new PainelVarredura(dependencias);
@@ -89,7 +92,19 @@ public class PainelTestes
         simulador.Terminar(Resultado());
         await varredura;
 
+        Assert.Equal(0, gravacoes);
+        Assert.Equal("Relatório ainda não salvo.", painel.TextoRelatorio);
+        Assert.StartsWith("mapnet-", painel.NomeSugerido);
+        Assert.Equal(painel.PastaRelatorios, painel.PastaInicial);
+
+        var destino = Path.Combine(Path.GetTempPath(), "escolhida", "relatorio.html");
+        await painel.SalvarComoAsync(destino);
+
+        Assert.Equal(1, gravacoes);
         Assert.Equal(EstadoPainel.Parado, estadoAoGravar);
+        Assert.False(painel.RelatorioNaoSalvo);
+        Assert.True(painel.PodeAbrirRelatorio);
+        Assert.Equal(Path.GetDirectoryName(destino), painel.PastaInicial);
     }
 
     [Fact]
@@ -366,6 +381,7 @@ public class PainelTestes
         var varredura = painel.VarrerAsync();
         simulador.Terminar(Resultado());
         await varredura;
+        await painel.SalvarComoAsync("relatorio.html");
 
         Assert.NotNull(gravado?.Maquina);
         Assert.Equal("203.0.113.7", gravado!.IpPublico);
@@ -386,6 +402,7 @@ public class PainelTestes
         var varredura = painel.VarrerAsync();
         simulador.Terminar(Resultado());
         await varredura;
+        await painel.SalvarComoAsync("relatorio.html");
 
         Assert.Null(gravado!.IpPublico);
     }
@@ -425,6 +442,135 @@ public class PainelTestes
 
         Assert.Equal(RegistroConsole.LimiteLinhas, registro.Linhas.Count);
         Assert.Equal("[14:02:11] linha 5", registro.Linhas[0]);
+    }
+
+    [Fact]
+    public async Task Portas_pedem_confirmacao_uma_vez_por_rede()
+    {
+        var simulador = new Simulador();
+        var perguntas = new List<string>();
+        var dependencias = Dependencias(simulador);
+        dependencias.Confirmar = p => { perguntas.Add(p); return true; };
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        painel.OlharPortas = true;
+        painel.TextoPortas = "80, 443";
+
+        var varredura = painel.VarrerAsync();
+        Assert.Equal(EstadoPainel.Varrendo, painel.Estado);
+        simulador.Terminar(Resultado());
+        await varredura;
+
+        Assert.Single(perguntas);
+        Assert.Contains("192.0.2.0/24", perguntas[0]);
+        Assert.True(dependencias.Opcoes.OlharPortas);
+        Assert.Equal([80, 443], dependencias.Opcoes.Portas);
+        Assert.Contains(painel.Console.Linhas, l => l.Contains("2 porta(s) TCP"));
+
+        var segundo = new Simulador();
+        var outra = new PainelVarredura(Dependencias(segundo));
+        Assert.False(outra.OlharPortas);
+    }
+
+    [Fact]
+    public async Task Sem_confirmacao_a_varredura_com_portas_nao_comeca()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        dependencias.Confirmar = _ => false;
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        painel.OlharPortas = true;
+
+        await painel.VarrerAsync();
+
+        Assert.Equal(EstadoPainel.Parado, painel.Estado);
+        Assert.Null(painel.UltimoResultado);
+        Assert.Contains(painel.Console.Linhas, l => l.Contains("não foi confirmada"));
+    }
+
+    [Fact]
+    public async Task Lista_de_portas_errada_nao_comeca_e_avisa()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        var perguntou = false;
+        dependencias.Confirmar = _ => perguntou = true;
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        string? falha = null;
+        painel.Falhou += m => falha = m;
+        painel.OlharPortas = true;
+        painel.TextoPortas = "80, abc";
+
+        await painel.VarrerAsync();
+
+        Assert.Equal(EstadoPainel.Parado, painel.Estado);
+        Assert.False(perguntou);
+        Assert.Contains("Porta inválida", falha);
+    }
+
+    [Fact]
+    public async Task Erro_ao_abrir_mostra_so_o_motivo_do_windows()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        dependencias.Abrir = (_, _) => throw new System.ComponentModel.Win32Exception(67, "An error occurred trying to start process with working directory C:\\pasta");
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        var varredura = painel.VarrerAsync();
+        simulador.Terminar(Resultado());
+        await varredura;
+        painel.HostSelecionado = painel.Hosts[1];
+
+        await painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
+
+        var linha = painel.Console.Linhas[^1];
+        Assert.Contains(@"Não foi possível abrir \\192.0.2.20:", linha);
+        Assert.DoesNotContain("An error occurred", linha);
+        Assert.DoesNotContain("pasta", linha);
+    }
+
+    [Fact]
+    public async Task Clique_repetido_enquanto_abre_nao_vira_fila()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        var liberar = new ManualResetEventSlim();
+        var aberturas = 0;
+        dependencias.Abrir = (_, _) => { Interlocked.Increment(ref aberturas); liberar.Wait(TimeSpan.FromSeconds(5)); };
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        var varredura = painel.VarrerAsync();
+        simulador.Terminar(Resultado());
+        await varredura;
+        painel.HostSelecionado = painel.Hosts[1];
+
+        var primeira = painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
+        Assert.False(painel.ComandoPastaCompartilhada.CanExecute(null));
+        await painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
+        await painel.AcaoNoHostAsync(AcaoHost.AbrirHttp);
+        liberar.Set();
+        await primeira;
+
+        Assert.Equal(1, aberturas);
+        Assert.True(painel.ComandoPastaCompartilhada.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task Opcoes_de_portas_nao_mudam_durante_a_varredura()
+    {
+        var simulador = new Simulador();
+        var painel = Painel(simulador);
+
+        var varredura = painel.VarrerAsync();
+        painel.OlharPortas = true;
+        painel.PortasEmMacAleatorio = true;
+
+        Assert.False(painel.OlharPortas);
+        Assert.False(painel.PortasEmMacAleatorio);
+        simulador.Terminar(Resultado());
+        await varredura;
     }
 
     private static PainelVarredura Painel(Simulador simulador)

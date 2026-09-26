@@ -132,7 +132,7 @@ O programa roda no notebook do técnico, ligado à rede do cliente. Isso molda o
 
 ## Dados de cliente
 
-O relatório traz dado da rede do cliente e pode trazer dado pessoal (nome de celular com nome de pessoa, MAC de aparelho pessoal). Ele fica só na máquina do técnico, em `Documentos\MapNet - MT`, e nunca entra no repositório. As regras de aviso, guarda e descarte saem da análise da `legal-br` (ver `docs/superpowers/pendencias.md`).
+O relatório traz dado da rede do cliente e pode trazer dado pessoal (nome de celular com nome de pessoa, MAC de aparelho pessoal). Ele fica só na máquina do técnico, na pasta que ele escolhe ao salvar (a janela sugere `Documentos\MapNet - MT`), e nunca entra no repositório. As regras de aviso, guarda e descarte saem da análise da `legal-br` (ver `docs/superpowers/pendencias.md`).
 
 ## Portões antes de cada commit
 

@@ -84,7 +84,7 @@ public class DetalheTestes
     }
 
     [Fact]
-    public void Nome_malicioso_vindo_da_rede_nao_entra_no_comando()
+    public async Task Nome_malicioso_vindo_da_rede_nao_entra_no_comando()
     {
         var (painel, abertos, _) = Painel();
         var host = Host();
@@ -92,19 +92,19 @@ public class DetalheTestes
         host.NomeNetBios = "\"; del /q *";
         painel.HostSelecionado = new LinhaHost(host);
 
-        painel.ComandoAreaRemota.Execute(null);
-        painel.ComandoPastaCompartilhada.Execute(null);
+        await painel.AcaoNoHostAsync(AcaoHost.AreaDeTrabalhoRemota);
+        await painel.AcaoNoHostAsync(AcaoHost.PastaCompartilhada);
 
         Assert.Equal([("mstsc.exe", "/v:192.0.2.57"), (@"\\192.0.2.57", (string?)null)], abertos);
     }
 
     [Fact]
-    public void Falha_ao_abrir_vai_ao_console()
+    public async Task Falha_ao_abrir_vai_ao_console()
     {
         var painel = new PainelVarredura(Dependencias(abrir: (_, _) => throw new InvalidOperationException("sem navegador")));
         painel.HostSelecionado = new LinhaHost(Host());
 
-        painel.AcaoNoHost(AcaoHost.AbrirHttps);
+        await painel.AcaoNoHostAsync(AcaoHost.AbrirHttps);
 
         Assert.EndsWith("Não foi possível abrir https://192.0.2.57/: sem navegador", painel.Console.Linhas[^1]);
     }

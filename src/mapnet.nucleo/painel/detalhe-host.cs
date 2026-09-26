@@ -20,7 +20,7 @@ public enum AcaoHost
 public static class DetalheHost
 {
     /// <summary>Arquivo (ou endereço) e argumentos para abrir no Windows. Só IPv4.</summary>
-    public static (string Arquivo, string? Argumentos) Destino(AcaoHost acao, IPAddress ip)
+    public static (string Arquivo, string? Argumentos) Destino(AcaoHost acao, IPAddress ip, int? porta = null)
     {
         if (ip.AddressFamily != AddressFamily.InterNetwork)
         {
@@ -28,15 +28,62 @@ public static class DetalheHost
         }
 
         var texto = ip.ToString();
+        var sufixo = porta is int p ? ":" + p.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
         return acao switch
         {
-            AcaoHost.AbrirHttp => ($"http://{texto}/", null),
-            AcaoHost.AbrirHttps => ($"https://{texto}/", null),
+            AcaoHost.AbrirHttp => ($"http://{texto}{sufixo}/", null),
+            AcaoHost.AbrirHttps => ($"https://{texto}{sufixo}/", null),
             AcaoHost.AreaDeTrabalhoRemota => ("mstsc.exe", $"/v:{texto}"),
             AcaoHost.PastaCompartilhada => ($@"\\{texto}", null),
             _ => throw new ArgumentOutOfRangeException(nameof(acao)),
         };
     }
+
+    /// <summary>
+    /// Porta que o atalho http ou https deve usar. Quando a porta comum (80 ou 443) está fechada
+    /// e uma alternativa está aberta, como a 8080 de muito painel de câmera, vai a alternativa.
+    /// Null é a porta comum.
+    /// </summary>
+    public static int? PortaWeb(HostEncontrado h, bool https)
+    {
+        if (!h.PortasVerificadas)
+        {
+            return null;
+        }
+
+        var (comum, alternativas) = https ? (443, new[] { 8443 }) : (80, new[] { 8080, 8000 });
+        if (h.PortasAbertas.Contains(comum))
+        {
+            return null;
+        }
+
+        return alternativas.FirstOrDefault(h.PortasAbertas.Contains) is var a and > 0 ? a : null;
+    }
+
+    /// <summary>
+    /// Diz se vale oferecer a ação. Sem verificação de portas, ou quando nenhuma porta do serviço
+    /// entrou na lista, não há como saber, e a ação fica ligada. Quando as portas do serviço foram
+    /// verificadas e todas estão fechadas, a ação desliga: abrir daria só erro.
+    /// </summary>
+    public static bool Disponivel(HostEncontrado h, AcaoHost acao)
+    {
+        int[] portas = acao switch
+        {
+            AcaoHost.AbrirHttp => [80, 8080, 8000],
+            AcaoHost.AbrirHttps => [443, 8443],
+            AcaoHost.AreaDeTrabalhoRemota => [3389],
+            AcaoHost.PastaCompartilhada => [445, 139],
+            _ => [],
+        };
+        var testadas = portas.Where(h.PortasTestadas.Contains).ToList();
+        return testadas.Count == 0 || testadas.Any(h.PortasAbertas.Contains);
+    }
+
+    /// <summary>Texto das portas para o detalhe e o relatório.</summary>
+    public static string TextoPortas(HostEncontrado h) =>
+        h.PortasVerificadas
+            ? (h.PortasAbertas.Count > 0 ? ListaPortas.Texto(h.PortasAbertas) : "nenhuma das portas verificadas está aberta")
+            : h.MotivoSemPortas ?? "não verificadas nesta varredura";
 
     /// <summary>Pista do sistema pelo TTL da resposta ao ping.</summary>
     public static string? PistaDoTtl(int? ttl) => ttl switch
@@ -68,6 +115,7 @@ public static class DetalheHost
         }
 
         itens.Add(new("ARP", h.RespondeuArp ? "respondeu" : h.EhEsteComputador ? "não se aplica (este computador)" : "não respondeu"));
+        itens.Add(new("Portas abertas", TextoPortas(h)));
         if (h.Marcas.Count > 0)
         {
             itens.Add(new("Observação", string.Join(", ", h.Marcas)));

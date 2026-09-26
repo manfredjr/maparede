@@ -79,11 +79,67 @@ public partial class JanelaPrincipal : Window
                 e.Handled = true;
             }
         };
-        Closing += (_, _) =>
+        Closing += AoFechar;
+    }
+
+    /// <summary>
+    /// O relatório não é gravado sozinho. Fechar com a última varredura sem salvar pergunta antes,
+    /// para o técnico não perder o levantamento.
+    /// </summary>
+    private async void AoFechar(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (!_fecharSemPerguntar && _painel.Estado == EstadoPainel.Parado && _painel.RelatorioNaoSalvo)
         {
-            _painel.Cancelar();
-            _painel.PararFerramentas();
+            var resposta = MessageBox.Show(this, "O relatório da última varredura ainda não foi salvo. Salvar antes de fechar?",
+                "MapNet - MT", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+            if (resposta == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (resposta == MessageBoxResult.Yes)
+            {
+                e.Cancel = true;
+                if (await SalvarComDialogoAsync())
+                {
+                    _fecharSemPerguntar = true;
+                    Close();
+                }
+
+                return;
+            }
+        }
+
+        _painel.Cancelar();
+        _painel.PararFerramentas();
+    }
+
+    private bool _fecharSemPerguntar;
+
+    /// <summary>Abre a janela de salvar e grava. Devolve falso se o técnico desistiu ou a gravação falhou.</summary>
+    private async Task<bool> SalvarComDialogoAsync()
+    {
+        if (_painel.UltimoResultado is null)
+        {
+            return false;
+        }
+
+        Directory.CreateDirectory(_painel.PastaInicial);
+        var dialogo = new SaveFileDialog
+        {
+            Title = "Salvar relatório",
+            Filter = "Relatório HTML (*.html)|*.html",
+            FileName = _painel.NomeSugerido,
+            InitialDirectory = _painel.PastaInicial,
         };
+        if (dialogo.ShowDialog(this) != true)
+        {
+            return false;
+        }
+
+        await _painel.SalvarComoAsync(dialogo.FileName!);
+        return !_painel.RelatorioNaoSalvo;
     }
 
     private void AoMudarConsole(NotifyCollectionChangedEventArgs e)
@@ -138,31 +194,12 @@ public partial class JanelaPrincipal : Window
 
     private void AoAbrirRelatorio(object sender, RoutedEventArgs e) => AbrirNoSistema(_painel.UltimoRelatorio);
 
-    private async void AoSalvarComo(object sender, RoutedEventArgs e)
-    {
-        if (_painel.UltimoResultado is not { } resultado)
-        {
-            return;
-        }
-
-        Directory.CreateDirectory(_painel.PastaRelatorios);
-        var dialogo = new SaveFileDialog
-        {
-            Title = "Salvar relatório",
-            Filter = "Relatório HTML (*.html)|*.html",
-            FileName = RelatorioHtml.NomeArquivo(resultado),
-            InitialDirectory = _painel.PastaRelatorios,
-        };
-        if (dialogo.ShowDialog(this) == true)
-        {
-            await _painel.SalvarComoAsync(dialogo.FileName);
-        }
-    }
+    private async void AoSalvarComo(object sender, RoutedEventArgs e) => await SalvarComDialogoAsync();
 
     private void AoAbrirPasta(object sender, RoutedEventArgs e)
     {
-        Directory.CreateDirectory(_painel.PastaRelatorios);
-        AbrirNoSistema(_painel.PastaRelatorios);
+        Directory.CreateDirectory(_painel.PastaInicial);
+        AbrirNoSistema(_painel.PastaInicial);
     }
 
     private void AoCopiarConsole(object sender, RoutedEventArgs e)

@@ -33,9 +33,17 @@ public sealed class ArgumentosCli
           --tempo-ping <ms>         espera de cada ping, de 100 a 10000 (padrão: 1000)
           --paralelo <n>            endereços sondados ao mesmo tempo, de 1 a 256 (padrão: 64)
           --sem-arp                 usa só o ping para descobrir hosts
+          --portas [lista]          verifica as portas TCP dos hosts encontrados, só abrindo
+                                    e fechando a conexão. Sem lista, usa as 24 portas comuns;
+                                    com lista, por exemplo 22,80,443 (até 100 portas)
+          --incluir-mac-aleatorio   inclui nas portas os aparelhos com MAC aleatório, quase
+                                    sempre pessoais, que ficam de fora por padrão
 
-        Exemplo:
+        Exemplos:
           mapnet --varrer --interface Wi-Fi --saida C:\Relatorios --abrir
+          mapnet --varrer --portas 80,443,9100
+
+        Use a verificação de portas só em rede que você tem autorização para verificar.
         """;
 
     public ComandoCli Comando { get; private set; } = ComandoCli.Janela;
@@ -91,6 +99,22 @@ public sealed class ArgumentosCli
                 case "--sem-arp":
                     a.Opcoes.UsarArp = false;
                     break;
+                case "--portas":
+                    a.Opcoes.OlharPortas = true;
+                    var lista = i + 1 < args.Count && !args[i + 1].StartsWith("--", StringComparison.Ordinal) ? args[++i] : null;
+                    if (ListaPortas.Interpretar(lista, out var erroPortas) is { } portas)
+                    {
+                        a.Opcoes.Portas = portas;
+                    }
+                    else
+                    {
+                        a.Erros.Add(erroPortas!);
+                    }
+
+                    break;
+                case "--incluir-mac-aleatorio":
+                    a.Opcoes.PortasEmMacAleatorio = true;
+                    break;
                 case "--tempo-ping":
                     if (Numero(Valor(args, ref i, arg, a.Erros), 100, 10000, arg, a.Erros) is int tempo)
                     {
@@ -116,10 +140,15 @@ public sealed class ArgumentosCli
             a.Erros.Add("Use só um comando por vez: --varrer, --interfaces, --ajuda ou --versao.");
         }
 
-        var opcoesDeVarredura = a.Interface != null || a.Saida != null || a.Abrir;
+        var opcoesDeVarredura = a.Interface != null || a.Saida != null || a.Abrir || a.Opcoes.OlharPortas;
         if (opcoesDeVarredura && a.Comando == ComandoCli.Janela)
         {
-            a.Erros.Add("As opções --interface, --saida e --abrir pedem o comando --varrer.");
+            a.Erros.Add("As opções --interface, --saida, --abrir e --portas pedem o comando --varrer.");
+        }
+
+        if (a.Opcoes.PortasEmMacAleatorio && !a.Opcoes.OlharPortas)
+        {
+            a.Erros.Add("A opção --incluir-mac-aleatorio só vale junto com --portas.");
         }
 
         return a;
