@@ -25,7 +25,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 5 | Ações de manutenção com elevação sob demanda, na aba Manutenção do console (sai como v0.2.4) | `manutencao` | [#18](https://github.com/manfredjr/mapnet/pull/18) | Publicada na v0.2.5 |
 | 6 | Painel de detalhe do host, com ping, tracert, navegador, área de trabalho remota e pasta compartilhada (sai como v0.2.5) | `detalhe-host` | [#19](https://github.com/manfredjr/mapnet/pull/19) | Publicada na v0.2.5 |
 | 7 | Portas TCP comuns abertas, com lista configurável, desligadas por padrão e com confirmação por rede (sai como v0.3.0) | `portas` | Plano em [#26](https://github.com/manfredjr/mapnet/pull/26), código em [#31](https://github.com/manfredjr/mapnet/pull/31) | Publicada na v0.3.0 |
-| 8 | Identificação leve dos serviços nas portas abertas: título da página, certificado HTTPS, banner SSH, FTP e SMTP, e UPnP (sai como v0.4.0) | `identificacao` | [PREENCHER] | Plano em revisão |
+| 8 | Identificação leve dos serviços nas portas abertas: título da página, certificado HTTPS, banner SSH, FTP e SMTP, e UPnP (sai como v0.4.0) | `identificacao` | Plano em [#32](https://github.com/manfredjr/mapnet/pull/32) | Plano em revisão |
 | 9 e 10 | Classificação por tipo de equipamento e relatório também em XML e CSV (até a v1.0.0) | a definir | - | A fazer |
 
 A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
