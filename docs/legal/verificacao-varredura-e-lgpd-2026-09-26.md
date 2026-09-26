@@ -2,7 +2,7 @@
 
 Data: 26/09/2026. Objeto: MapNet - MT, software livre (GPL-3.0) desenvolvido e distribuído pela MANFRED TECNOLOGIA LTDA (MT - Manfred Tecnologia), CNPJ 21.075.901/0001-12, microempresa. Versão 0.2.5 publicada e versão 0.3.0 planejada (sondagem de portas TCP).
 
-> **Sinalização.** Esta análise tem 2 pendências de validação, encaminhadas em `docs/legal/CONSULTA-ADVOGADO-varredura-e-lgpd-2026-09-26.md`.
+> **Situação.** As 2 pendências desta análise foram respondidas pelo parecer recebido em 26/09/2026, em `docs/legal/parecer-distribuicao-2026-09-26.md`. A página e o README passaram a trazer os avisos "Uso autorizado" e "Licença e garantias", e a frase "não entra em equipamento" saiu dos textos.
 
 ## 1. Contexto e fatos
 

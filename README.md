@@ -6,7 +6,9 @@ Página do programa: **https://mapnet.manfred.com.br**. Download da versão mais
 
 Software livre, sob licença [GPL-3.0](LICENSE).
 
-Não é scanner de vulnerabilidade: o programa não testa senha nem tenta entrar em nada. Ele só registra o que a rede já mostra para qualquer computador ligado nela.
+Não é scanner de vulnerabilidade: o programa não testa senha, não contorna autenticação e não explora vulnerabilidade. Para achar os equipamentos, ele manda ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida.
+
+**Uso autorizado.** O MapNet - MT serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação. Confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados.
 
 As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-design.md`](docs/superpowers/specs/2026-09-25-mapnet-design.md).
 
@@ -177,6 +179,8 @@ Relatar problema, sugerir melhoria ou mandar código: veja o [`CONTRIBUTING.md`]
 ## Licença
 
 Distribuído sob a **[GNU General Public License v3.0](LICENSE)**. Qualquer pessoa pode usar, estudar e modificar o programa. Quem distribuir uma versão modificada precisa abrir o código dela sob a mesma licença.
+
+**Licença e garantias.** O MapNet - MT é distribuído de graça sob a GPL-3.0. O inventário depende das respostas dos dispositivos e pode sair incompleto ou impreciso. A licença não promete funcionamento em toda rede nem inclui suporte técnico. Quem executa o programa deve definir uma rede autorizada e conferir o alcance da verificação antes de iniciar. As disposições da GPL-3.0 sobre garantias e responsabilidade valem nos limites da lei brasileira e não restringem direitos que a lei assegura ao consumidor.
 
 A fonte Montserrat, embutida no `.exe`, é do Montserrat Project e vai sob a SIL Open Font License 1.1, em [`src/mapnet/recursos/fontes/ofl.txt`](src/mapnet/recursos/fontes/ofl.txt).
 
