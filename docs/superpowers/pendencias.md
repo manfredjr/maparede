@@ -25,7 +25,7 @@ O que ficou de fora, com o motivo e o que fecha o item.
 
 ## Tela WPF: nomes longos na tabela
 
-Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, MAC, Fabricante até "MAC aleatório (privativo)", Ping e as marcas sozinhas da Observação aparecem inteiros. Nome e Observação com duas marcas ("Este computador, MAC aleatório") podem ter qualquer tamanho e continuam cortados na célula, com o texto inteiro na dica. Abaixo da largura padrão aparece a rolagem lateral. Fecha o resto: o painel de detalhe do host da fatia 6.
+Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, MAC, Fabricante até "MAC aleatório (privativo)", Ping e as marcas sozinhas da Observação aparecem inteiros. Nome e Observação com duas marcas ("Este computador, MAC aleatório") podem ter qualquer tamanho e continuam cortados na célula, com o texto inteiro na dica. Abaixo da largura padrão aparece a rolagem lateral. O painel de detalhe do host da fatia 6 mostra o nome inteiro ao clicar na linha. Fechado.
 
 ## Fatia 3: painel "Minha máquina"
 
@@ -49,3 +49,10 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 |---|---|---|
 | Teste das quatro ações num Windows de verdade | As ações mudam a rede do Windows e abrem o UAC, então não rodaram no teste do agente. Os testes cobrem a lista fechada, a confirmação, o UAC negado e o modo auxiliar com argumento errado | O Manfred rodar cada botão no `.exe` do PR, aceitar e recusar o UAC, e conferir a saída na aba Manutenção |
 | `ipconfig /flushdns` sem administrador | O desenho deixou a confirmar. A fatia roda sem elevação, que é o comportamento conhecido do Windows 10 e 11 | Se o Windows do Manfred devolver "requer elevação", mudar `PedeAdministrador` para incluir a ação |
+
+## Fatia 6: detalhe do host
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Portas abertas no detalhe | O desenho prevê as portas no detalhe quando a fatia de portas existir | Versão 1, fatia de portas TCP |
+| Esc e novo clique na linha testados só no modelo | O agente não teve acesso ao teclado e ao mouse na janela de teste. A lógica de fechar está coberta por teste, e a ligação na janela é curta | O Manfred abrir e fechar o detalhe com Esc e com novo clique |
