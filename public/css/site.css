@@ -57,13 +57,16 @@ li { margin-bottom: 6px; }
 pre { background: var(--grafite); color: #e8f5d8; border-radius: 8px; padding: 14px 16px; overflow-x: auto; margin-bottom: 16px; font: 0.9rem/1.6 Consolas, "Courier New", monospace; }
 
 /* Rodapé */
-.rodape { background: var(--grafite); color: rgba(255, 255, 255, 0.75); border-top: 4px solid var(--verde); }
-.rodape a { color: inherit; text-decoration: none; }
-.rodape a:hover { color: var(--verde-claro); }
-.rodape__base { padding: 22px 24px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; max-width: 780px; margin: 0 auto; }
-.rodape__credito { text-align: right; line-height: 1.7; }
-.rodape__credito strong { color: var(--branco); }
-/* O selo tem a altura das duas linhas do crédito: 2 linhas x 1.7 de entrelinha = 3.4em. */
+/* Mesmo formato do rodapé do CronoAula: fundo da página, linha fina em cima,
+   letra pequena na cor apagada e o logo da MT ao lado. Só os nomes ganham destaque. */
+.rodape { border-top: 1px solid var(--borda); color: var(--suave); }
+.rodape a { color: var(--suave); text-decoration: none; }
+.rodape a:hover { text-decoration: underline; }
+.rodape__base { padding: 12px 16px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; max-width: 780px; margin: 0 auto; }
+.rodape__credito { text-align: right; line-height: 1.5; }
+.rodape__credito p + p { margin-top: 2px; }
+.rodape__credito strong { color: var(--texto); font-weight: 500; }
+/* O logo tem a altura das duas linhas do crédito: 2 x 1.5em mais 2px entre elas. */
 .rodape__selo { display: flex; align-items: center; }
-.rodape__selo img { height: 3.4em; width: auto; background: var(--branco); border-radius: 8px; padding: 3px 5px; }
-@media (max-width: 600px) { .rodape__credito { text-align: center; } }
+.rodape__selo img { height: calc(3em + 2px); width: auto; }
+@media (max-width: 600px) { .rodape__credito { text-align: center; } .rodape__selo { order: -1; } }
