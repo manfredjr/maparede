@@ -6,7 +6,9 @@ Leia este arquivo antes de escrever qualquer linha.
 
 Scanner de inventário de rede para Windows, produto da MT - Manfred Tecnologia (MANFRED TECNOLOGIA LTDA). O Manfred roda o programa na rede do cliente e sai com um retrato dela: quais equipamentos existem, de que fabricante, com que nome e, nas próximas fatias, com que portas e de que tipo.
 
-Não é scanner de vulnerabilidade. Não testa senha, não explora falha e não tenta entrar em nada. Só levanta o que a rede já mostra para qualquer computador ligado nela.
+Não é scanner de vulnerabilidade. Não testa senha, não contorna autenticação e não explora vulnerabilidade. Não usar a frase "não entra em equipamento" nos textos: o parecer de 26/09/2026 (`docs/legal/parecer-distribuicao-2026-09-26.md`) a considera imprecisa para um programa que abre conexões. Página, README e tela descrevem exatamente o que cada versão publicada envia.
+
+A MT desenvolve e distribui o programa; não executa varreduras em clientes. Quem roda o programa escolhe a rede e responde pela autorização.
 
 O projeto não tem relação com o site institucional da MT. Desenho em `docs/superpowers/specs/2026-09-25-mapnet-design.md`.
 
@@ -57,7 +59,7 @@ Se aparecer o aviso de que o commit não chegou ao GitHub, enviar à mão assim 
 - Mensagem de commit: começa com verbo na 3ª pessoa ("Cria", "Corrige"), título sem acento, corpo explica o porquê e termina com `Autores: Manfred Heil Junior`. Texto longo entra por arquivo, com `-F` ou `--body-file`.
 - Nunca emendar nem reescrever commit que já subiu. Correção é commit novo por cima.
 - Cada fatia entra por Pull Request, com "O que muda", "Como testar" e a linha de autores.
-- Merge só pelo `gh pr merge` e só depois da frase "conferi tudo certo, pode juntar o PR #N".
+- Merge só pelo `gh pr merge` e só depois da frase "conferi tudo certo, pode juntar o PR #N". Vale também a resposta pelo número do quadro "Falta" ("N pode fazer" ou "N autorizado"), quando o item N é o merge de um PR nomeado ali, combinado com o Manfred em 26/09/2026.
 
 ## Textos
 

@@ -8,7 +8,7 @@ Este desenho registra o pedido do Manfred de 25/09/2026 e as decisões tomadas n
 
 Programa para Windows que o Manfred roda na rede do cliente para fazer o inventário dela: quais equipamentos estão ligados, com IP, MAC, fabricante, nome, portas comuns abertas e tipo provável. O resultado é um relatório que ele guarda e entrega.
 
-Não é scanner de vulnerabilidade. Não testa senha, não explora falha e não tenta entrar em nada.
+Não é scanner de vulnerabilidade. Não testa senha, não contorna autenticação e não explora vulnerabilidade.
 
 ## 2. Para quem
 
