@@ -69,4 +69,4 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 
 | Item | Motivo | O que fecha |
 |---|---|---|
-| Prazo de guarda dos registros de acesso do site | A página de privacidade diz que a hospedagem e a Cloudflare registram IP, data, página e navegador de cada acesso, mas não diz por quanto tempo: o prazo depende da configuração do cPanel e da conta da Cloudflare, que o agente não vê | O Manfred conferir os prazos no cPanel e na Cloudflare, e a página passar a informar |
+| Prazo de guarda dos registros de acesso do site | A página de privacidade diz que a hospedagem e a Cloudflare registram IP, data, página e navegador de cada acesso, mas não diz por quanto tempo: o prazo depende da configuração do cPanel e da conta da Cloudflare, que o agente não vê | Fechado em 26/09/2026: no cPanel, Acesso bruto, os logs são arquivados e o arquivo do mês é removido no fim do mês seguinte. A página informa esse prazo e remete a Cloudflare à política de privacidade dela |
