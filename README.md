@@ -21,7 +21,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda, e tabela de hosts sem texto cortado (sai como v0.2.2) | `minha-maquina` | Plano em [#14](https://github.com/manfredjr/mapnet/pull/14), código em [#16](https://github.com/manfredjr/mapnet/pull/16) | Em teste |
 | 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões e rotas (sai como v0.2.3) | `diagnostico` | [#17](https://github.com/manfredjr/mapnet/pull/17) | Em teste |
 | 5 | Ações de manutenção com elevação sob demanda, na aba Manutenção do console (sai como v0.2.4) | `manutencao` | [#18](https://github.com/manfredjr/mapnet/pull/18) | Em teste |
-| 6 | Painel de detalhe do host | a definir | - | A fazer |
+| 6 | Painel de detalhe do host, com ping, tracert, navegador, área de trabalho remota e pasta compartilhada (sai como v0.2.5) | `detalhe-host` | [#19](https://github.com/manfredjr/mapnet/pull/19) | Em teste |
 | 7 em diante | Portas TCP, identificação leve, classificação e relatório completo em HTML, XML e CSV | a definir | - | A fazer |
 
 A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
