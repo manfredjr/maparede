@@ -31,18 +31,20 @@
                 </Border>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- IP publico no topo: consulta a internet, entao fica a vista e so roda com o clique -->
+                    <Button Style="{StaticResource BotaoFaixaContorno}" Command="{Binding ComandoIpPublico}" Content="{Binding TextoBotaoIpPublico}"
+                            ToolTip="Pergunta o IP público ao serviço 1.1.1.1, do Cloudflare. Só roda com o clique. O resultado aparece em Minha máquina." />
                     <Button x:Name="BotaoPrincipal" Style="{StaticResource BotaoFaixa}" MinWidth="150"
                             Command="{Binding ComandoPrincipal}" Content="{Binding TextoBotaoPrincipal}" />
-                    <Button x:Name="BotaoRelatorio" Style="{StaticResource BotaoFaixaContorno}" Content="Relatório"
-                            Click="AoClicarRelatorio">
+                    <Button Style="{StaticResource BotaoFaixaContorno}" Content="Salvar relatório" Click="AoSalvarComo"
+                            IsEnabled="{Binding PodeSalvarComo}" ToolTip="Escolha onde gravar o relatório HTML da última varredura" />
+                    <Button x:Name="BotaoRelatorio" Style="{StaticResource BotaoFaixaContorno}" Content="Abrir"
+                            Click="AoClicarRelatorio" ToolTip="Abrir o relatório salvo ou a pasta dele">
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Abrir o relatório" Click="AoAbrirRelatorio"
                                           IsEnabled="{Binding PodeAbrirRelatorio}" />
-                                <MenuItem Header="Salvar o relatório como..." Click="AoSalvarComo"
-                                          IsEnabled="{Binding PodeSalvarComo}" />
-                                <Separator />
-                                <MenuItem Header="Abrir a pasta dos relatórios" Click="AoAbrirPasta" />
+                                <MenuItem Header="Abrir a pasta do relatório" Click="AoAbrirPasta" />
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -82,12 +84,8 @@
                             HorizontalAlignment="Center" Margin="0,10,0,0" AutomationProperties.Name="MT - Manfred Tecnologia"
                             ToolTip="MT - Manfred Tecnologia. Abre o site manfred.com.br no navegador.">
                         <Image Source="pack://application:,,,/mapnet;component/recursos/mt-logo.png"
-                               Height="72" RenderOptions.BitmapScalingMode="HighQuality" />
+                               Height="110" RenderOptions.BitmapScalingMode="HighQuality" />
                     </Button>
-                    <!-- Consulta do IP publico fixa acima do logo, sempre a mostra -->
-                    <Button DockPanel.Dock="Bottom" Style="{StaticResource BotaoContorno}" HorizontalAlignment="Center" Margin="0,10,0,0"
-                            Command="{Binding ComandoIpPublico}" Content="{Binding TextoBotaoIpPublico}"
-                            ToolTip="Pergunta o IP público ao serviço 1.1.1.1, do Cloudflare. Só roda com o clique." />
                     <Border DockPanel.Dock="Bottom" Height="1" Background="{StaticResource PincelBorda}" Margin="0,8,0,0" />
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
                         <Border Style="{StaticResource BarraTitulo}" />

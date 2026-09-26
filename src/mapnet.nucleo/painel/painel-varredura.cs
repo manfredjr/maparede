@@ -817,9 +817,22 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             EscreverAviso(a);
         }
 
+        // O relatório não é gravado sozinho: quem usa escolhe onde, no botão Salvar relatório.
+        TextoRelatorio = "Relatório ainda não salvo.";
+        Console.Escrever("Para guardar o relatório, clique em Salvar relatório e escolha onde.");
         AvisarBotoes();
-        await SalvarAsync(resultado, Path.Combine(PastaRelatorios, RelatorioHtml.NomeArquivo(resultado)));
     }
+
+    /// <summary>A última varredura ainda não foi salva em nenhum lugar.</summary>
+    public bool RelatorioNaoSalvo => UltimoResultado != null && UltimoRelatorio == null;
+
+    /// <summary>Nome sugerido na janela de salvar, como mapnet-20260926-1430-192-0-2-0-24.html.</summary>
+    public string? NomeSugerido => UltimoResultado is { } r ? RelatorioHtml.NomeArquivo(r) : null;
+
+    /// <summary>Pasta em que a janela de salvar abre: a do último relatório salvo ou Documentos\MapNet - MT.</summary>
+    public string PastaInicial => _ultimaPasta is { } ultimo ? Path.GetDirectoryName(ultimo) ?? PastaRelatorios : PastaRelatorios;
+
+    private string? _ultimaPasta;
 
     /// <summary>
     /// Confere a lista de portas e, na primeira vez em cada sub-rede, pede a confirmação. Sem
@@ -853,7 +866,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         return true;
     }
 
-    /// <summary>Grava o último resultado em outro lugar, escolhido pelo técnico.</summary>
+    /// <summary>Grava o último resultado no lugar escolhido pelo técnico.</summary>
     public Task SalvarComoAsync(string caminho) =>
         UltimoResultado is { } r && _estado == EstadoPainel.Parado ? SalvarAsync(r, caminho) : Task.CompletedTask;
 
@@ -875,6 +888,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
             resultado.IpPublico = _ipPublico?.ToString();
             UltimoRelatorio = await _dep.SalvarEm(resultado, caminho);
+            _ultimaPasta = UltimoRelatorio;
             TextoRelatorio = $"Relatório em {UltimoRelatorio}";
             Console.Escrever($"Relatório gravado em {UltimoRelatorio}");
         }
@@ -973,6 +987,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         Avisar(nameof(Varrendo));
         Avisar(nameof(PodeAbrirRelatorio));
         Avisar(nameof(PodeSalvarComo));
+        Avisar(nameof(RelatorioNaoSalvo));
         ComandoPrincipal.Reavaliar();
         ComandoAtualizar.Reavaliar();
     }

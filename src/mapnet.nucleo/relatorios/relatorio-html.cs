@@ -226,10 +226,10 @@ public static class RelatorioHtml
     }
 
     private const string Estilo = """
-        :root { --texto: #1f2933; --suave: #52606d; --linha: #d9e2ec; --fundo: #f5f7fa; --destaque: #0b5394; --gateway: #fff4d6; --proprio: #e6f4ea; }
+        :root { --texto: #1f2933; --suave: #52606d; --linha: #dfe4dc; --fundo: #f5f7f2; --destaque: #0b4d24; --verde: #0f8f2f; --verde-claro: #9ad52b; --gateway: #fff4d6; --proprio: #e6f4ea; }
         * { box-sizing: border-box; }
         body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--texto); background: var(--fundo); font-size: 14px; }
-        header { background: var(--destaque); color: #fff; padding: 20px 24px; }
+        header { background: linear-gradient(90deg, var(--destaque), var(--verde)); color: #fff; padding: 20px 24px; border-bottom: 4px solid var(--verde-claro); }
         header h1 { margin: 4px 0; font-size: 22px; }
         .marca { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: .85; }
         .sub { margin: 0; opacity: .9; }
@@ -254,16 +254,16 @@ public static class RelatorioHtml
         .lista.curta { width: auto; min-width: 50%; }
         .lista.curta thead th { cursor: default; }
         tr.host { cursor: pointer; }
-        tr.host:hover { background: #eef4fb; }
+        tr.host:hover { background: #eef7e8; }
         tr.gateway { background: var(--gateway); }
         tr.proprio { background: var(--proprio); }
-        tr.detalhe td { background: #fbfcfe; }
+        tr.detalhe td { background: #fbfdf9; }
         dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 16px; margin: 4px 0; }
         dt { font-size: 12px; color: var(--suave); }
         dd { margin: 0; word-break: break-word; }
         .num { text-align: right; }
         .mono { font-family: Consolas, "Courier New", monospace; }
-        .etiqueta { display: inline-block; font-size: 12px; background: #e4ecf7; color: var(--destaque); border-radius: 10px; padding: 1px 8px; margin: 1px 4px 1px 0; white-space: nowrap; }
+        .etiqueta { display: inline-block; font-size: 12px; background: #e5f3dc; color: var(--destaque); border-radius: 10px; padding: 1px 8px; margin: 1px 4px 1px 0; white-space: nowrap; }
         .filtro { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
         .filtro input { flex: 1; min-width: 220px; padding: 7px 10px; border: 1px solid var(--linha); border-radius: 4px; font: inherit; }
         #contagem, .dica { color: var(--suave); font-size: 12px; }
@@ -274,7 +274,7 @@ public static class RelatorioHtml
         @media (max-width: 600px) { .dados th { width: 42%; } header h1 { font-size: 19px; } }
         @media print {
           body { background: #fff; }
-          header { color: #000; background: none; border-bottom: 2px solid #000; }
+          header { color: #000; background: none; border-bottom: 2px solid var(--destaque); }
           section { border: none; padding: 0; }
           .filtro, .dica { display: none; }
           tr.detalhe { display: none; }

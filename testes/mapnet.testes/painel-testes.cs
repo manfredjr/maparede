@@ -66,20 +66,23 @@ public class PainelTestes
         Assert.Equal(EstadoPainel.Parado, painel.Estado);
         Assert.Equal("Iniciar varredura", painel.TextoBotaoPrincipal);
         Assert.True(painel.PodeTrocarInterface);
-        Assert.True(painel.PodeAbrirRelatorio);
+        Assert.False(painel.PodeAbrirRelatorio);
         Assert.True(painel.PodeSalvarComo);
+        Assert.True(painel.RelatorioNaoSalvo);
         Assert.Equal(100, painel.Progresso);
     }
 
     [Fact]
-    public async Task Estado_volta_a_parado_antes_de_gravar_o_relatorio()
+    public async Task Relatorio_so_e_gravado_quando_o_tecnico_salva()
     {
         var simulador = new Simulador();
         EstadoPainel? estadoAoGravar = null;
+        var gravacoes = 0;
         PainelVarredura? painel = null;
         var dependencias = Dependencias(simulador, salvar: (_, caminho) =>
         {
             estadoAoGravar = painel!.Estado;
+            gravacoes++;
             return Task.FromResult(caminho);
         });
         painel = new PainelVarredura(dependencias);
@@ -89,7 +92,19 @@ public class PainelTestes
         simulador.Terminar(Resultado());
         await varredura;
 
+        Assert.Equal(0, gravacoes);
+        Assert.Equal("Relatório ainda não salvo.", painel.TextoRelatorio);
+        Assert.StartsWith("mapnet-", painel.NomeSugerido);
+        Assert.Equal(painel.PastaRelatorios, painel.PastaInicial);
+
+        var destino = Path.Combine(Path.GetTempPath(), "escolhida", "relatorio.html");
+        await painel.SalvarComoAsync(destino);
+
+        Assert.Equal(1, gravacoes);
         Assert.Equal(EstadoPainel.Parado, estadoAoGravar);
+        Assert.False(painel.RelatorioNaoSalvo);
+        Assert.True(painel.PodeAbrirRelatorio);
+        Assert.Equal(Path.GetDirectoryName(destino), painel.PastaInicial);
     }
 
     [Fact]
@@ -366,6 +381,7 @@ public class PainelTestes
         var varredura = painel.VarrerAsync();
         simulador.Terminar(Resultado());
         await varredura;
+        await painel.SalvarComoAsync("relatorio.html");
 
         Assert.NotNull(gravado?.Maquina);
         Assert.Equal("203.0.113.7", gravado!.IpPublico);
@@ -386,6 +402,7 @@ public class PainelTestes
         var varredura = painel.VarrerAsync();
         simulador.Terminar(Resultado());
         await varredura;
+        await painel.SalvarComoAsync("relatorio.html");
 
         Assert.Null(gravado!.IpPublico);
     }
