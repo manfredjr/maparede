@@ -637,16 +637,36 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         }
     }
 
+    /// <summary>Identifica os serviços das portas abertas. Marcado ao abrir, e só vale com as portas ligadas.</summary>
+    public bool IdentificarServicos
+    {
+        get => _dep.Opcoes.IdentificarServicos;
+        set
+        {
+            if (_dep.Opcoes.IdentificarServicos == value || !PodeTrocarInterface)
+            {
+                return;
+            }
+
+            _dep.Opcoes.IdentificarServicos = value;
+            Avisar();
+        }
+    }
+
     public string DicaPortasPadrao => "Portas da lista padrão: " + ListaPortas.Texto(ListaPortas.Padrao);
 
     /// <summary>
     /// Pergunta feita antes da primeira verificação de portas em cada sub-rede. Diz o que vai ser
     /// enviado e lembra da autorização, como recomenda a análise jurídica de 26/09/2026.
     /// </summary>
-    public static string PerguntaPortas(SubRede subRede, int quantidade, bool incluiMacAleatorio) =>
+    public static string PerguntaPortas(SubRede subRede, int quantidade, bool incluiMacAleatorio, bool identificar = false) =>
         $"Verificar portas em {subRede}?\n\n"
         + $"Para cada equipamento encontrado, o MapNet abre e fecha uma conexão TCP em {quantidade} porta(s), sem enviar dados. "
         + "Não testa senha nem explora falha.\n\n"
+        + (identificar
+            ? "Com Identificar serviços, nas portas que estiverem abertas ele também pede a página inicial dos serviços web (só GET, sem senha), "
+                + "lê o certificado HTTPS e a primeira linha de SSH, FTP e SMTP, e faz uma busca UPnP na rede local.\n\n"
+            : string.Empty)
         + (incluiMacAleatorio
             ? "Os aparelhos com MAC aleatório, quase sempre celulares e notebooks pessoais, também entram.\n\n"
             : "Os aparelhos com MAC aleatório, quase sempre pessoais, ficam de fora.\n\n")
@@ -792,6 +812,10 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         if (_dep.Opcoes.OlharPortas)
         {
             Console.Escrever($"Portas: {_dep.Opcoes.Portas.Count} porta(s) TCP em cada host encontrado, só abrindo e fechando a conexão.");
+            if (_dep.Opcoes.IdentificarServicos)
+            {
+                Console.Escrever("Serviços: página inicial web, certificado HTTPS, banner de SSH, FTP e SMTP e busca UPnP, só nas portas abertas.");
+            }
         }
 
         if (aviso != null)
@@ -870,13 +894,13 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
         _dep.Opcoes.Portas = portas;
         var subRede = Varredor.SubRedeAVarrer(interfaceRede, _dep.PrefixoMinimo, out _);
-        var chave = $"{subRede}|{_dep.Opcoes.PortasEmMacAleatorio}";
+        var chave = $"{subRede}|{_dep.Opcoes.PortasEmMacAleatorio}|{_dep.Opcoes.IdentificarServicos}";
         if (_redesConfirmadas.Contains(chave))
         {
             return true;
         }
 
-        if (_dep.Confirmar?.Invoke(PerguntaPortas(subRede, portas.Count, _dep.Opcoes.PortasEmMacAleatorio)) != true)
+        if (_dep.Confirmar?.Invoke(PerguntaPortas(subRede, portas.Count, _dep.Opcoes.PortasEmMacAleatorio, _dep.Opcoes.IdentificarServicos)) != true)
         {
             Console.Escrever("Varredura não iniciada: a verificação de portas não foi confirmada.");
             return false;

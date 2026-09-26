@@ -143,6 +143,9 @@
                         <TextBox Width="150" Padding="6,2" VerticalContentAlignment="Center" Margin="0,0,14,0"
                                  Text="{Binding TextoPortas, UpdateSourceTrigger=PropertyChanged}"
                                  IsEnabled="{Binding OlharPortas}" ToolTip="{Binding DicaPortasPadrao, Mode=OneTime}" />
+                        <CheckBox Content="Identificar serviços" IsChecked="{Binding IdentificarServicos}" VerticalAlignment="Center" Margin="0,0,14,0"
+                                  IsEnabled="{Binding OlharPortas}"
+                                  ToolTip="Nas portas abertas, pede a página inicial dos serviços web (só GET, sem senha), lê o certificado HTTPS e a primeira linha de SSH, FTP e SMTP, e faz uma busca UPnP na rede local." />
                         <CheckBox Content="Incluir aparelhos com MAC aleatório" IsChecked="{Binding PortasEmMacAleatorio}" VerticalAlignment="Center"
                                   IsEnabled="{Binding OlharPortas}"
                                   ToolTip="Celulares e notebooks pessoais costumam usar MAC aleatório e ficam de fora por padrão." />
@@ -201,23 +204,30 @@
                             -->
                             <DataGridTextColumn Header="IP" Binding="{Binding Ip}" SortMemberPath="IpNumero" Width="118" MinWidth="118"
                                                 FontFamily="{StaticResource FonteConsole}" ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="1.3*" MinWidth="90"
+                            <DataGridTextColumn Header="Nome" Binding="{Binding Nome}" Width="1.3*" MinWidth="80"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Origem" Binding="{Binding OrigemNome}" Width="96" MinWidth="96"
+                            <DataGridTextColumn Header="Origem" Binding="{Binding OrigemNome}" Width="88" MinWidth="88"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                             <DataGridTextColumn Header="MAC" Binding="{Binding Mac}" Width="132" MinWidth="132"
                                                 FontFamily="{StaticResource FonteConsole}" ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Fabricante" Binding="{Binding Fabricante}" Width="1.5*" MinWidth="140"
+                            <DataGridTextColumn Header="Fabricante" Binding="{Binding Fabricante}" Width="1.4*" MinWidth="110"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                             <DataGridTextColumn Header="Ping (ms)" Binding="{Binding Ping}" SortMemberPath="PingOrdem" Width="80" MinWidth="80" />
-                            <DataGridTextColumn Header="Portas" Binding="{Binding Portas}" Width="1*" MinWidth="80">
+                            <DataGridTextColumn Header="Portas" Binding="{Binding Portas}" Width="0.9*" MinWidth="70">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="ToolTip" Value="{Binding PortasDica}" />
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Observação" Binding="{Binding Observacao}" Width="1.1*" MinWidth="120"
+                            <DataGridTextColumn Header="Serviço" Binding="{Binding Servico}" Width="1.4*" MinWidth="90">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="ToolTip" Value="{Binding ServicoDica}" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Observação" Binding="{Binding Observacao}" Width="1.1*" MinWidth="100"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                         </DataGrid.Columns>
                     </DataGrid>

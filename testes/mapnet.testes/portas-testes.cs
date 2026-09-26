@@ -234,7 +234,7 @@ public class PortasTestes
         Assert.Contains("title=\"80 (HTTP)\">80</td>", html);
         Assert.Contains("2 porta(s) TCP, só abrindo e fechando a conexão: 80 (HTTP), 443 (HTTPS)", html);
         Assert.Contains("com verificação de portas por conexão TCP", html);
-        Assert.Contains("colspan=\"7\"", html);
+        Assert.Contains("colspan=\"8\"", html);
     }
 
     [Fact]

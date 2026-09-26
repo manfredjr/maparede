@@ -38,6 +38,10 @@ public sealed class ArgumentosCli
                                     com lista, por exemplo 22,80,443 (até 100 portas)
           --incluir-mac-aleatorio   inclui nas portas os aparelhos com MAC aleatório, quase
                                     sempre pessoais, que ficam de fora por padrão
+          --sem-identificar         com --portas, não identifica os serviços. Sem esta
+                                    opção, nas portas abertas o programa pede a página
+                                    inicial web, lê o certificado HTTPS e o banner de SSH,
+                                    FTP e SMTP, e faz uma busca UPnP na rede local
 
         Exemplos:
           mapnet --varrer --interface Wi-Fi --saida C:\Relatorios --abrir
@@ -64,6 +68,7 @@ public sealed class ArgumentosCli
     {
         var a = new ArgumentosCli();
         var comandos = 0;
+        var semIdentificar = false;
 
         for (var i = 0; i < args.Count; i++)
         {
@@ -115,6 +120,10 @@ public sealed class ArgumentosCli
                 case "--incluir-mac-aleatorio":
                     a.Opcoes.PortasEmMacAleatorio = true;
                     break;
+                case "--sem-identificar":
+                    a.Opcoes.IdentificarServicos = false;
+                    semIdentificar = true;
+                    break;
                 case "--tempo-ping":
                     if (Numero(Valor(args, ref i, arg, a.Erros), 100, 10000, arg, a.Erros) is int tempo)
                     {
@@ -149,6 +158,11 @@ public sealed class ArgumentosCli
         if (a.Opcoes.PortasEmMacAleatorio && !a.Opcoes.OlharPortas)
         {
             a.Erros.Add("A opção --incluir-mac-aleatorio só vale junto com --portas.");
+        }
+
+        if (semIdentificar && !a.Opcoes.OlharPortas)
+        {
+            a.Erros.Add("A opção --sem-identificar só vale junto com --portas.");
         }
 
         return a;

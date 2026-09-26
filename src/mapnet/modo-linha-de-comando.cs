@@ -119,6 +119,10 @@ internal static partial class ModoLinhaDeComando
         {
             Console.WriteLine($"Portas:    {argumentos.Opcoes.Portas.Count} porta(s) TCP em cada host, só abrindo e fechando a conexão"
                 + (argumentos.Opcoes.PortasEmMacAleatorio ? ", inclusive nos aparelhos com MAC aleatório" : ""));
+            if (argumentos.Opcoes.IdentificarServicos)
+            {
+                Console.WriteLine("Serviços:  página inicial web, certificado HTTPS, banner de SSH, FTP e SMTP e busca UPnP, só nas portas abertas");
+            }
         }
 
         Console.WriteLine();
@@ -137,7 +141,8 @@ internal static partial class ModoLinhaDeComando
         {
             var marcas = h.Marcas.Count > 0 ? $"  [{string.Join(", ", h.Marcas)}]" : string.Empty;
             var portas = h.PortasAbertas.Count > 0 ? $"  portas {h.PortasTexto}" : string.Empty;
-            Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {h.Nome}{marcas}{portas}");
+            var servico = h.ServicoResumo.Length > 0 ? $"  ({Cortar(h.ServicoResumo, 50)})" : string.Empty;
+            Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {h.Nome}{marcas}{portas}{servico}");
         }
 
         // Na linha de comando não há clique, então o relatório sai sem o IP público.

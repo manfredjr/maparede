@@ -85,6 +85,10 @@ public static class DetalheHost
             ? (h.PortasAbertas.Count > 0 ? ListaPortas.Texto(h.PortasAbertas) : "nenhuma das portas verificadas está aberta")
             : h.MotivoSemPortas ?? "não verificadas nesta varredura";
 
+    /// <summary>Uma linha por serviço, para o detalhe e o relatório.</summary>
+    public static string TextoServicos(HostEncontrado h) =>
+        h.Servicos.Count > 0 ? string.Join(Environment.NewLine, h.Servicos.Select(s => s.Texto)) : "nenhum serviço se identificou";
+
     /// <summary>Pista do sistema pelo TTL da resposta ao ping.</summary>
     public static string? PistaDoTtl(int? ttl) => ttl switch
     {
@@ -116,6 +120,10 @@ public static class DetalheHost
 
         itens.Add(new("ARP", h.RespondeuArp ? "respondeu" : h.EhEsteComputador ? "não se aplica (este computador)" : "não respondeu"));
         itens.Add(new("Portas abertas", TextoPortas(h)));
+        if (h.ServicosIdentificados)
+        {
+            itens.Add(new("Serviços", TextoServicos(h)));
+        }
         if (h.Marcas.Count > 0)
         {
             itens.Add(new("Observação", string.Join(", ", h.Marcas)));

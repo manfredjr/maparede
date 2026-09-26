@@ -65,6 +65,14 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 | Portas numa rede de verdade | A etapa foi testada com sonda simulada e no modo de demonstração. Não rodou numa rede de verdade no teste do agente | O Manfred varrer a rede da MT com as portas ligadas e conferir, por exemplo, a 80 ou 443 no roteador, a 9100 numa impressora e a 445 num Windows com compartilhamento |
 | Confirmação vale para a sessão | A pergunta aparece uma vez por sub-rede enquanto o programa está aberto. Fechar e abrir de novo pergunta outra vez | Guardar a confirmação, se o Manfred achar a pergunta repetitiva no uso |
 
+## Fatia 8: identificação de serviços
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Linha de comando com a identificação ligada por padrão | O plano previa `--identificar` para ligar. Com a decisão de 26/09/2026 de deixar **Identificar serviços** marcado na janela, a linha de comando segue o mesmo padrão: `--portas` já identifica e `--sem-identificar` desliga | O Manfred confirmar ou pedir `--identificar` |
+| HTTP pedido pelo IP | O `GET /` vai com o IP no cabeçalho `Host`. Servidor que hospeda vários sites por nome pode mostrar uma página genérica | Usar o nome do DNS reverso no `Host`, se fizer falta no campo |
+| Janela da identificação vista só no modo de demonstração | A identificação de verdade rodou na rede do Manfred pela linha de comando, com roteador, câmera, TV e Windows respondendo. A janela foi conferida com dados de exemplo | O Manfred varrer pela janela com as portas ligadas |
+
 ## Página de privacidade
 
 | Item | Motivo | O que fecha |

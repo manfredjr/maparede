@@ -250,6 +250,26 @@ public static class Demonstracao
         [142] = [554, 8000],
     };
 
+    /// <summary>Serviços de exemplo, com nomes e modelos inventados, pelo último número do IP.</summary>
+    private static IReadOnlyList<ServicoIdentificado> ServicosExemplo(byte final) => final switch
+    {
+        1 =>
+        [
+            new() { Porta = 0, Protocolo = "UPnP", Modelo = "Roteador do escritório (Exemplo Redes RX-100)" },
+            new() { Porta = 80, Protocolo = "HTTP", CodigoHttp = 302, Redireciona = "https://192.0.2.1/" },
+            new() { Porta = 443, Protocolo = "HTTPS", CodigoHttp = 200, Titulo = "Painel do roteador", CertificadoNome = "roteador.escritorio.example", CertificadoEmissor = "roteador.escritorio.example", CertificadoValidade = new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero) },
+        ],
+        5 =>
+        [
+            new() { Porta = 0, Protocolo = "UPnP", Modelo = "Impressora da recepção (Exemplo Print P-200)" },
+            new() { Porta = 80, Protocolo = "HTTP", CodigoHttp = 200, Titulo = "Impressora P-200", Servidor = "exemplo-httpd/1.0" },
+        ],
+        12 => [new() { Porta = 22, Protocolo = "SSH", Banner = "SSH-2.0-OpenSSH_9.2p1" }, new() { Porta = 80, Protocolo = "HTTP", CodigoHttp = 200, Titulo = "Painel de senhas" }],
+        57 => [new() { Porta = 0, Protocolo = "UPnP", Modelo = "Servidor de arquivos (Exemplo NAS N-4)" }],
+        142 => [new() { Porta = 8000, Protocolo = "HTTP", CodigoHttp = 200, Titulo = "Gravador de câmeras", Servidor = "exemplo-nvr" }],
+        _ => [],
+    };
+
     /// <summary>
     /// Varredura de mentira: anda pelos 254 endereços em uns 4 segundos e relata os hosts de
     /// exemplo. Com as portas ligadas, preenche as portas de exemplo, com a mesma regra de quem
@@ -292,6 +312,19 @@ public static class Demonstracao
                 h.PortasVerificadas = true;
                 progresso.Report(new ProgressoVarredura(EtapaPortas.Nome, n + 1, alvos.Count, h));
                 await Task.Delay(120, CancellationToken.None).ConfigureAwait(true);
+            }
+
+            if (opcoes.IdentificarServicos)
+            {
+                resultado.IdentificacaoFeita = true;
+                for (var n = 0; n < alvos.Count; n++)
+                {
+                    var h = alvos[n];
+                    h.Servicos = ServicosExemplo(h.Ip.GetAddressBytes()[3]).Where(s => s.Porta == 0 || h.PortasAbertas.Contains(s.Porta)).ToList();
+                    h.ServicosIdentificados = true;
+                    progresso.Report(new ProgressoVarredura(EtapaIdentificacao.Nome, n + 1, alvos.Count, h));
+                    await Task.Delay(80, CancellationToken.None).ConfigureAwait(true);
+                }
             }
         }
 
