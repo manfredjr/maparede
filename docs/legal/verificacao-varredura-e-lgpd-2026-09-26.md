@@ -10,7 +10,7 @@ Data: 26/09/2026. Objeto: MapNet - MT, software livre (GPL-3.0) da MT - Manfred 
 - **O que o programa faz hoje (0.2.5):** descobre os equipamentos da sub-rede por ping e ARP; lê IP, MAC, fabricante (tabela OUI) e nomes (DNS reverso, NetBIOS, mDNS); mostra dados do próprio computador; ferramentas de diagnóstico (ping, tracert, DNS, tabelas do Windows); manutenção do próprio computador; consulta opcional do IP público. Não testa senha, não explora falha, não entra em equipamento.
 - **O que vem (0.3.0 e seguintes):** abrir e fechar conexão TCP em portas comuns de cada equipamento encontrado, sem enviar dados; depois, ler o que o equipamento anuncia (título HTTP, banner SSH e FTP, certificado HTTPS, UPnP).
 - **Resultado:** relatório HTML (depois XML e CSV) gravado só no computador do técnico, em `Documentos\MapNet - MT`. Pode trazer nome de aparelho com nome de pessoa (por exemplo, o celular de um funcionário) e o MAC de aparelho pessoal.
-- **Dados da empresa:** o arquivo `dados-empresa.md` da `legal-br` não existe. Razão social, CNPJ, porte e foro da MT ficam como `[PREENCHER]`.
+- **Dados da empresa:** MANFRED TECNOLOGIA LTDA, CNPJ 21.075.901/0001-12, porte ME, atividade principal 62.09-1-00 (suporte técnico, manutenção e outros serviços em tecnologia da informação), conforme o comprovante de inscrição do CNPJ emitido em 26/09/2026. O foro fica como `[PREENCHER]`.
 
 ## 2. Fontes e verificação
 
@@ -48,7 +48,7 @@ O relatório `STATUS-FONTES.md` da biblioteca não existe. Por isso cada norma u
 
 **FATO LEGAL.** LGPD, art. 37: "O controlador e o operador devem manter registro das operações de tratamento de dados pessoais que realizarem, especialmente quando baseado no legítimo interesse." Art. 46, caput: os agentes de tratamento devem adotar "medidas de segurança, técnicas e administrativas aptas a proteger os dados pessoais de acessos não autorizados"; § 2º: desde a concepção do produto. Verificados no Planalto em 26/09/2026.
 
-**RECOMENDAÇÃO.** Se a MT for agente de tratamento de pequeno porte, a Resolução CD/ANPD nº 2/2022, art. 9º, permite o registro do art. 37 de forma simplificada (texto só na biblioteca local; confirmar a vigência antes de usar). O porte depende da receita da MT: `[PREENCHER]`.
+**RECOMENDAÇÃO.** A MT é microempresa (porte ME no CNPJ), o que a coloca, em princípio, entre os agentes de tratamento de pequeno porte da Resolução CD/ANPD nº 2/2022. O art. 9º dessa resolução permite o registro do art. 37 de forma simplificada. O art. 3º afasta o benefício em tratamento de alto risco, e o inventário de rede de pequenas empresas não parece ser esse caso. Texto só na biblioteca local: confirmar a vigência antes de usar.
 
 ### 4.2 Risco penal e civil da varredura e da sondagem de portas
 
@@ -66,7 +66,7 @@ O relatório `STATUS-FONTES.md` da biblioteca não existe. Por isso cada norma u
 
 **RECOMENDAÇÃO.** A autorização expressa e escrita é o que dá segurança ao técnico:
 
-1. **Termo de autorização de varredura**, assinado pelo representante do cliente antes do atendimento, com: rede e endereço, período, o que o programa faz e o que não faz, quem fica com o relatório, prazo de guarda e descarte, e declaração de que o cliente avisou os usuários de aparelhos pessoais ligados à rede ou vai restringir a varredura (ver questão 1). O texto do termo depende das respostas da consulta e dos dados da MT (`[PREENCHER]`).
+1. **Termo de autorização de varredura**, assinado pelo representante do cliente antes do atendimento, com: rede e endereço, período, o que o programa faz e o que não faz, quem fica com o relatório, prazo de guarda e descarte, e declaração de que o cliente avisou os usuários de aparelhos pessoais ligados à rede ou vai restringir a varredura (ver questão 1). O texto do termo depende das respostas da consulta e do foro (`[PREENCHER]`).
 2. **Cláusula no contrato de prestação de serviço** da MT com o mesmo conteúdo, para clientes recorrentes.
 3. **Confirmação na tela** antes da primeira varredura em cada rede, com caixa não marcada e o registro no relatório (nome do técnico, data, hora e a frase aceita). Na linha de comando, uma opção obrigatória equivalente. A confirmação na tela não substitui o termo: ela registra, dentro do programa, que o técnico declarou ter a autorização.
 

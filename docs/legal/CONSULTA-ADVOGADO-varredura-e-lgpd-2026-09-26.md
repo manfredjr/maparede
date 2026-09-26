@@ -1,6 +1,6 @@
 # Consulta ao advogado: varredura de rede, sondagem de portas e LGPD
 
-Data: 26/09/2026. Cliente da consulta: MT - Manfred Tecnologia (`[PREENCHER]` razão social e CNPJ). Análise de base: `docs/legal/verificacao-varredura-e-lgpd-2026-09-26.md`.
+Data: 26/09/2026. Cliente da consulta: MANFRED TECNOLOGIA LTDA (MT - Manfred Tecnologia), CNPJ 21.075.901/0001-12, microempresa. Análise de base: `docs/legal/verificacao-varredura-e-lgpd-2026-09-26.md`.
 
 **Contexto em uma linha.** O MapNet - MT é um programa gratuito e de código aberto que o técnico da MT roda na rede de empresas clientes, a pedido delas, para fazer o inventário dos equipamentos. Qualquer pessoa também pode baixá-lo. Ele não testa senha nem explora falha. A próxima versão vai abrir e fechar conexão TCP em portas comuns de cada equipamento, sem enviar dados, e depois ler o que o equipamento anuncia (título de página, banner, certificado).
 
