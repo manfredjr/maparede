@@ -8,12 +8,14 @@ internal static class Programa
 {
     /// <summary>
     /// Sem argumentos abre a janela. Com argumentos roda no modo linha de comando, no mesmo .exe.
+    /// O argumento --demonstracao abre a janela com dados de exemplo, sem tocar na rede.
     /// </summary>
     [STAThread]
     private static int Main(string[] args)
     {
+        var demonstracao = args is [Demonstracao.Argumento];
         var argumentos = ArgumentosCli.Interpretar(args);
-        if (args.Length > 0)
+        if (args.Length > 0 && !demonstracao)
         {
             return ModoLinhaDeComando.Executar(argumentos);
         }
@@ -24,7 +26,9 @@ internal static class Programa
             Source = new Uri("pack://application:,,,/mapnet;component/tema/tema-mt.xaml", UriKind.Absolute),
         });
         aplicativo.DispatcherUnhandledException += AoErroNaoTratado;
-        return aplicativo.Run(new JanelaPrincipal());
+        return aplicativo.Run(demonstracao
+            ? new JanelaPrincipal(Demonstracao.Dependencias(), " (demonstração)")
+            : new JanelaPrincipal(DependenciasPainel.Padrao(), string.Empty));
     }
 
     private static bool _erroMostrado;

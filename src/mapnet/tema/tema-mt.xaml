@@ -154,6 +154,24 @@
         <Setter Property="Margin" Value="0,8,0,1" />
     </Style>
 
+    <!-- Titulo de cada bloco da coluna Minha maquina (Computador, Placa, Enderecos...) -->
+    <Style TargetType="{x:Type TextBlock}" x:Key="TituloGrupo">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="ExtraBold" />
+        <Setter Property="Foreground" Value="{StaticResource PincelVerde}" />
+        <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+
+    <!-- Celula da tabela de hosts: o texto inteiro aparece na dica, porque a celula corta sem reticencias -->
+    <Style TargetType="{x:Type TextBlock}" x:Key="CelulaComDica">
+        <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
+        <Style.Triggers>
+            <Trigger Property="Text" Value="">
+                <Setter Property="ToolTip" Value="{x:Null}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="{x:Type TextBlock}" x:Key="ValorInfo">
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FontSize" Value="12" />
