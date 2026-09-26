@@ -33,13 +33,30 @@ public sealed class DependenciasPainel
     public string PastaRelatorios { get; init; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MapNet - MT");
 
+    /// <summary>
+    /// Lê os dados da máquina para a interface escolhida. Sem esta parte, o painel mostra só o que
+    /// a própria interface traz.
+    /// </summary>
+    public Func<InterfaceRede, Task<InformacoesMaquina>>? LerMaquina { get; init; }
+
+    /// <summary>Consulta do IP público. Sem ela, o botão fica desligado.</summary>
+    public IConsultaIpPublico? IpPublico { get; init; }
+
+    public Func<DateTimeOffset> Agora { get; init; } = () => DateTimeOffset.Now;
+
     /// <summary>As partes de verdade: interfaces do Windows, varredor e relatório HTML.</summary>
-    public static DependenciasPainel Padrao() => new()
+    public static DependenciasPainel Padrao()
     {
-        ListarInterfaces = LeitorInterfaces.Listar,
-        Varrer = (i, p, c) => new Varredor().VarrerAsync(i, p, c),
-        SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
-    };
+        var prefixo = new OpcoesVarredura().PrefixoMinimo;
+        return new()
+        {
+            ListarInterfaces = LeitorInterfaces.Listar,
+            Varrer = (i, p, c) => new Varredor().VarrerAsync(i, p, c),
+            SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
+            LerMaquina = i => Task.Run(() => LeitorMaquina.Ler(i, FontesMaquina.Padrao(), prefixo)),
+            IpPublico = new IpPublicoCloudflare(),
+        };
+    }
 }
 
 /// <summary>
@@ -60,12 +77,18 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     private string _textoResumo = string.Empty;
     private string _textoAviso = string.Empty;
     private string _textoRelatorio = string.Empty;
+    private InformacoesMaquina? _maquina;
+    private bool _lendoMaquina;
+    private bool _consultandoIp;
+    private string? _textoIpPublico;
+    private System.Net.IPAddress? _ipPublico;
 
     public PainelVarredura(DependenciasPainel dependencias)
     {
         _dep = dependencias;
         ComandoPrincipal = new Comando(AcionarPrincipal, () => PodeAcionarPrincipal);
         ComandoAtualizar = new Comando(CarregarInterfaces, () => PodeTrocarInterface);
+        ComandoIpPublico = new Comando(() => _ = ConsultarIpPublicoAsync(), () => PodeConsultarIpPublico);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -88,6 +111,8 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     public Comando ComandoPrincipal { get; }
 
     public Comando ComandoAtualizar { get; }
+
+    public Comando ComandoIpPublico { get; }
 
     public string PastaRelatorios => _dep.PastaRelatorios;
 
@@ -123,34 +148,113 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
             _interfaceSelecionada = value;
             Avisar();
-            Avisar(nameof(MinhaMaquina));
             AvisarBotoes();
+            _ = LerMaquinaAsync();
         }
     }
 
-    /// <summary>Linhas da coluna "Minha máquina", com o que o núcleo já lê da placa escolhida.</summary>
-    public IReadOnlyList<ItemMinhaMaquina> MinhaMaquina
+    /// <summary>
+    /// Blocos da coluna "Minha máquina": Computador, Placa, Endereços, DHCP, Wi-Fi e IP público.
+    /// Enquanto a leitura roda, um bloco só, com "lendo...".
+    /// </summary>
+    public IReadOnlyList<GrupoMinhaMaquina> GruposMaquina
     {
         get
         {
-            if (_interfaceSelecionada is not { } i)
+            if (_interfaceSelecionada is null)
             {
-                return [new ItemMinhaMaquina("Interface", "Nenhuma interface de rede ativa com IPv4. Conecte o cabo ou o Wi-Fi e clique em Atualizar.")];
+                return [new GrupoMinhaMaquina("Interface", [new ItemMinhaMaquina("Interface", "Nenhuma interface de rede ativa com IPv4. Conecte o cabo ou o Wi-Fi e clique em Atualizar.")])];
             }
 
-            var subRede = Varredor.SubRedeAVarrer(i, _dep.PrefixoMinimo, out _);
-            return
-            [
-                new ItemMinhaMaquina("Placa", i.Descricao.Length > 0 ? i.Descricao : i.Nome),
-                new ItemMinhaMaquina("Tipo", i.TipoTexto),
-                new ItemMinhaMaquina("MAC", i.Mac.Length > 0 ? EnderecoMac.Formatar(i.Mac) : "não informado"),
-                new ItemMinhaMaquina("IPv4", $"{i.Ip}/{i.Prefixo}"),
-                new ItemMinhaMaquina("Máscara", i.Mascara.ToString()),
-                new ItemMinhaMaquina("Gateway", i.Gateway?.ToString() ?? "nenhum"),
-                new ItemMinhaMaquina("DNS", i.Dns.Count > 0 ? string.Join(", ", i.Dns) : "nenhum"),
-                new ItemMinhaMaquina("Sub-rede a varrer", $"{subRede} ({subRede.QuantidadeHosts} endereços)"),
-            ];
+            if (_maquina is null || _lendoMaquina)
+            {
+                return [new GrupoMinhaMaquina("Minha máquina", [new ItemMinhaMaquina("Leitura", "lendo...")])];
+            }
+
+            return _maquina.Grupos(_dep.Agora(), _textoIpPublico ?? "não consultado");
         }
+    }
+
+    public bool PodeConsultarIpPublico => _dep.IpPublico != null && !_consultandoIp;
+
+    public string TextoBotaoIpPublico => _consultandoIp ? "Consultando..." : "Consultar IP público";
+
+    /// <summary>
+    /// Consulta o IP público. É a única saída do programa para a internet e só acontece por este
+    /// comando, que a tela liga ao botão.
+    /// </summary>
+    public async Task ConsultarIpPublicoAsync()
+    {
+        if (_dep.IpPublico is not { } consulta || _consultandoIp)
+        {
+            return;
+        }
+
+        _consultandoIp = true;
+        _textoIpPublico = "consultando...";
+        AvisarIpPublico();
+        Console.Escrever($"Consultando o IP público em {consulta.Endereco}...");
+        try
+        {
+            var ip = await consulta.ConsultarAsync(CancellationToken.None);
+            _ipPublico = ip;
+            _textoIpPublico = ip.ToString();
+            Console.Escrever($"IP público: {ip}");
+        }
+        catch (Exception e)
+        {
+            _ipPublico = null;
+            _textoIpPublico = $"não foi possível consultar: {e.Message}";
+            Console.Escrever($"Não foi possível consultar o IP público: {e.Message}");
+        }
+        finally
+        {
+            _consultandoIp = false;
+            AvisarIpPublico();
+        }
+    }
+
+    /// <summary>Lê a máquina em segundo plano. Se a interface mudou no meio, o resultado velho é descartado.</summary>
+    private async Task LerMaquinaAsync()
+    {
+        if (_interfaceSelecionada is not { } i)
+        {
+            _maquina = null;
+            Avisar(nameof(GruposMaquina));
+            return;
+        }
+
+        _lendoMaquina = true;
+        Avisar(nameof(GruposMaquina));
+        InformacoesMaquina lida;
+        try
+        {
+            lida = _dep.LerMaquina is { } ler
+                ? await ler(i)
+                : LeitorMaquina.Ler(i, new FontesMaquina { Computador = () => null, Placa = _ => null }, _dep.PrefixoMinimo);
+        }
+        catch (Exception e)
+        {
+            Console.Escrever($"Não foi possível ler os dados da máquina: {e.Message}");
+            lida = new InformacoesMaquina { Interface = i, SubRedeAVarrer = Varredor.SubRedeAVarrer(i, _dep.PrefixoMinimo, out _) };
+        }
+
+        if (!ReferenceEquals(i, _interfaceSelecionada))
+        {
+            return;
+        }
+
+        _maquina = lida;
+        _lendoMaquina = false;
+        Avisar(nameof(GruposMaquina));
+    }
+
+    private void AvisarIpPublico()
+    {
+        Avisar(nameof(GruposMaquina));
+        Avisar(nameof(PodeConsultarIpPublico));
+        Avisar(nameof(TextoBotaoIpPublico));
+        ComandoIpPublico.Reavaliar();
     }
 
     public string Filtro
@@ -256,7 +360,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         if (_interfaceSelecionada is null)
         {
             Avisar(nameof(InterfaceSelecionada));
-            Avisar(nameof(MinhaMaquina));
+            _ = LerMaquinaAsync();
             AvisarBotoes();
             TextoAndamento = "Nenhuma interface de rede ativa com IPv4 foi encontrada.";
         }
@@ -364,6 +468,13 @@ public sealed class PainelVarredura : INotifyPropertyChanged
                 Directory.CreateDirectory(pasta);
             }
 
+            // O relatório leva a "Minha máquina" da interface varrida e o IP público, se foi consultado.
+            if (_maquina is { } maquina && maquina.Interface.Id == resultado.Interface.Id)
+            {
+                resultado.Maquina = maquina;
+            }
+
+            resultado.IpPublico = _ipPublico?.ToString();
             UltimoRelatorio = await _dep.SalvarEm(resultado, caminho);
             TextoRelatorio = $"Relatório em {UltimoRelatorio}";
             Console.Escrever($"Relatório gravado em {UltimoRelatorio}");
@@ -480,6 +591,3 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     private void Avisar([CallerMemberName] string? propriedade = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propriedade));
 }
-
-/// <summary>Uma linha da coluna "Minha máquina": rótulo e valor.</summary>
-public sealed record ItemMinhaMaquina(string Rotulo, string Valor);

@@ -77,6 +77,11 @@ public static class RelatorioHtml
             html.Append("</ul></section>");
         }
 
+        if (r.Maquina is { } maquina)
+        {
+            AcrescentarMaquina(html, maquina.Grupos(r.Fim, r.IpPublico));
+        }
+
         html.Append($$"""
             <section class="cartoes">
               <div class="cartao"><span class="numero">{{hosts.Count}}</span><span class="rotulo">hosts encontrados</span></div>
@@ -150,6 +155,24 @@ public static class RelatorioHtml
         return html.ToString();
     }
 
+    /// <summary>Seção "Minha máquina": o computador de onde a varredura foi feita, em blocos.</summary>
+    private static void AcrescentarMaquina(StringBuilder html, IReadOnlyList<GrupoMinhaMaquina> grupos)
+    {
+        html.Append("<section class=\"maquina\"><h2>Minha máquina</h2><div class=\"grupos\">");
+        foreach (var grupo in grupos)
+        {
+            html.Append($"<div class=\"grupo\"><h3>{C(grupo.Titulo)}</h3><table class=\"dados\">");
+            foreach (var item in grupo.Itens)
+            {
+                html.Append($"<tr><th>{C(item.Rotulo)}</th><td>{C(item.Valor)}</td></tr>");
+            }
+
+            html.Append("</table></div>");
+        }
+
+        html.Append("</div></section>");
+    }
+
     private static void AcrescentarHost(StringBuilder html, HostEncontrado h)
     {
         var marcas = h.Marcas;
@@ -217,7 +240,10 @@ public static class RelatorioHtml
         .avisos h2 { color: #8a5a00; }
         table { border-collapse: collapse; width: 100%; }
         .dados th { text-align: left; width: 200px; color: var(--suave); font-weight: 600; padding: 4px 8px 4px 0; vertical-align: top; }
-        .dados td { padding: 4px 0; }
+        .dados td { padding: 4px 0; word-break: break-word; }
+        .grupos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px 24px; }
+        .grupo h3 { font-size: 13px; margin: 0 0 4px; color: var(--suave); text-transform: uppercase; letter-spacing: .5px; }
+        .grupo .dados th { width: 45%; }
         .lista th, .lista td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--linha); }
         .lista thead th { background: var(--fundo); position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap; }
         .lista thead th.ordenada { color: var(--destaque); text-decoration: underline; }
