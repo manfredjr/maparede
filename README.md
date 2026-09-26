@@ -14,6 +14,8 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 
 ## Situação do projeto
 
+**Versão 1.0 concluída em 26/09/2026**, publicada como v1.0.0. O que ficou de fora é melhoria opcional e está em [`docs/superpowers/pendencias.md`](docs/superpowers/pendencias.md). O executável segue sem assinatura digital, por decisão do Manfred.
+
 | Fatia | Conteúdo | Ramo | Pull Request | Situação |
 |---|---|---|---|---|
 | 0 | Estrutura do método da MT: regras, ganchos, CI, spec | `metodo-mt` | [#1](https://github.com/manfredjr/mapnet/pull/1) | Concluída |
