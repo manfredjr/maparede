@@ -99,6 +99,7 @@ public static class RelatorioHtml
                 <tr><th>Gateway</th><td>{{C(i.Gateway?.ToString() ?? "não configurado")}}</td></tr>
                 <tr><th>DNS</th><td>{{C(i.Dns.Count > 0 ? string.Join(", ", i.Dns) : "não configurado")}}</td></tr>
                 <tr><th>Início</th><td>{{C(Data(r.Inicio))}}</td></tr>
+                <tr><th>Portas verificadas</th><td>{{C(r.PortasVerificadas is { } portas ? $"{portas.Count} porta(s) TCP, só abrindo e fechando a conexão: {ListaPortas.Texto(portas)}" : "não verificadas nesta varredura")}}</td></tr>
                 <tr><th>Duração</th><td>{{C(Duracao(r.Duracao))}}{{(r.Cancelada ? " (interrompida)" : "")}}</td></tr>
                 <tr><th>Computador</th><td>{{C(r.NomeComputador)}}</td></tr>
               </table>
@@ -118,6 +119,7 @@ public static class RelatorioHtml
                   <th data-tipo="texto">MAC</th>
                   <th data-tipo="texto">Fabricante</th>
                   <th data-tipo="numero">Ping (ms)</th>
+                  <th data-tipo="texto">Portas</th>
                   <th data-tipo="texto">Observação</th>
                 </tr></thead>
                 <tbody>
@@ -146,7 +148,7 @@ public static class RelatorioHtml
             </main>
             <footer>
               Relatório gerado pelo <a href="https://mapnet.manfred.com.br">MapNet - MT</a> {{C(ResultadoVarredura.VersaoPrograma)}}, da MT - Manfred Tecnologia.
-              Levantamento de inventário: o programa só registra o que a rede mostra a qualquer computador ligado nela.
+              Levantamento de inventário por ping, ARP e consultas de nome{{(r.PortasVerificadas is null ? "" : ", com verificação de portas por conexão TCP")}}. O programa não testa senha nem explora falha.
             </footer>
             <script>{{Script}}</script>
             </body>
@@ -176,7 +178,7 @@ public static class RelatorioHtml
     private static void AcrescentarHost(StringBuilder html, HostEncontrado h)
     {
         var marcas = h.Marcas;
-        var busca = string.Join(' ', h.Ip, h.Nome, h.NomeDns, h.NomeNetBios, h.NomeMdns, h.GrupoNetBios, h.MacTexto, h.Fabricante, string.Join(' ', marcas))
+        var busca = string.Join(' ', h.Ip, h.Nome, h.NomeDns, h.NomeNetBios, h.NomeMdns, h.GrupoNetBios, h.MacTexto, h.Fabricante, string.Join(' ', marcas), h.PortasTexto)
             .ToLowerInvariant();
         var classe = h.EhGateway ? " class=\"host gateway\"" : h.EhEsteComputador ? " class=\"host proprio\"" : " class=\"host\"";
 
@@ -186,10 +188,11 @@ public static class RelatorioHtml
         html.Append($"<td class=\"mono\">{C(h.MacTexto)}</td>");
         html.Append($"<td>{C(h.Fabricante)}</td>");
         html.Append($"<td class=\"num\" data-valor=\"{(h.TempoPingMs ?? -1)}\">{(h.TempoPingMs.HasValue ? h.TempoPingMs.Value.ToString(_ptBr) : "-")}</td>");
+        html.Append($"<td class=\"mono\" title=\"{C(h.PortasAbertas.Count > 0 ? ListaPortas.Texto(h.PortasAbertas) : null)}\">{C(h.PortasTexto)}</td>");
         html.Append($"<td>{string.Concat(marcas.Select(m => $"<span class=\"etiqueta\">{C(m)}</span>"))}</td>");
         html.Append("</tr>");
 
-        html.Append("<tr class=\"detalhe\" hidden><td colspan=\"6\"><dl>");
+        html.Append("<tr class=\"detalhe\" hidden><td colspan=\"7\"><dl>");
         Item(html, "IP", h.Ip.ToString());
         Item(html, "MAC", h.MacTexto.Length > 0 ? h.MacTexto : "não obtido");
         Item(html, "Fabricante", h.Fabricante.Length > 0 ? h.Fabricante : "não identificado");
@@ -200,6 +203,7 @@ public static class RelatorioHtml
         Item(html, "Nome exibido vem de", h.OrigemNome.Length > 0 ? h.OrigemNome : "nenhuma fonte respondeu");
         Item(html, "Ping", h.RespondeuPing ? $"respondeu em {h.TempoPingMs} ms" + (h.Ttl.HasValue ? $", TTL {h.Ttl}" : "") : "não respondeu");
         Item(html, "ARP", h.RespondeuArp ? "respondeu" : h.EhEsteComputador ? "não se aplica (este computador)" : "não respondeu");
+        Item(html, "Portas abertas", DetalheHost.TextoPortas(h));
         html.Append("</dl></td></tr>");
     }
 

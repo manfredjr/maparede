@@ -427,6 +427,88 @@ public class PainelTestes
         Assert.Equal("[14:02:11] linha 5", registro.Linhas[0]);
     }
 
+    [Fact]
+    public async Task Portas_pedem_confirmacao_uma_vez_por_rede()
+    {
+        var simulador = new Simulador();
+        var perguntas = new List<string>();
+        var dependencias = Dependencias(simulador);
+        dependencias.Confirmar = p => { perguntas.Add(p); return true; };
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        painel.OlharPortas = true;
+        painel.TextoPortas = "80, 443";
+
+        var varredura = painel.VarrerAsync();
+        Assert.Equal(EstadoPainel.Varrendo, painel.Estado);
+        simulador.Terminar(Resultado());
+        await varredura;
+
+        Assert.Single(perguntas);
+        Assert.Contains("192.0.2.0/24", perguntas[0]);
+        Assert.True(dependencias.Opcoes.OlharPortas);
+        Assert.Equal([80, 443], dependencias.Opcoes.Portas);
+        Assert.Contains(painel.Console.Linhas, l => l.Contains("2 porta(s) TCP"));
+
+        var segundo = new Simulador();
+        var outra = new PainelVarredura(Dependencias(segundo));
+        Assert.False(outra.OlharPortas);
+    }
+
+    [Fact]
+    public async Task Sem_confirmacao_a_varredura_com_portas_nao_comeca()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        dependencias.Confirmar = _ => false;
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        painel.OlharPortas = true;
+
+        await painel.VarrerAsync();
+
+        Assert.Equal(EstadoPainel.Parado, painel.Estado);
+        Assert.Null(painel.UltimoResultado);
+        Assert.Contains(painel.Console.Linhas, l => l.Contains("não foi confirmada"));
+    }
+
+    [Fact]
+    public async Task Lista_de_portas_errada_nao_comeca_e_avisa()
+    {
+        var simulador = new Simulador();
+        var dependencias = Dependencias(simulador);
+        var perguntou = false;
+        dependencias.Confirmar = _ => perguntou = true;
+        var painel = new PainelVarredura(dependencias);
+        painel.CarregarInterfaces();
+        string? falha = null;
+        painel.Falhou += m => falha = m;
+        painel.OlharPortas = true;
+        painel.TextoPortas = "80, abc";
+
+        await painel.VarrerAsync();
+
+        Assert.Equal(EstadoPainel.Parado, painel.Estado);
+        Assert.False(perguntou);
+        Assert.Contains("Porta inválida", falha);
+    }
+
+    [Fact]
+    public async Task Opcoes_de_portas_nao_mudam_durante_a_varredura()
+    {
+        var simulador = new Simulador();
+        var painel = Painel(simulador);
+
+        var varredura = painel.VarrerAsync();
+        painel.OlharPortas = true;
+        painel.PortasEmMacAleatorio = true;
+
+        Assert.False(painel.OlharPortas);
+        Assert.False(painel.PortasEmMacAleatorio);
+        simulador.Terminar(Resultado());
+        await varredura;
+    }
+
     private static PainelVarredura Painel(Simulador simulador)
     {
         var painel = new PainelVarredura(Dependencias(simulador));

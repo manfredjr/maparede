@@ -6,7 +6,7 @@ Página do programa: **https://mapnet.manfred.com.br**. Download da versão mais
 
 Software livre, sob licença [GPL-3.0](LICENSE).
 
-Não é scanner de vulnerabilidade: o programa não testa senha, não contorna autenticação e não explora vulnerabilidade. Para achar os equipamentos, ele manda ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida.
+Não é scanner de vulnerabilidade: o programa não testa senha, não contorna autenticação e não explora vulnerabilidade. Para achar os equipamentos, ele manda ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida. Com a opção **Verificar portas** ligada, ele também abre e fecha uma conexão TCP em cada porta da lista, nos equipamentos que encontrou, sem enviar dados.
 
 **Uso autorizado.** O MapNet - MT serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação. Confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados.
 
@@ -24,7 +24,8 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões e rotas (sai como v0.2.3) | `diagnostico` | [#17](https://github.com/manfredjr/mapnet/pull/17) | Publicada na v0.2.5 |
 | 5 | Ações de manutenção com elevação sob demanda, na aba Manutenção do console (sai como v0.2.4) | `manutencao` | [#18](https://github.com/manfredjr/mapnet/pull/18) | Publicada na v0.2.5 |
 | 6 | Painel de detalhe do host, com ping, tracert, navegador, área de trabalho remota e pasta compartilhada (sai como v0.2.5) | `detalhe-host` | [#19](https://github.com/manfredjr/mapnet/pull/19) | Publicada na v0.2.5 |
-| 7 em diante | Portas TCP, identificação leve, classificação e relatório completo em HTML, XML e CSV | a definir | - | A fazer |
+| 7 | Portas TCP comuns abertas, com lista configurável, desligadas por padrão e com confirmação por rede (sai como v0.3.0) | `portas` | Plano em [#26](https://github.com/manfredjr/mapnet/pull/26), código em [PREENCHER] | Em revisão |
+| 8 a 10 | Identificação leve, classificação por tipo de equipamento e relatório também em XML e CSV (até a v1.0.0) | a definir | - | A fazer |
 
 A versão 0.2 segue o desenho em [`docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md`](docs/superpowers/specs/2026-09-25-mapnet-0.2-painel-do-tecnico-design.md).
 
@@ -39,10 +40,11 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 1. Abra o `mapnet.exe`.
 2. Na faixa verde do topo, escolha a interface de rede. A primeira da lista é a que tem gateway, quase sempre a certa. A coluna **Minha máquina** mostra o computador (nome, grupo de trabalho ou domínio, usuário), a placa (tipo, MAC, velocidade, MTU), os endereços (IPv4, IPv6, gateway, DNS, sufixo e a sub-rede que vai ser varrida) e o DHCP com a validade da concessão. No Wi-Fi, mostra também a rede, a banda, o canal e o sinal.
 3. O botão **Consultar IP público** pergunta o IP ao serviço `1.1.1.1`, do Cloudflare, e só roda com o clique. Se o relatório for gravado depois da consulta, o IP público vai junto.
-4. Clique em **Iniciar varredura**. Clicar numa linha da tabela abre, ao lado, o detalhe do host: MAC, fabricante, os nomes pelo DNS reverso, NetBIOS e mDNS, o grupo de trabalho, o ping com o TTL e uma pista do sistema pelo TTL. Os botões do detalhe fazem ping contínuo e tracert no console, abrem http e https no navegador, a área de trabalho remota e a pasta compartilhada, e copiam os dados. Um novo clique na mesma linha, a tecla Esc ou o botão **Fechar** fecham o detalhe. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante ou observação, e cada coluna ordena com um clique no título.
-5. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo. O console tem também uma aba para cada ferramenta: Ping (normal ou contínuo), Tracert, DNS com escolha do servidor, ARP, Conexões e Rotas. Os campos de host e de servidor DNS já vêm com o gateway e o DNS da interface. Enquanto a ferramenta roda, **Executar** vira **Parar**. **Copiar** e **Limpar** valem para a aba aberta.
-6. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
-7. A aba **Manutenção** tem quatro botões, que rodam os comandos oficiais do Windows e mostram a saída ali mesmo: **Limpar cache DNS** (`ipconfig /flushdns`), **Liberar e renovar IP** (`ipconfig /release` e `/renew`), **Limpar tabela ARP** (`netsh interface ip delete arpcache`) e **Resetar Winsock e TCP/IP** (`netsh winsock reset` e `netsh int ip reset`). O programa continua abrindo como usuário comum. Quando a ação pede administrador, o Windows mostra a tela do UAC só para aquele comando. Renovar o IP e resetar o Winsock derrubam a rede por alguns segundos e pedem confirmação antes. O reset só vale depois de reiniciar o computador.
+4. Para saber também as portas abertas de cada equipamento, marque **Verificar portas** acima da tabela. A **Lista** vem com `padrão`, as 24 portas comuns (a dica do campo mostra quais são), ou aceita até 100 portas separadas por vírgula, como `80,443,9100`. Os aparelhos com MAC aleatório, quase sempre celulares e notebooks pessoais, ficam de fora, a não ser que você marque **Incluir aparelhos com MAC aleatório**. Na primeira varredura com portas em cada rede, o programa diz o que vai enviar e pede confirmação. Use só em rede que você tem autorização para verificar.
+5. Clique em **Iniciar varredura**. Clicar numa linha da tabela abre, ao lado, o detalhe do host: MAC, fabricante, os nomes pelo DNS reverso, NetBIOS e mDNS, o grupo de trabalho, o ping com o TTL, uma pista do sistema pelo TTL e as portas abertas, com o serviço de cada uma. Os botões do detalhe fazem ping contínuo e tracert no console, abrem http e https no navegador (na 8080, 8000 ou 8443 quando só ela está aberta), a área de trabalho remota e a pasta compartilhada, e copiam os dados. Um novo clique na mesma linha, a tecla Esc ou o botão **Fechar** fecham o detalhe. A tabela vai se enchendo enquanto os hosts respondem, e o mesmo botão vira **Cancelar**. O campo **Filtrar** procura por IP, nome, MAC, fabricante, observação ou número de porta aberta (`9100` lista as impressoras), e cada coluna ordena com um clique no título.
+6. O console embaixo registra o andamento e os avisos, e a barra de estado mostra o resumo. O console tem também uma aba para cada ferramenta: Ping (normal ou contínuo), Tracert, DNS com escolha do servidor, ARP, Conexões e Rotas. Os campos de host e de servidor DNS já vêm com o gateway e o DNS da interface. Enquanto a ferramenta roda, **Executar** vira **Parar**. **Copiar** e **Limpar** valem para a aba aberta.
+7. No fim, o relatório é gravado em `Documentos\MapNet - MT`. O botão **Relatório** abre o relatório no navegador, salva em outro lugar ou abre a pasta.
+8. A aba **Manutenção** tem quatro botões, que rodam os comandos oficiais do Windows e mostram a saída ali mesmo: **Limpar cache DNS** (`ipconfig /flushdns`), **Liberar e renovar IP** (`ipconfig /release` e `/renew`), **Limpar tabela ARP** (`netsh interface ip delete arpcache`) e **Resetar Winsock e TCP/IP** (`netsh winsock reset` e `netsh int ip reset`). O programa continua abrindo como usuário comum. Quando a ação pede administrador, o Windows mostra a tela do UAC só para aquele comando. Renovar o IP e resetar o Winsock derrubam a rede por alguns segundos e pedem confirmação antes. O reset só vale depois de reiniciar o computador.
 
 ### Pela linha de comando
 
@@ -50,6 +52,7 @@ O programa é um arquivo só, `mapnet.exe`. Não precisa instalar nada no comput
 mapnet --interfaces
 mapnet --varrer
 mapnet --varrer --interface 2 --saida C:\Relatorios --abrir
+mapnet --varrer --portas 80,443,9100
 mapnet --ajuda
 ```
 
@@ -63,6 +66,8 @@ mapnet --ajuda
 | `--tempo-ping <ms>` | Espera de cada ping, de 100 a 10000. Padrão: 1000 |
 | `--paralelo <n>` | Endereços sondados ao mesmo tempo, de 1 a 256. Padrão: 64 |
 | `--sem-arp` | Descobre hosts só pelo ping |
+| `--portas [lista]` | Verifica as portas TCP dos hosts encontrados, só abrindo e fechando a conexão. Sem lista, usa as 24 portas comuns; com lista, até 100 portas, como `22,80,443`. Desligado sem esta opção |
+| `--incluir-mac-aleatorio` | Com `--portas`, inclui os aparelhos com MAC aleatório, que ficam de fora por padrão |
 
 O `.exe` é de janela, então o Prompt de Comando devolve o cursor antes de o programa terminar. Para esperar o fim, use `start /wait mapnet --varrer` no Prompt de Comando ou termine a linha com `| Out-Host` no PowerShell. Redirecionar para arquivo (`> saida.txt`) funciona direto, em UTF-8.
 
@@ -103,6 +108,8 @@ Se o valor bater com o do `.txt`, o executável é exatamente o que foi publicad
 - **Fabricante:** pelos três primeiros bytes do MAC, na tabela OUI do IEEE embutida no programa (35.084 prefixos). MAC com o bit de administração local ligado aparece como "MAC aleatório (privativo)", que é o caso do celular com endereço privado.
 - **Nome:** DNS reverso, NetBIOS (o mesmo do `nbtstat -A`, que traz também o grupo de trabalho ou domínio) e mDNS (nomes `.local` de celulares, Macs, impressoras e aparelhos Linux).
 - **Relatório HTML:** arquivo único, com resumo da varredura, cartões de contagem, tabela filtrável e ordenável, detalhe de cada host ao clicar na linha e a lista de fabricantes.
+
+- **Portas (desde a v0.3.0, desligadas por padrão):** para cada host encontrado, abre e fecha a conexão TCP em cada porta da lista, sem enviar nenhum dado, com até 128 conexões ao mesmo tempo, 8 por host e 800 ms de espera por porta. Porta que aceita a conexão aparece como aberta. Este computador e os aparelhos com MAC aleatório ficam de fora, e o motivo aparece no detalhe. O relatório ganha a coluna Portas e diz quais portas foram verificadas. A identificação do serviço (título da página, banner, certificado) fica para a v0.4.0.
 
 Sub-rede maior que /22 (1022 endereços) é varrida só no bloco /22 em volta do IP do computador, com aviso no relatório. A faixa manual fica para uma próxima versão.
 

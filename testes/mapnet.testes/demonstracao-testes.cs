@@ -33,6 +33,22 @@ public partial class DemonstracaoTestes
     }
 
     [Fact]
+    public async Task Com_portas_ligadas_a_demonstracao_preenche_portas_e_deixa_o_celular_de_fora()
+    {
+        var dependencias = Demonstracao.Dependencias();
+        dependencias.Opcoes.OlharPortas = true;
+        var i = dependencias.ListarInterfaces()[0];
+
+        var r = await dependencias.Varrer(i, new Progress<ProgressoVarredura>(), CancellationToken.None);
+
+        Assert.NotNull(r.PortasVerificadas);
+        Assert.Contains(r.Hosts, h => h.PortasAbertas.Contains(9100));
+        var celular = r.Hosts.Single(h => h.NomeMdns == "celular-exemplo.local");
+        Assert.False(celular.PortasVerificadas);
+        Assert.Equal(EtapaPortas.MotivoMacAleatorio, celular.MotivoSemPortas);
+    }
+
+    [Fact]
     public void Ipv6_de_exemplo_e_de_documentacao_ou_link_local()
     {
         var i = Demonstracao.Dependencias().ListarInterfaces()[0];

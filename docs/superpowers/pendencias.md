@@ -54,8 +54,16 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 
 | Item | Motivo | O que fecha |
 |---|---|---|
-| Portas abertas no detalhe | O desenho prevê as portas no detalhe quando a fatia de portas existir | Versão 1, fatia de portas TCP |
+| Portas abertas no detalhe | Fechado na fatia 7 (0.3.0): o detalhe mostra as portas abertas com o serviço, ou o motivo de não terem sido verificadas | Fechado |
 | Esc e novo clique na linha testados só no modelo | O agente não teve acesso ao teclado e ao mouse na janela de teste. A lógica de fechar está coberta por teste, e a ligação na janela é curta | O Manfred abrir e fechar o detalhe com Esc e com novo clique |
+
+## Fatia 7: portas TCP
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Portas desligadas por padrão | O plano da versão 1.0 previa as portas ligadas, com `--sem-portas` para desligar. A análise jurídica de 26/09/2026 recomendou pedir o escopo antes da sondagem e deixar aparelhos pessoais de fora por padrão. A fatia seguiu a recomendação: a caixa começa desmarcada, a primeira varredura com portas em cada rede pede confirmação e a linha de comando liga com `--portas` | O Manfred confirmar a escolha ou pedir as portas ligadas ao abrir |
+| Portas numa rede de verdade | A etapa foi testada com sonda simulada e no modo de demonstração. Não rodou numa rede de verdade no teste do agente | O Manfred varrer a rede da MT com as portas ligadas e conferir, por exemplo, a 80 ou 443 no roteador, a 9100 numa impressora e a 445 num Windows com compartilhamento |
+| Confirmação vale para a sessão | A pergunta aparece uma vez por sub-rede enquanto o programa está aberto. Fechar e abrir de novo pergunta outra vez | Guardar a confirmação, se o Manfred achar a pergunta repetitiva no uso |
 
 ## Página de privacidade
 

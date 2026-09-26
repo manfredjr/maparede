@@ -150,6 +150,9 @@ public sealed class ResultadoVarredura
 
     public bool Cancelada { get; set; }
 
+    /// <summary>Lista de portas que a etapa de portas usou. Null quando a etapa não rodou.</summary>
+    public IReadOnlyList<int>? PortasVerificadas { get; set; }
+
     public string NomeComputador { get; init; } = Environment.MachineName;
 
     /// <summary>Dados da coluna "Minha máquina" para a seção do relatório. Null quando não foram lidos.</summary>

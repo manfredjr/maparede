@@ -115,6 +115,12 @@ internal static partial class ModoLinhaDeComando
         var subRede = Varredor.SubRedeAVarrer(interfaceRede, argumentos.Opcoes.PrefixoMinimo, out _);
         Console.WriteLine($"Interface: {interfaceRede.Resumo}");
         Console.WriteLine($"Sub-rede:  {subRede} ({subRede.QuantidadeHosts} endereços)");
+        if (argumentos.Opcoes.OlharPortas)
+        {
+            Console.WriteLine($"Portas:    {argumentos.Opcoes.Portas.Count} porta(s) TCP em cada host, só abrindo e fechando a conexão"
+                + (argumentos.Opcoes.PortasEmMacAleatorio ? ", inclusive nos aparelhos com MAC aleatório" : ""));
+        }
+
         Console.WriteLine();
 
         var varredor = new Varredor(argumentos.Opcoes);
@@ -130,7 +136,8 @@ internal static partial class ModoLinhaDeComando
         foreach (var h in resultado.Hosts)
         {
             var marcas = h.Marcas.Count > 0 ? $"  [{string.Join(", ", h.Marcas)}]" : string.Empty;
-            Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {h.Nome}{marcas}");
+            var portas = h.PortasAbertas.Count > 0 ? $"  portas {h.PortasTexto}" : string.Empty;
+            Console.WriteLine($"  {h.Ip,-15}  {h.MacTexto,-17}  {Cortar(h.Fabricante, 28),-28}  {h.Nome}{marcas}{portas}");
         }
 
         // Na linha de comando não há clique, então o relatório sai sem o IP público.

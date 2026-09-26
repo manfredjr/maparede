@@ -96,6 +96,7 @@ public sealed class Varredor
 
         if (!resultado.Cancelada && _opcoes.OlharPortas)
         {
+            resultado.PortasVerificadas = _opcoes.Portas;
             try
             {
                 await EtapaPortas.VerificarAsync(resultado.Hosts, _opcoes, _portas, progresso, cancelamento).ConfigureAwait(false);

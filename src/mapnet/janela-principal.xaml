@@ -8,7 +8,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Style="{StaticResource JanelaMT}"
         Icon="pack://application:,,,/mapnet;component/recursos/mapnet.ico"
-        Width="1180" Height="740" MinWidth="960" MinHeight="600"
+        Width="1280" Height="740" MinWidth="960" MinHeight="600"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
@@ -134,9 +134,21 @@
                                        Foreground="{StaticResource PincelTextoSuave}" />
                             <TextBox Width="220" Padding="6,4" VerticalContentAlignment="Center"
                                      Text="{Binding Filtro, UpdateSourceTrigger=PropertyChanged}"
-                                     ToolTip="IP, nome, MAC, fabricante ou observação" />
+                                     ToolTip="IP, nome, MAC, fabricante, observação ou número de porta aberta" />
                         </StackPanel>
                     </DockPanel>
+                    <!-- Portas: desligadas ao abrir. Ligadas, a primeira varredura em cada rede pede confirmacao -->
+                    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8" IsEnabled="{Binding PodeTrocarInterface}">
+                        <CheckBox Content="Verificar portas" IsChecked="{Binding OlharPortas}" VerticalAlignment="Center" Margin="0,0,10,0"
+                                  ToolTip="Abre e fecha uma conexão TCP em cada porta da lista, nos hosts encontrados. Não envia dados, não testa senha. Use só em rede que você tem autorização para verificar." />
+                        <TextBlock Text="Lista:" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{StaticResource PincelTextoSuave}" />
+                        <TextBox Width="150" Padding="6,2" VerticalContentAlignment="Center" Margin="0,0,14,0"
+                                 Text="{Binding TextoPortas, UpdateSourceTrigger=PropertyChanged}"
+                                 IsEnabled="{Binding OlharPortas}" ToolTip="{Binding DicaPortasPadrao, Mode=OneTime}" />
+                        <CheckBox Content="Incluir aparelhos com MAC aleatório" IsChecked="{Binding PortasEmMacAleatorio}" VerticalAlignment="Center"
+                                  IsEnabled="{Binding OlharPortas}"
+                                  ToolTip="Celulares e notebooks pessoais costumam usar MAC aleatório e ficam de fora por padrão." />
+                    </WrapPanel>
                     <!-- Detalhe do host escolhido: abre ao clicar na linha e fecha com novo clique, com Esc ou no Fechar -->
                     <Border DockPanel.Dock="Right" Width="250" Margin="12,0,0,6" Padding="12,0,0,0"
                             BorderBrush="{StaticResource PincelBorda}" BorderThickness="1,0,0,0"
@@ -154,9 +166,9 @@
                                 <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Tracert"
                                         Command="{Binding ComandoTracertHost}" ToolTip="Mostra o caminho até o host, na aba Tracert do console" />
                                 <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="http"
-                                        Command="{Binding ComandoAbrirHttp}" ToolTip="Abre http://IP no navegador" />
+                                        Command="{Binding ComandoAbrirHttp}" ToolTip="Abre http://IP no navegador. Se só a 8080 ou a 8000 estiver aberta, usa ela" />
                                 <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="https"
-                                        Command="{Binding ComandoAbrirHttps}" ToolTip="Abre https://IP no navegador" />
+                                        Command="{Binding ComandoAbrirHttps}" ToolTip="Abre https://IP no navegador. Se só a 8443 estiver aberta, usa ela" />
                                 <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Área remota"
                                         Command="{Binding ComandoAreaRemota}" ToolTip="Abre a Conexão de Área de Trabalho Remota com o IP" />
                                 <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Pasta"
@@ -184,8 +196,8 @@
                         <DataGrid.Columns>
                             <!--
                                 Larguras fixas pelo texto mais longo possivel: IP 255.255.255.255, "DNS reverso",
-                                MAC com 17 caracteres e o titulo "Ping (ms)". Nome, Fabricante e Observacao
-                                dividem o resto, com minimo para "MAC aleatorio (privativo)" e "Nao responde a ping".
+                                MAC com 17 caracteres e o titulo "Ping (ms)". Nome, Fabricante, Portas e Observacao
+                                dividem o resto, com minimo menor que o texto mais longo: o que passar aparece inteiro na dica.
                                 Na largura padrao da janela, mesmo com a barra de rolagem vertical, nada disso fica cortado. Abaixo dela, aparece a rolagem
                                 lateral. Texto maior que a coluna aparece inteiro na dica.
                             -->
@@ -197,10 +209,17 @@
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                             <DataGridTextColumn Header="MAC" Binding="{Binding Mac}" Width="132" MinWidth="132"
                                                 FontFamily="{StaticResource FonteConsole}" ElementStyle="{StaticResource CelulaComDica}" />
-                            <DataGridTextColumn Header="Fabricante" Binding="{Binding Fabricante}" Width="1.6*" MinWidth="170"
+                            <DataGridTextColumn Header="Fabricante" Binding="{Binding Fabricante}" Width="1.5*" MinWidth="140"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                             <DataGridTextColumn Header="Ping (ms)" Binding="{Binding Ping}" SortMemberPath="PingOrdem" Width="80" MinWidth="80" />
-                            <DataGridTextColumn Header="Observação" Binding="{Binding Observacao}" Width="1.2*" MinWidth="150"
+                            <DataGridTextColumn Header="Portas" Binding="{Binding Portas}" Width="1*" MinWidth="80">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="ToolTip" Value="{Binding PortasDica}" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Observação" Binding="{Binding Observacao}" Width="1.1*" MinWidth="120"
                                                 ElementStyle="{StaticResource CelulaComDica}" />
                         </DataGrid.Columns>
                     </DataGrid>

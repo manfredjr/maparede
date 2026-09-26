@@ -48,7 +48,7 @@
     <div><h3>Todos os equipamentos da sub-rede</h3><p>Por ping e por ARP. Quem bloqueia ping também aparece.</p></div>
     <div><h3>Fabricante e nome</h3><p>Pelo MAC, na tabela do IEEE, e por DNS, NetBIOS e mDNS.</p></div>
     <div><h3>De onde vem a rede</h3><p>DHCP, gateway, DNS, Wi-Fi e, com um clique, o IP público.</p></div>
-    <div><h3>Detalhe de cada equipamento</h3><p>Nomes, TTL e atalhos para ping, navegador e área de trabalho remota.</p></div>
+    <div><h3>Detalhe de cada equipamento</h3><p>Nomes, TTL, portas abertas e atalhos para ping, navegador e área de trabalho remota.</p></div>
     <div><h3>Ferramentas de rede</h3><p>Ping, tracert, DNS, ARP, conexões e rotas, com a saída em português.</p></div>
     <div><h3>Manutenção</h3><p>Limpar o cache DNS, renovar o IP, limpar o ARP e resetar o Winsock.</p></div>
     <div><h3>Relatório em HTML</h3><p>Arquivo único para guardar com a documentação do cliente.</p></div>
@@ -74,7 +74,7 @@ mapnet --varrer --interface 1 --abrir</pre>
   <h2>Uso autorizado</h2>
   <p>O MapNet serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação.</p>
   <ul>
-    <li><strong>O que ele envia:</strong> ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida, as mesmas mensagens que os computadores de uma rede trocam entre si.</li>
+    <li><strong>O que ele envia:</strong> ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida, as mesmas mensagens que os computadores de uma rede trocam entre si. Se você ligar a verificação de portas, ele também abre e fecha uma conexão TCP em cada porta da lista, só nos equipamentos encontrados e sem enviar dados.</li>
     <li><strong>O que ele não faz:</strong> não testa senhas, não contorna autenticação, não explora vulnerabilidades e não muda configuração de nada na rede. A manutenção mexe só no computador de quem usa, e só com o clique.</li>
     <li><strong>Sua parte:</strong> confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados.</li>
   </ul>
