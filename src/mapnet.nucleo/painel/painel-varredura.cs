@@ -91,7 +91,7 @@ public sealed class DependenciasPainel
             Opcoes = opcoes,
             ListarInterfaces = LeitorInterfaces.Listar,
             Varrer = (i, p, c) => new Varredor(opcoes).VarrerAsync(i, p, c),
-            SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
+            SalvarEm = (r, caminho) => Relatorios.SalvarAsync(r, caminho),
             LerMaquina = i => Task.Run(() => LeitorMaquina.Ler(i, FontesMaquina.Padrao(), prefixo)),
             IpPublico = new IpPublicoCloudflare(),
             Ferramentas = FerramentasPadrao,

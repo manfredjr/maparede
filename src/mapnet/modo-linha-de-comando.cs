@@ -148,30 +148,23 @@ internal static partial class ModoLinhaDeComando
 
         // Na linha de comando não há clique, então o relatório sai sem o IP público.
         resultado.Maquina = LeitorMaquina.Ler(interfaceRede, FontesMaquina.Padrao(), argumentos.Opcoes.PrefixoMinimo);
-        var caminho = DefinirCaminho(argumentos.Saida, resultado);
-        caminho = await RelatorioHtml.SalvarAsync(resultado, caminho).ConfigureAwait(false);
         Console.WriteLine();
-        Console.WriteLine($"Relatório gravado em: {caminho}");
-
-        if (argumentos.Abrir)
+        var gravados = new List<string>();
+        foreach (var caminho in argumentos.Caminhos(resultado, Environment.CurrentDirectory))
         {
-            Process.Start(new ProcessStartInfo(caminho) { UseShellExecute = true });
+            var gravado = await Relatorios.SalvarAsync(resultado, caminho).ConfigureAwait(false);
+            gravados.Add(gravado);
+            Console.WriteLine($"Relatório gravado em: {gravado}");
+        }
+
+        // Abre o HTML, se houver; senão, o primeiro arquivo gravado.
+        if (argumentos.Abrir && gravados.Count > 0)
+        {
+            var abrir = gravados.FirstOrDefault(g => Relatorios.FormatoDe(g) == FormatoRelatorio.Html) ?? gravados[0];
+            Process.Start(new ProcessStartInfo(abrir) { UseShellExecute = true });
         }
 
         return resultado.Cancelada ? CodigoCancelado : CodigoSucesso;
-    }
-
-    private static string DefinirCaminho(string? saida, ResultadoVarredura resultado)
-    {
-        var nome = RelatorioHtml.NomeArquivo(resultado);
-        if (string.IsNullOrWhiteSpace(saida))
-        {
-            return Path.Combine(Environment.CurrentDirectory, nome);
-        }
-
-        return saida.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || saida.EndsWith(".htm", StringComparison.OrdinalIgnoreCase)
-            ? saida
-            : Path.Combine(saida, nome);
     }
 
     private static string Cortar(string texto, int tamanho) => texto.Length <= tamanho ? texto : texto[..(tamanho - 3)] + "...";

@@ -80,6 +80,13 @@ Fechado em parte na fatia 3 (0.2.2). No tamanho padrão da janela, IP, Origem, M
 | Tabela de sinais | Os fabricantes e as palavras que apontam cada tipo saíram do que é comum em escritório e do teste na rede do Manfred. Equipamento de marca que não está na lista cai em Desconhecido | Acrescentar fabricante ou palavra quando o técnico achar um caso errado no campo |
 | Switch gerenciável | Switch quase não se mostra: não costuma ter nome, porta aberta diferente nem UPnP. A fatia não arrisca esse tipo | Rever se aparecer sinal confiável, como título de página de switch conhecido |
 
+## Fatia 10: relatório em CSV e XML
+
+| Item | Motivo | O que fecha |
+|---|---|---|
+| Esquema do XML | O XML tem o atributo `formato="1"` para mudar sem quebrar quem lê, mas não tem um XSD publicado | Publicar o esquema se alguém for integrar o XML a outro sistema |
+| CSV no Excel com outro idioma | O ponto e vírgula é o separador do Excel em português. Num Excel em inglês, o arquivo abre numa coluna só | Importar pelo assistente de texto, ou oferecer vírgula como opção se fizer falta |
+
 ## Página de privacidade
 
 | Item | Motivo | O que fecha |

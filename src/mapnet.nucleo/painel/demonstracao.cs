@@ -47,7 +47,7 @@ public static class Demonstracao
             Opcoes = opcoes,
             ListarInterfaces = () => [wifi, cabo],
             Varrer = (i, p, c) => VarrerAsync(i, opcoes, p, c),
-            SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
+            SalvarEm = (r, caminho) => Relatorios.SalvarAsync(r, caminho),
             // Documentos Públicos: o caminho não traz o nome do usuário, que apareceria nas imagens.
             PastaRelatorios = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "MapNet - MT", "demonstracao"),
             LerMaquina = i => Task.FromResult(LeitorMaquina.Ler(i, Fontes(), new OpcoesVarredura().PrefixoMinimo)),

@@ -126,11 +126,14 @@ public partial class JanelaPrincipal : Window
         }
 
         Directory.CreateDirectory(_painel.PastaInicial);
+        // O nome vai sem extensão: o tipo escolhido na lista acrescenta .html, .csv ou .xml.
         var dialogo = new SaveFileDialog
         {
             Title = "Salvar relatório",
-            Filter = "Relatório HTML (*.html)|*.html",
-            FileName = _painel.NomeSugerido,
+            Filter = "Relatório HTML, para abrir no navegador (*.html)|*.html|Planilha CSV, para o Excel (*.csv)|*.csv|Dados XML, para outro programa (*.xml)|*.xml",
+            FileName = Path.GetFileNameWithoutExtension(_painel.NomeSugerido),
+            DefaultExt = ".html",
+            AddExtension = true,
             InitialDirectory = _painel.PastaInicial,
         };
         if (dialogo.ShowDialog(this) != true)
@@ -138,7 +141,13 @@ public partial class JanelaPrincipal : Window
             return false;
         }
 
-        await _painel.SalvarComoAsync(dialogo.FileName!);
+        var caminho = dialogo.FileName!;
+        if (!Path.HasExtension(caminho))
+        {
+            caminho += dialogo.FilterIndex switch { 2 => ".csv", 3 => ".xml", _ => ".html" };
+        }
+
+        await _painel.SalvarComoAsync(caminho);
         return !_painel.RelatorioNaoSalvo;
     }
 
