@@ -20,7 +20,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 2 | Tela WPF do painel do técnico, com a identidade da MT (a v0.2.0 fechava no fim da varredura e teve a Release retirada, a correção saiu na v0.2.1) | `tela-wpf` | [#10](https://github.com/manfredjr/mapnet/pull/10), [#12](https://github.com/manfredjr/mapnet/pull/12), [#13](https://github.com/manfredjr/mapnet/pull/13) | Publicada na v0.2.1 |
 | 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda, e tabela de hosts sem texto cortado (sai como v0.2.2) | `minha-maquina` | Plano em [#14](https://github.com/manfredjr/mapnet/pull/14), código em [#16](https://github.com/manfredjr/mapnet/pull/16) | Em teste |
 | 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões e rotas (sai como v0.2.3) | `diagnostico` | [#17](https://github.com/manfredjr/mapnet/pull/17) | Em teste |
-| 5 | Ações de manutenção com elevação sob demanda | a definir | - | A fazer |
+| 5 | Ações de manutenção com elevação sob demanda, na aba Manutenção do console (sai como v0.2.4) | `manutencao` | [#18](https://github.com/manfredjr/mapnet/pull/18) | Em teste |
 | 6 | Painel de detalhe do host | a definir | - | A fazer |
 | 7 em diante | Portas TCP, identificação leve, classificação e relatório completo em HTML, XML e CSV | a definir | - | A fazer |
 
