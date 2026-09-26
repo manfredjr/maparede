@@ -18,7 +18,7 @@ As regras do projeto estão no [`AGENTS.md`](AGENTS.md) e o desenho em [`docs/su
 | 1 | Descoberta de hosts (ping e ARP), MAC, fabricante, nome (DNS reverso, NetBIOS, mDNS), relatório HTML básico, janela e linha de comando | `descoberta-hosts` | [#2](https://github.com/manfredjr/mapnet/pull/2) | Publicada na v0.1.2 |
 | 1b | Página mapnet.manfred.com.br, código aberto (GPL-3.0), nome MapNet - MT, publicação do .exe pelo GitHub Releases | `pagina-e-codigo-aberto` | [#3](https://github.com/manfredjr/mapnet/pull/3) | Concluída |
 | 2 | Tela WPF do painel do técnico, com a identidade da MT (a v0.2.0 fechava no fim da varredura e teve a Release retirada, a correção saiu na v0.2.1) | `tela-wpf` | [#10](https://github.com/manfredjr/mapnet/pull/10), [#12](https://github.com/manfredjr/mapnet/pull/12), [#13](https://github.com/manfredjr/mapnet/pull/13) | Publicada na v0.2.1 |
-| 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda, e tabela de hosts sem texto cortado (sai como v0.2.2) | `minha-maquina` | Plano em [#14](https://github.com/manfredjr/mapnet/pull/14) | Plano aprovado, código a fazer |
+| 3 | Painel "Minha máquina" completo: nome, domínio, DHCP, Wi-Fi e IP público sob demanda, e tabela de hosts sem texto cortado (sai como v0.2.2) | `minha-maquina` | Plano em [#14](https://github.com/manfredjr/mapnet/pull/14), código em [#16](https://github.com/manfredjr/mapnet/pull/16) | Em teste |
 | 4 | Console de diagnóstico: ping, tracert, DNS, ARP, conexões, rotas e `ipconfig /all` | a definir | - | A fazer |
 | 5 | Ações de manutenção com elevação sob demanda | a definir | - | A fazer |
 | 6 | Painel de detalhe do host | a definir | - | A fazer |
