@@ -115,11 +115,11 @@ pre { max-width: 720px; background: var(--grafite); color: #e8f5d8; border-radiu
 /* Rodapé */
 .rodape { background: var(--grafite); color: rgba(255, 255, 255, 0.75); border-top: 4px solid var(--verde-principal); }
 .rodape a:hover { color: var(--verde-claro); }
-.rodape__base { padding: 24px; font-size: 0.85rem; display: flex; align-items: center; justify-content: flex-end; gap: 20px; flex-wrap: wrap; max-width: 1040px; margin: 0 auto; }
+.rodape__base { padding: 24px; font-size: 0.85rem; display: flex; align-items: center; justify-content: flex-end; gap: 16px; flex-wrap: wrap; max-width: 1040px; margin: 0 auto; }
 .rodape__credito { text-align: right; line-height: 1.7; }
 .rodape__credito strong { color: var(--branco); }
 .rodape__links a:hover { text-decoration: underline; }
-.rodape__direitos { font-size: 0.78rem; opacity: 0.7; }
-.rodape__selo { display: inline-flex; background: var(--branco); border-radius: 8px; padding: 4px 6px; }
-.rodape__selo img { height: 40px; width: auto; }
+/* O selo tem a altura das duas linhas do crédito: 2 linhas x 1.7 de entrelinha = 3.4em. */
+.rodape__selo { display: flex; align-items: center; }
+.rodape__selo img { height: 3.4em; width: auto; background: var(--branco); border-radius: 8px; padding: 3px 5px; }
 @media (max-width: 600px) { .rodape__credito { text-align: center; } }
