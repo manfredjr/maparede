@@ -44,6 +44,25 @@ public sealed class DependenciasPainel
 
     public Func<DateTimeOffset> Agora { get; init; } = () => DateTimeOffset.Now;
 
+    /// <summary>Ferramentas do console, uma aba para cada. Sem esta parte, o console só tem a aba Varredura.</summary>
+    public Func<IReadOnlyList<IFerramenta>>? Ferramentas { get; init; }
+
+    /// <summary>As ferramentas de verdade: ping, tracert, DNS e, no Windows, as tabelas.</summary>
+    public static IReadOnlyList<IFerramenta> FerramentasPadrao()
+    {
+        var pingador = new PingadorSistema();
+        var lista = new List<IFerramenta> { new FerramentaPing(pingador), new FerramentaTracert(pingador), new FerramentaDns() };
+        if (OperatingSystem.IsWindows())
+        {
+            var tabelas = new TabelasWindows();
+            lista.Add(FerramentaTabela.Arp(tabelas));
+            lista.Add(FerramentaTabela.Conexoes(tabelas));
+            lista.Add(FerramentaTabela.Rotas(tabelas));
+        }
+
+        return lista;
+    }
+
     /// <summary>As partes de verdade: interfaces do Windows, varredor e relatório HTML.</summary>
     public static DependenciasPainel Padrao()
     {
@@ -55,6 +74,7 @@ public sealed class DependenciasPainel
             SalvarEm = (r, caminho) => RelatorioHtml.SalvarAsync(r, caminho),
             LerMaquina = i => Task.Run(() => LeitorMaquina.Ler(i, FontesMaquina.Padrao(), prefixo)),
             IpPublico = new IpPublicoCloudflare(),
+            Ferramentas = FerramentasPadrao,
         };
     }
 }
@@ -82,6 +102,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     private bool _consultandoIp;
     private string? _textoIpPublico;
     private System.Net.IPAddress? _ipPublico;
+    private AbaConsole _abaSelecionada;
 
     public PainelVarredura(DependenciasPainel dependencias)
     {
@@ -89,6 +110,13 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         ComandoPrincipal = new Comando(AcionarPrincipal, () => PodeAcionarPrincipal);
         ComandoAtualizar = new Comando(CarregarInterfaces, () => PodeTrocarInterface);
         ComandoIpPublico = new Comando(() => _ = ConsultarIpPublicoAsync(), () => PodeConsultarIpPublico);
+        Abas.Add(new AbaConsole("Varredura", Console));
+        foreach (var ferramenta in _dep.Ferramentas?.Invoke() ?? [])
+        {
+            Abas.Add(new AbaConsole(ferramenta.Titulo, new RegistroConsole(), ferramenta));
+        }
+
+        _abaSelecionada = Abas[0];
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -106,7 +134,35 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     /// <summary>Hosts em ordem de IP. A tela pode reordenar por coluna.</summary>
     public ObservableCollection<LinhaHost> Hosts { get; } = [];
 
+    /// <summary>Registro da aba Varredura.</summary>
     public RegistroConsole Console { get; } = new();
+
+    /// <summary>Abas do console: Varredura e uma para cada ferramenta.</summary>
+    public ObservableCollection<AbaConsole> Abas { get; } = [];
+
+    public AbaConsole AbaSelecionada
+    {
+        get => _abaSelecionada;
+        set
+        {
+            if (value is null || ReferenceEquals(value, _abaSelecionada))
+            {
+                return;
+            }
+
+            _abaSelecionada = value;
+            Avisar();
+        }
+    }
+
+    /// <summary>Para as ferramentas que estão rodando. A janela chama ao fechar.</summary>
+    public void PararFerramentas()
+    {
+        foreach (var aba in Abas)
+        {
+            aba.Parar();
+        }
+    }
 
     public Comando ComandoPrincipal { get; }
 
@@ -149,6 +205,11 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             _interfaceSelecionada = value;
             Avisar();
             AvisarBotoes();
+            foreach (var aba in Abas)
+            {
+                aba.DefinirPadroes(value?.Gateway?.ToString() ?? string.Empty, value?.Dns.FirstOrDefault()?.ToString() ?? string.Empty);
+            }
+
             _ = LerMaquinaAsync();
         }
     }

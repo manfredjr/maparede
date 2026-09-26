@@ -68,7 +68,7 @@ public partial class DemonstracaoTestes
     public void Ligacoes_da_janela_existem_nos_modelos()
     {
         var janela = File.ReadAllText(Path.Combine(CaracteresProibidosTestes.RaizDoRepositorio(), "src", "mapnet", "janela-principal.xaml"));
-        var propriedades = new[] { typeof(PainelVarredura), typeof(GrupoMinhaMaquina), typeof(ItemMinhaMaquina), typeof(LinhaHost) }
+        var propriedades = new[] { typeof(PainelVarredura), typeof(GrupoMinhaMaquina), typeof(ItemMinhaMaquina), typeof(LinhaHost), typeof(AbaConsole) }
             .SelectMany(t => t.GetProperties())
             .Select(p => p.Name)
             .ToHashSet();

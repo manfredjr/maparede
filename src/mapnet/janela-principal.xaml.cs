@@ -29,24 +29,48 @@ public partial class JanelaPrincipal : Window
         _painel.FiltroMudou += vista.Refresh;
         TabelaHosts.ItemsSource = vista;
 
-        // O console acompanha a última linha, como um terminal.
-        _painel.Console.Linhas.CollectionChanged += AoMudarConsole;
+        // O console acompanha a última linha, como um terminal, em cada aba.
+        foreach (var aba in _painel.Abas)
+        {
+            aba.Registro.Linhas.CollectionChanged += (_, e) =>
+            {
+                if (ReferenceEquals(aba, _painel.AbaSelecionada))
+                {
+                    AoMudarConsole(e);
+                }
+            };
+        }
+
+        _painel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(PainelVarredura.AbaSelecionada))
+            {
+                RolarAoFim();
+            }
+        };
 
         // Erro de verdade aparece numa janela: o técnico precisa ler antes de seguir.
         _painel.Falhou += mensagem =>
             MessageBox.Show(this, mensagem, "MapNet - MT", MessageBoxButton.OK, MessageBoxImage.Error);
 
         Loaded += (_, _) => _painel.CarregarInterfaces();
-        Closing += (_, _) => _painel.Cancelar();
+        Closing += (_, _) =>
+        {
+            _painel.Cancelar();
+            _painel.PararFerramentas();
+        };
     }
 
-    private void AoMudarConsole(object? sender, NotifyCollectionChangedEventArgs e)
+    private void AoMudarConsole(NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action != NotifyCollectionChangedAction.Add)
+        if (e.Action == NotifyCollectionChangedAction.Add)
         {
-            return;
+            RolarAoFim();
         }
+    }
 
+    private void RolarAoFim()
+    {
         // A rolagem espera a lista registrar a linha nova. Rolar aqui dentro, no meio do aviso
         // de mudança, mede a lista antes de ela contar a linha, e o WPF derruba o programa com
         // "ItemsControl is inconsistent with its items source".
@@ -103,7 +127,7 @@ public partial class JanelaPrincipal : Window
     {
         try
         {
-            Clipboard.SetText(_painel.Console.Texto);
+            Clipboard.SetText(_painel.AbaSelecionada.Registro.Texto);
         }
         catch (System.Runtime.InteropServices.ExternalException)
         {
@@ -111,7 +135,7 @@ public partial class JanelaPrincipal : Window
         }
     }
 
-    private void AoLimparConsole(object sender, RoutedEventArgs e) => _painel.Console.Limpar();
+    private void AoLimparConsole(object sender, RoutedEventArgs e) => _painel.AbaSelecionada.Registro.Limpar();
 
     /// <summary>O navegador abre o site da MT. O programa em si não manda nada para a internet.</summary>
     private void AoClicarMarcaMt(object sender, RoutedEventArgs e) => AbrirNoSistema(SiteMt);

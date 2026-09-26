@@ -15,7 +15,7 @@ public interface IConsultaIpPublico
 
 /// <summary>
 /// IP público pelo trace do Cloudflare, que responde texto simples ("ip=203.0.113.7") e não pede
-/// cadastro. É a única consulta do programa fora da rede local.
+/// cadastro. Só roda com o clique do técnico.
 /// </summary>
 public sealed class IpPublicoCloudflare : IConsultaIpPublico
 {
