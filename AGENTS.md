@@ -39,7 +39,7 @@ O repositório é público. Além da lista abaixo, nada que descreva a infraestr
 - Documento de terceiros (contrato, cartão CNPJ, PDF de instituição) e gravação pessoal.
 - Executável gerado (`bin/`, `obj/`, `publicar/`). O `.exe` sai do código, pelo CI ou pelo `ferramentas\publicar.cmd`.
 
-O `.gitignore` já barra os nomes padrão dos relatórios (`mapnet-*.html`, `.xml`, `.csv`), a pasta `/relatorios/` da raiz e a `.superpowers/`.
+O `.gitignore` já barra os nomes padrão dos relatórios (`mapnet-*.html`, `.xml`, `.csv`), a pasta `/relatorios/` da raiz e a `.superpowers/`. O teste `DadosReaisTestes` confere o que está no git: documentação e página sem IP privado nem MAC, nenhum relatório gerado e imagem só em `docs/superpowers/specs/img/`, `public/` e `src/mapnet/recursos/`. Imagem de tela sai só do modo `--demonstracao`, e exemplo de endereço na documentação usa `192.0.2.x`, `198.51.100.x` ou `203.0.113.x`. Resultado de teste feito na rede do Manfred ou de cliente fica na conversa, nunca em commit, PR ou arquivo.
 
 ## Backup no GitHub
 
