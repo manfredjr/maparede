@@ -44,6 +44,12 @@ public sealed class DependenciasPainel
 
     public Func<DateTimeOffset> Agora { get; init; } = () => DateTimeOffset.Now;
 
+    /// <summary>Abre um endereço ou programa no Windows (arquivo e argumentos). A janela liga ao Process.Start.</summary>
+    public Action<string, string?>? Abrir { get; set; }
+
+    /// <summary>Põe o texto na área de transferência. A janela liga ao Clipboard.</summary>
+    public Action<string>? Copiar { get; set; }
+
     /// <summary>Executor das ações de manutenção. Sem ele, a aba Manutenção não aparece.</summary>
     public IExecutorManutencao? Manutencao { get; init; }
 
@@ -112,6 +118,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
     private AbaConsole _abaSelecionada;
     private AbaConsole? _abaManutencao;
     private bool _manutencaoRodando;
+    private LinhaHost? _hostSelecionado;
 
     public PainelVarredura(DependenciasPainel dependencias)
     {
@@ -131,6 +138,16 @@ public sealed class PainelVarredura : INotifyPropertyChanged
             Abas.Add(_abaManutencao);
         }
 
+        ComandoPingHost = new Comando(() => _ = FerramentaNoHostAsync("Ping", continuo: true), () => _hostSelecionado != null);
+        ComandoTracertHost = new Comando(() => _ = FerramentaNoHostAsync("Tracert", continuo: false), () => _hostSelecionado != null);
+        ComandoAbrirHttp = ComandoDe(AcaoHost.AbrirHttp);
+        ComandoAbrirHttps = ComandoDe(AcaoHost.AbrirHttps);
+        ComandoAreaRemota = ComandoDe(AcaoHost.AreaDeTrabalhoRemota);
+        ComandoPastaCompartilhada = ComandoDe(AcaoHost.PastaCompartilhada);
+        ComandoCopiarHost = new Comando(
+            () => _dep.Copiar?.Invoke(DetalheHost.Texto(_hostSelecionado!.Host)),
+            () => _hostSelecionado != null && _dep.Copiar != null);
+        ComandoFecharDetalhe = new Comando(() => HostSelecionado = null, () => _hostSelecionado != null);
         ComandoLimparCacheDns = ComandoDe(AcaoManutencao.LimparCacheDns);
         ComandoRenovarIp = ComandoDe(AcaoManutencao.RenovarIp);
         ComandoLimparArp = ComandoDe(AcaoManutencao.LimparArp);
@@ -171,6 +188,111 @@ public sealed class PainelVarredura : INotifyPropertyChanged
 
             _abaSelecionada = value;
             Avisar();
+        }
+    }
+
+    /// <summary>Host escolhido na tabela. Com ele, o painel de detalhe abre ao lado da tabela.</summary>
+    public LinhaHost? HostSelecionado
+    {
+        get => _hostSelecionado;
+        set
+        {
+            if (ReferenceEquals(value, _hostSelecionado))
+            {
+                return;
+            }
+
+            if (_hostSelecionado != null)
+            {
+                _hostSelecionado.PropertyChanged -= AoMudarHost;
+            }
+
+            _hostSelecionado = value;
+            if (value != null)
+            {
+                value.PropertyChanged += AoMudarHost;
+            }
+
+            AvisarDetalhe();
+        }
+    }
+
+    public bool TemHostSelecionado => _hostSelecionado != null;
+
+    public string TituloDetalhe => _hostSelecionado is { } h ? (h.Nome.Length > 0 ? h.Nome : h.Ip) : string.Empty;
+
+    public IReadOnlyList<ItemMinhaMaquina> DetalheItens =>
+        _hostSelecionado is { } h ? DetalheHost.Itens(h.Host) : [];
+
+    public Comando ComandoPingHost { get; }
+
+    public Comando ComandoTracertHost { get; }
+
+    public Comando ComandoAbrirHttp { get; }
+
+    public Comando ComandoAbrirHttps { get; }
+
+    public Comando ComandoAreaRemota { get; }
+
+    public Comando ComandoPastaCompartilhada { get; }
+
+    public Comando ComandoCopiarHost { get; }
+
+    public Comando ComandoFecharDetalhe { get; }
+
+    /// <summary>Leva o IP do host para a aba da ferramenta e roda. O ping vai no modo contínuo.</summary>
+    public async Task FerramentaNoHostAsync(string titulo, bool continuo)
+    {
+        if (_hostSelecionado is not { } h || Abas.FirstOrDefault(a => a.Titulo == titulo) is not { } aba)
+        {
+            return;
+        }
+
+        if (aba.Rodando)
+        {
+            aba.Parar();
+        }
+
+        AbaSelecionada = aba;
+        aba.Alvo = h.Ip;
+        aba.Continuo = continuo;
+        await aba.ExecutarAsync();
+    }
+
+    /// <summary>Abre o host no navegador, na área de trabalho remota ou no Explorer.</summary>
+    public void AcaoNoHost(AcaoHost acao)
+    {
+        if (_hostSelecionado is not { } h || _dep.Abrir is not { } abrir)
+        {
+            return;
+        }
+
+        var (arquivo, argumentos) = DetalheHost.Destino(acao, h.Host.Ip);
+        try
+        {
+            abrir(arquivo, argumentos);
+            Console.Escrever($"Abrindo {arquivo}{(argumentos is null ? "" : " " + argumentos)}.");
+        }
+        catch (Exception e)
+        {
+            Console.Escrever($"Não foi possível abrir {arquivo}: {e.Message}");
+        }
+    }
+
+    private Comando ComandoDe(AcaoHost acao) =>
+        new(() => AcaoNoHost(acao), () => _hostSelecionado != null && _dep.Abrir != null);
+
+    private void AoMudarHost(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => AvisarDetalhe();
+
+    private void AvisarDetalhe()
+    {
+        Avisar(nameof(HostSelecionado));
+        Avisar(nameof(TemHostSelecionado));
+        Avisar(nameof(TituloDetalhe));
+        Avisar(nameof(DetalheItens));
+        foreach (var c in new[] { ComandoPingHost, ComandoTracertHost, ComandoAbrirHttp, ComandoAbrirHttps, ComandoAreaRemota, ComandoPastaCompartilhada, ComandoCopiarHost, ComandoFecharDetalhe })
+        {
+            c.Reavaliar();
         }
     }
 
@@ -548,6 +670,7 @@ public sealed class PainelVarredura : INotifyPropertyChanged
         }
 
         _cancelamento = new CancellationTokenSource();
+        HostSelecionado = null;
         Hosts.Clear();
         _porIp.Clear();
         _avisosEscritos.Clear();

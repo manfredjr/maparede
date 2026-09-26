@@ -137,7 +137,50 @@
                                      ToolTip="IP, nome, MAC, fabricante ou observação" />
                         </StackPanel>
                     </DockPanel>
-                    <DataGrid x:Name="TabelaHosts" Style="{StaticResource TabelaHosts}">
+                    <!-- Detalhe do host escolhido: abre ao clicar na linha e fecha com novo clique, com Esc ou no Fechar -->
+                    <Border DockPanel.Dock="Right" Width="250" Margin="12,0,0,6" Padding="12,0,0,0"
+                            BorderBrush="{StaticResource PincelBorda}" BorderThickness="1,0,0,0"
+                            Visibility="{Binding TemHostSelecionado, Converter={StaticResource VisivelSe}}">
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,2">
+                                <Button DockPanel.Dock="Right" Style="{StaticResource BotaoContorno}" Margin="6,0,0,0" Content="Fechar" VerticalAlignment="Top"
+                                        Command="{Binding ComandoFecharDetalhe}" ToolTip="Fechar o detalhe (Esc)" />
+                                <TextBlock Style="{StaticResource TituloGrupo}" Text="{Binding TituloDetalhe}" FontSize="13"
+                                           TextWrapping="Wrap" Margin="0,2,0,0" />
+                            </DockPanel>
+                            <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Ping contínuo"
+                                        Command="{Binding ComandoPingHost}" ToolTip="Pinga o host sem parar, na aba Ping do console" />
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Tracert"
+                                        Command="{Binding ComandoTracertHost}" ToolTip="Mostra o caminho até o host, na aba Tracert do console" />
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="http"
+                                        Command="{Binding ComandoAbrirHttp}" ToolTip="Abre http://IP no navegador" />
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="https"
+                                        Command="{Binding ComandoAbrirHttps}" ToolTip="Abre https://IP no navegador" />
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Área remota"
+                                        Command="{Binding ComandoAreaRemota}" ToolTip="Abre a Conexão de Área de Trabalho Remota com o IP" />
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Pasta"
+                                        Command="{Binding ComandoPastaCompartilhada}" ToolTip="Abre \\IP no Explorador de Arquivos" />
+                                <Button Style="{StaticResource BotaoContorno}" Margin="0,0,6,6" Content="Copiar dados"
+                                        Command="{Binding ComandoCopiarHost}" ToolTip="Copia o detalhe do host para a área de transferência" />
+                            </WrapPanel>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding DetalheItens}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource RotuloInfo}" Text="{Binding Rotulo}" />
+                                                <TextBox Style="{x:Null}" Text="{Binding Valor, Mode=OneWay}" IsReadOnly="True"
+                                                         BorderThickness="0" Background="Transparent" Padding="0" Margin="-2,0,0,0"
+                                                         FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Border>                    <DataGrid x:Name="TabelaHosts" Style="{StaticResource TabelaHosts}"
+                              SelectedItem="{Binding HostSelecionado, Mode=TwoWay}" PreviewMouseLeftButtonDown="AoClicarNaTabela">
                         <DataGrid.Columns>
                             <!--
                                 Larguras fixas pelo texto mais longo possivel: IP 255.255.255.255, "DNS reverso",

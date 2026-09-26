@@ -20,6 +20,19 @@ public partial class JanelaPrincipal : Window
     public JanelaPrincipal(DependenciasPainel dependencias, string complementoTitulo)
     {
         InitializeComponent();
+        dependencias.Abrir ??= (arquivo, argumentos) =>
+            Process.Start(new ProcessStartInfo(arquivo, argumentos ?? string.Empty) { UseShellExecute = true })?.Dispose();
+        dependencias.Copiar ??= texto =>
+        {
+            try
+            {
+                Clipboard.SetText(texto);
+            }
+            catch (System.Runtime.InteropServices.ExternalException)
+            {
+                // Outro programa segurando a área de transferência: basta clicar de novo.
+            }
+        };
         dependencias.Confirmar ??= pergunta =>
             MessageBox.Show(this, pergunta, "MapNet - MT", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
         _painel = new PainelVarredura(dependencias);
@@ -56,6 +69,16 @@ public partial class JanelaPrincipal : Window
             MessageBox.Show(this, mensagem, "MapNet - MT", MessageBoxButton.OK, MessageBoxImage.Error);
 
         Loaded += (_, _) => _painel.CarregarInterfaces();
+
+        // Esc fecha o detalhe do host.
+        PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == System.Windows.Input.Key.Escape && _painel.TemHostSelecionado)
+            {
+                _painel.HostSelecionado = null;
+                e.Handled = true;
+            }
+        };
         Closing += (_, _) =>
         {
             _painel.Cancelar();
@@ -83,6 +106,23 @@ public partial class JanelaPrincipal : Window
                 ListaConsole.ScrollIntoView(ListaConsole.Items[^1]);
             }
         });
+    }
+
+    /// <summary>Clicar de novo na linha que já está aberta fecha o detalhe.</summary>
+    private void AoClicarNaTabela(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        var elemento = e.OriginalSource as DependencyObject;
+        while (elemento != null && elemento is not System.Windows.Controls.DataGridRow)
+        {
+            elemento = System.Windows.Media.VisualTreeHelper.GetParent(elemento);
+        }
+
+        if (elemento is System.Windows.Controls.DataGridRow linha && ReferenceEquals(linha.Item, _painel.HostSelecionado))
+        {
+            _painel.HostSelecionado = null;
+            TabelaHosts.SelectedItem = null;
+            e.Handled = true;
+        }
     }
 
     private void AoClicarRelatorio(object sender, RoutedEventArgs e)
