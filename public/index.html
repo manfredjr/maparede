@@ -118,7 +118,7 @@
     -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
     opacity: 0.55;
   }
-  .hero__grid { position: relative; display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; }
+  .hero__grid { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
   @media (max-width: 900px) { .hero__grid { grid-template-columns: 1fr; } }
   .hero__tag {
     display: inline-block; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
@@ -132,7 +132,11 @@
   .hero__nota { font-size: 0.85rem; color: var(--cinza-medio); margin-top: 16px; }
 
   /* Tela do programa, tirada do modo --demonstracao (só endereços reservados para documentação). */
-  .tela { margin: 0 auto; max-width: 720px; width: 100%; }
+  .tela { margin: 0; }
+  .tela button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+  .ampliada { border: 0; padding: 0; background: none; max-width: 96vw; max-height: 94vh; cursor: zoom-out; }
+  .ampliada::backdrop { background: rgba(0, 0, 0, 0.78); }
+  .ampliada img { display: block; max-width: 96vw; max-height: 94vh; width: auto; height: auto; border-radius: 8px; }
   .tela img { display: block; width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow-lg); border: 1px solid var(--cinza-borda); }
   .tela figcaption { font-size: 0.72rem; color: var(--cinza-medio); text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; text-align: center; }
 
@@ -237,8 +241,9 @@
     </div>
 
     <figure class="tela">
-      <a href="img/mapnet-tela.webp" target="_blank" rel="noopener"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></a>
-      <figcaption>Tela do programa com dados de exemplo</figcaption>
+      <button type="button" id="abrir-tela" aria-label="Ampliar a tela do programa"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT com a tabela de hosts, a coluna Minha máquina e o ping no console"></button>
+      <figcaption>Tela do programa com dados de exemplo. Clique para ampliar.</figcaption>
+      <dialog class="ampliada" id="tela-ampliada" aria-label="Tela do programa ampliada"><img src="img/mapnet-tela.webp" width="1180" height="740" alt="Janela do MapNet - MT ampliada"></dialog>
     </figure>
   </div>
 </section>
@@ -393,5 +398,13 @@ mapnet --varrer --interface 1 --abrir</pre>
   <div class="footer__base">MT - Manfred Tecnologia - Joinville, SC - Brasil</div>
 </footer>
 
+<script>
+  // Amplia a tela do programa. O Esc fecha pelo proprio dialog; o clique na imagem ampliada tambem fecha.
+  (function () {
+    var janela = document.getElementById("tela-ampliada");
+    document.getElementById("abrir-tela").addEventListener("click", function () { janela.showModal(); });
+    janela.addEventListener("click", function () { janela.close(); });
+  })();
+</script>
 </body>
 </html>
