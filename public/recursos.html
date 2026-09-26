@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recursos - MapNet - MT</title>
+<meta name="description" content="O que o MapNet - MT levanta na rede local e as ferramentas que ele traz para o suporte de TI.">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="canonical" href="https://mapnet.manfred.com.br/recursos.html">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<header class="cabecalho">
+  <div class="container cabecalho__inner">
+    <a class="marca" href="./"><img src="img/mapnet-simbolo.webp" alt="" width="32" height="32">MapNet - MT</a>
+    <nav class="nav" aria-label="Páginas">
+      <a href="recursos.html" aria-current="page">Recursos</a>
+      <a href="como-usar.html">Como usar</a>
+      <a href="uso-autorizado.html">Uso autorizado</a>
+      <a href="codigo-aberto.html">Código aberto</a>
+      <a class="nav__baixar" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="pagina">
+  <div class="container">
+    <h1>Recursos</h1>
+    <p class="pagina__intro">Quem chega para atender uma rede que não conhece precisa saber o que está ligado nela: onde está o roteador, quais são as impressoras, quantos computadores e celulares estão conectados. O MapNet faz esse levantamento a partir de um notebook ligado à rede.</p>
+    <div class="lista">
+      <div><h3>Todos os equipamentos da sub-rede</h3><p>Por ping e por ARP. Quem bloqueia ping no firewall também aparece.</p></div>
+      <div><h3>Fabricante pelo MAC</h3><p>Pela tabela oficial do IEEE, que vai dentro do programa. Não precisa de internet.</p></div>
+      <div><h3>Nome de cada equipamento</h3><p>Por DNS reverso, NetBIOS (com o grupo de trabalho ou domínio) e mDNS.</p></div>
+      <div><h3>Celular com MAC aleatório</h3><p>Identificado como tal, em vez de aparecer como fabricante desconhecido.</p></div>
+      <div><h3>Detalhe de cada equipamento</h3><p>Um clique na linha mostra nomes, TTL e pista do sistema, com atalhos para ping, tracert, navegador, área de trabalho remota e pasta compartilhada.</p></div>
+      <div><h3>Retrato do computador do técnico</h3><p>Nome, placa, endereços, DHCP, Wi-Fi e, com um clique, o IP público.</p></div>
+      <div><h3>Ferramentas de rede no console</h3><p>Ping, tracert, consulta DNS, tabela ARP, conexões e rotas, com a saída em português.</p></div>
+      <div><h3>Manutenção da rede</h3><p>Limpar o cache DNS, renovar o IP, limpar a tabela ARP e resetar o Winsock, pelos comandos do próprio Windows.</p></div>
+      <div><h3>Relatório em HTML</h3><p>Arquivo único, com resumo, tabela com filtro e o detalhe de cada equipamento.</p></div>
+      <div><h3>Janela e linha de comando</h3><p>O mesmo programa serve para o uso no dia a dia e para roteiros.</p></div>
+    </div>
+    <div class="texto"><h2>Nas próximas versões</h2><p>Portas abertas mais comuns, identificação leve do equipamento (página web, SSH, UPnP) e classificação por tipo, como roteador, impressora, câmera e servidor.</p></div>
+  </div>
+</section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape__base">
+    <div class="rodape__credito">
+      <p>Software de apoio ao suporte de TI e infraestrutura da plataforma <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>manfred.com.br</strong></a></p>
+      <p>Desenvolvido e publicado por <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>MT - Manfred Tecnologia</strong></a></p>
+      <p class="rodape__links">
+        <a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet">Código-fonte</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a>
+      </p>
+      <p class="rodape__direitos">&copy; 2026 MANFRED TECNOLOGIA LTDA. Software livre sob a GPL-3.0.</p>
+    </div>
+    <a class="rodape__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
+      <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="53" height="40" loading="lazy">
+    </a>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Como usar - MapNet - MT</title>
+<meta name="description" content="Como baixar, abrir e usar o MapNet - MT pela janela e pela linha de comando.">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="canonical" href="https://mapnet.manfred.com.br/como-usar.html">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<header class="cabecalho">
+  <div class="container cabecalho__inner">
+    <a class="marca" href="./"><img src="img/mapnet-simbolo.webp" alt="" width="32" height="32">MapNet - MT</a>
+    <nav class="nav" aria-label="Páginas">
+      <a href="recursos.html">Recursos</a>
+      <a href="como-usar.html" aria-current="page">Como usar</a>
+      <a href="uso-autorizado.html">Uso autorizado</a>
+      <a href="codigo-aberto.html">Código aberto</a>
+      <a class="nav__baixar" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="pagina">
+  <div class="container">
+    <h1>Como usar</h1>
+    <p class="pagina__intro">O programa é um arquivo só. Não precisa instalar nada, nem o .NET, e não pede administrador.</p>
+    <ol class="passos">
+      <li><span>Baixe o <a href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">mapnet.exe</a> e copie para qualquer pasta, ou para um pendrive.</span></li>
+      <li><span>Dê um duplo clique nele e escolha a interface de rede. A primeira da lista costuma ser a certa.</span></li>
+      <li><span>Clique em <strong>Iniciar varredura</strong>. No fim, o relatório fica em <em>Documentos\MapNet - MT</em>.</span></li>
+    </ol>
+    <div class="texto"><h2>Pela linha de comando</h2></div>
+    <pre>mapnet --interfaces
+mapnet --varrer --interface 1 --abrir</pre>
+    <div class="aviso">
+      <h2>Antes da primeira vez</h2>
+      <p>O Windows pode exibir <em>"O Windows protegeu o seu computador"</em>. O motivo é a falta de assinatura digital, que é um certificado pago. Clique em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>. Outra forma: clique com o botão direito no arquivo, abra <strong>Propriedades</strong>, marque <strong>Desbloquear</strong> e confirme em <strong>OK</strong>.</p>
+      <p>Use o programa só em redes que você administra ou em que o responsável autorizou o levantamento.</p>
+    </div>
+    <div class="texto"><p>O manual completo, com todas as opções, está no <a href="https://github.com/manfredjr/mapnet#readme">README do projeto</a>.</p></div>
+  </div>
+</section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape__base">
+    <div class="rodape__credito">
+      <p>Software de apoio ao suporte de TI e infraestrutura da plataforma <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>manfred.com.br</strong></a></p>
+      <p>Desenvolvido e publicado por <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>MT - Manfred Tecnologia</strong></a></p>
+      <p class="rodape__links">
+        <a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet">Código-fonte</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a>
+      </p>
+      <p class="rodape__direitos">&copy; 2026 MANFRED TECNOLOGIA LTDA. Software livre sob a GPL-3.0.</p>
+    </div>
+    <a class="rodape__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
+      <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="53" height="40" loading="lazy">
+    </a>
+  </div>
+</footer>
+</body>
+</html>

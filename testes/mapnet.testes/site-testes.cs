@@ -46,6 +46,34 @@ public partial class SiteTestes
         Assert.All(conferidos, a => Assert.True(File.Exists(Path.Combine(raiz, a)), $"O .cpanel.yml confere {a}, que não existe."));
     }
 
+    [Fact]
+    public void Links_internos_das_paginas_apontam_para_arquivos_que_existem()
+    {
+        var publico = Path.Combine(CaracteresProibidosTestes.RaizDoRepositorio(), "public");
+        var quebrados = new List<string>();
+        foreach (var pagina in Directory.EnumerateFiles(publico, "*.html"))
+        {
+            foreach (Match m in LinkLocal().Matches(File.ReadAllText(pagina)))
+            {
+                var alvo = m.Groups[1].Value.Split('#', '?')[0];
+                if (alvo is "" or "./")
+                {
+                    continue;
+                }
+
+                if (!File.Exists(Path.Combine(publico, alvo)))
+                {
+                    quebrados.Add($"{Path.GetFileName(pagina)}: {alvo}");
+                }
+            }
+        }
+
+        Assert.True(quebrados.Count == 0, "Link interno quebrado: " + string.Join(", ", quebrados));
+    }
+
+    [GeneratedRegex(@"(?:href|src)=""(?!https?:|mailto:|#)([^""]+)""")]
+    private static partial Regex LinkLocal();
+
     [GeneratedRegex("<AssemblyName>([^<]+)</AssemblyName>")]
     private static partial Regex NomeDoAssembly();
 

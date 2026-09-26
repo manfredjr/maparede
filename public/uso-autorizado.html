@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uso autorizado - MapNet - MT</title>
+<meta name="description" content="O que o MapNet - MT envia pela rede, o que ele não faz e a responsabilidade de quem usa.">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="canonical" href="https://mapnet.manfred.com.br/uso-autorizado.html">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+
+<header class="cabecalho">
+  <div class="container cabecalho__inner">
+    <a class="marca" href="./"><img src="img/mapnet-simbolo.webp" alt="" width="32" height="32">MapNet - MT</a>
+    <nav class="nav" aria-label="Páginas">
+      <a href="recursos.html">Recursos</a>
+      <a href="como-usar.html">Como usar</a>
+      <a href="uso-autorizado.html" aria-current="page">Uso autorizado</a>
+      <a href="codigo-aberto.html">Código aberto</a>
+      <a class="nav__baixar" href="https://github.com/manfredjr/mapnet/releases/latest/download/mapnet.exe">Baixar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="pagina">
+  <div class="container">
+    <h1>Uso autorizado</h1>
+    <p class="pagina__intro">O MapNet - MT serve para inventariar equipamentos em redes nas quais você tem autorização para fazer a verificação.</p>
+    <div class="blocos">
+      <div class="bloco"><h3>O que ele envia</h3><p>Para achar os equipamentos, o programa manda ping, pedidos ARP e consultas de nome (DNS, NetBIOS e mDNS) aos endereços da sub-rede escolhida. São as mesmas mensagens que os computadores de uma rede trocam entre si.</p></div>
+      <div class="bloco"><h3>O que ele não faz</h3><p>O MapNet não é scanner de vulnerabilidade. Não testa senhas, não contorna autenticação, não explora vulnerabilidades e não muda configuração de nada na rede. As ações de manutenção mexem só no computador de quem usa, e só com o clique.</p></div>
+      <div class="bloco"><h3>Sua responsabilidade</h3><p>Use o MapNet só em redes nas quais você tem autorização para fazer a verificação. Confira o intervalo de endereços antes de iniciar e respeite as regras da rede e dos dispositivos examinados.</p></div>
+    </div>
+    <div class="texto"><p>O programa só sai da rede local quando o técnico pede: na consulta do IP público e quando aponta o ping, o tracert ou a consulta DNS para um endereço de fora. Fora isso, não manda nada para a internet e não coleta dado de uso. O relatório fica só no computador em que a varredura foi feita.</p></div>
+  </div>
+</section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape__base">
+    <div class="rodape__credito">
+      <p>Software de apoio ao suporte de TI e infraestrutura da plataforma <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>manfred.com.br</strong></a></p>
+      <p>Desenvolvido e publicado por <a href="https://www.manfred.com.br" target="_blank" rel="noopener"><strong>MT - Manfred Tecnologia</strong></a></p>
+      <p class="rodape__links">
+        <a href="https://github.com/manfredjr/mapnet#readme">Manual de uso</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet">Código-fonte</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet/blob/main/LICENSE">Licença GPL-3.0</a> &middot;
+        <a href="https://github.com/manfredjr/mapnet/issues">Avisar um problema</a>
+      </p>
+      <p class="rodape__direitos">&copy; 2026 MANFRED TECNOLOGIA LTDA. Software livre sob a GPL-3.0.</p>
+    </div>
+    <a class="rodape__selo" href="https://www.manfred.com.br" target="_blank" rel="noopener" aria-label="MT - Manfred Tecnologia">
+      <img src="img/logo-128.webp" alt="MT - Manfred Tecnologia" width="53" height="40" loading="lazy">
+    </a>
+  </div>
+</footer>
+</body>
+</html>
