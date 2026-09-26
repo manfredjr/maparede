@@ -158,7 +158,10 @@ Passo a passo em `docs/publicacao.md`.
 
 ## Comunicação
 
-- Respostas claras e objetivas: o que mudou, o que falta e o que o agente recomenda, sem rodeio.
+- Resposta o mais curta e simples possível, combinado com o Manfred em 26/09/2026. Sempre diz o que já foi feito e o que falta fazer, sem rodeio e sem repetir o que já foi dito.
+- O que pode ser feito de forma automatizada e é reversível, o agente executa sem perguntar e só conta que fez (ver Autonomia).
+- O que não é reversível, o agente pergunta antes, com a sugestão dele.
+- Pergunta sempre objetiva e clara, fechada, com as opções e a recomendação do agente.
 - Toda resposta termina com os blocos **Feito**, **Você precisa fazer**, **Fica comigo** e **Etapa**, nessa ordem. Detalhes em `.superpowers/metodo/briefing-fechamento-das-respostas.md`.
   - **Feito:** o que foi concluído nesta resposta, inclusive o que o agente executou sozinho pela regra da Autonomia.
   - **Você precisa fazer:** o que depende do Manfred, cada item com a recomendação do agente. Decisão irreversível aparece aqui como pergunta, com as opções e a recomendada.
